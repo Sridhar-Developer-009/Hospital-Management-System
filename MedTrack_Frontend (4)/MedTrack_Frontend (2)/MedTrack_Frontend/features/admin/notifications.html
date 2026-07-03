@@ -19,6 +19,60 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" href="../../assets/css/global.css">
   <link rel="stylesheet" href="../../assets/css/admin.css">
+  <!-- Theme Initialization & OS Listener -->
+  <script>
+    (function() {
+      function updateIcon(isDark) {
+        var icon = document.getElementById('darkModeIcon');
+        if(icon) {
+          icon.innerHTML = isDark
+            ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+            : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+        }
+      }
+      function applyTheme() {
+        var stored = localStorage.getItem('citycare_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var isDark = stored === 'dark' || (!stored && prefersDark);
+        if (isDark) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+        updateIcon(isDark);
+      }
+      // Apply immediately
+      applyTheme();
+      
+      // Listen for OS changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+        if (!localStorage.getItem('citycare_theme')) {
+          applyTheme();
+        }
+      });
+      
+      // Attach click listener for toggle button when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        var toggle = document.getElementById('darkModeToggle');
+        if(toggle) {
+          toggle.addEventListener('click', function() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+              document.documentElement.removeAttribute('data-theme');
+              localStorage.setItem('citycare_theme', 'light');
+              updateIcon(false);
+            } else {
+              document.documentElement.setAttribute('data-theme', 'dark');
+              localStorage.setItem('citycare_theme', 'dark');
+              updateIcon(true);
+            }
+          });
+        }
+        // Initial icon setup in case DOM wasn't ready during applyTheme()
+        applyTheme();
+      });
+    })();
+  </script>
 </head>
 <body>
   <div class="admin-layout">
@@ -368,4 +422,5 @@
   </script>
 </body>
 </html>
+
 
