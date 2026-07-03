@@ -1,0 +1,2 @@
+namespace HospitalManagementSystem.NotificationManagement.Models;
+public class NotificationLog { public int NotificationId { get; set; } public int AppointmentId { get; set; } public string Recipient { get; set; } = string.Empty; public string NotificationType { get; set; } = "System"; public string Message { get; set; } = string.Empty; public string Status { get; set; } = "SystemAlert"; public DateTime? SentDate { get; set; } }

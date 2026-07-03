@@ -1,0 +1,3 @@
+﻿DepartmentId | DepartmentName | Status | AppointmentCount
+1 | Cardiology | Booked | 1
+1 | Cardiology | Cancelled | 1

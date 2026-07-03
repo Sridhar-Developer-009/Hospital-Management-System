@@ -1,0 +1,10 @@
+﻿# Report: Doctor Availability & Utilisation Report
+# Date Range: 09-Jun-2026 to 31-Dec-2026
+# Generated: 08-Jun-2026 17:14:34
+# Total Records: 4
+#
+Doctor Name,Department Name,Status,Appointment Count
+Dr. Arvind Swamy,Cardiology,Booked,3
+Dr. Arvind Swamy,Cardiology,Cancelled,3
+srd,General Medicine,Booked,1
+sridhar,Cardiology,Booked,1

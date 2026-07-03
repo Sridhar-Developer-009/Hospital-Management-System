@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CityCare - Portal Sign In</title>
+  
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Global & Login CSS stylesheets -->
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+  <div class="login-page-wrapper">
+    <div class="login-main-container">
+      
+      <!-- Left Panel: Graphic & Features Hero -->
+      <div class="login-hero-panel">
+        <!-- Logo -->
+        <a href="../../index.html" class="login-hero-brand" aria-label="Back to CityCare home">
+          <div class="brand-logo-icon">
+            <!-- Medical cross logo -->
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </div>
+          <div class="brand-logo-text">
+            <span class="brand-title">CityCare</span>
+            <span class="brand-subtitle">Hospital</span>
+          </div>
+        </a>
+        
+        <!-- Headers -->
+        <div class="login-hero-content">
+          <h1 class="login-hero-title" id="hero-context-heading">Administrator <span>Login</span></h1>
+          <p class="login-hero-desc" id="hero-context-desc">Access and manage hospital operations with complete control.</p>
+          
+          <!-- Features list — built by JS dynamically; static version for no-JS fallback -->
+          <div class="login-bullets-list" id="features-list-container">
+            <div class="login-bullet-block">
+              <div class="login-bullet-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </div>
+              <div class="login-bullet-info">
+                <span class="login-bullet-title">Secure Access</span>
+                <span class="login-bullet-desc">Enterprise-grade security to protect sensitive data.</span>
+              </div>
+            </div>
+            <div class="login-bullet-block">
+              <div class="login-bullet-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+              </div>
+              <div class="login-bullet-info">
+                <span class="login-bullet-title">Real-time Insights</span>
+                <span class="login-bullet-desc">Monitor hospital performance and key metrics instantly.</span>
+              </div>
+            </div>
+            <div class="login-bullet-block">
+              <div class="login-bullet-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path></svg>
+              </div>
+              <div class="login-bullet-info">
+                <span class="login-bullet-title">Complete Control</span>
+                <span class="login-bullet-desc">Manage staff, departments, appointments and more.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bottom Warning Block -->
+        <div class="security-warning-card" role="note">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span class="security-warning-text">Your security is our priority. All activities are monitored and logged for security and compliance.</span>
+        </div>
+      </div>
+      
+      <!-- Right Panel: Login Card Form -->
+      <div class="login-form-panel">
+        <!-- Back to Home — top-right corner -->
+        <div class="back-home-wrapper">
+          <a href="../../index.html" class="btn-outline" aria-label="Return to home page">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Home
+          </a>
+        </div>
+        
+        <!-- Card — no 3D transform to avoid clipping issues -->
+        <div class="login-form-card">
+          <!-- Distinct shield icon for the card (different from left panel pulse icon) -->
+          <div class="login-card-logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
+          
+          <h2 class="login-card-title" id="login-context-title">Administrator Login</h2>
+          <p class="login-card-desc" id="login-context-desc">Enter your credentials to access the administrator portal.</p>
+          
+          <form id="login-form-element" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="username-input">Username</label>
+              <div class="input-icon-wrapper">
+                <span class="input-icon-left" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </span>
+                <input type="text" id="username-input" class="form-field-control" placeholder="Enter your username" autocomplete="username" maxlength="30" required>
+                <span class="field-error-icon" aria-hidden="true">!</span>
+              </div>
+              <span class="field-error-msg" id="username-error" role="alert"></span>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="pwd-input">Password</label>
+              <div class="input-icon-wrapper">
+                <span class="input-icon-left" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </span>
+                <input type="password" id="pwd-input" class="form-field-control" placeholder="Enter your password" autocomplete="current-password" required>
+                <span class="field-error-icon" aria-hidden="true">!</span>
+                <!-- Eye toggle: shows/hides password -->
+                <button type="button" class="input-icon-right-toggle" id="pwd-toggle-btn" aria-label="Show password" aria-pressed="false">
+                  <!-- Eye icon (default = password hidden) -->
+                  <svg id="icon-eye-show" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                  <!-- Eye-off icon (shown when password is visible) -->
+                  <svg id="icon-eye-hide" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                </button>
+              </div>
+              <span class="field-error-msg" id="password-error" role="alert"></span>
+            </div>
+            
+            <div class="form-actions-row">
+              <label class="checkbox-label-block">
+                <input type="checkbox" id="remember-me" checked>
+                Remember me
+              </label>
+              <!-- Forgot password handled in JS — no inline onclick -->
+              <a href="#" class="forgot-pwd-link" id="forgot-pwd-link">Forgot Password?</a>
+            </div>
+            
+            <!-- Error message area (hidden by default) -->
+            <div class="form-error-msg" id="form-error-msg" role="alert" aria-live="polite"></div>
+            
+            <button type="submit" class="btn-form-solid">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span id="login-btn-text">Sign In as Administrator</span>
+            </button>
+            
+            <div class="form-separator" role="separator">or</div>
+            
+            <a href="../../index.html#portals" class="btn-form-outline">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              Login as Different User
+            </a>
+
+            <div class="register-link-block" id="register-link-block" style="display: none;">
+              <span style="color: var(--muted-text); font-size: 0.88rem;">Don't have an account?</span>
+              <a href="register.html?role=Patient" style="color: var(--primary-brand); font-weight: 700; font-size: 0.88rem; text-decoration: none; margin-left: 4px;">Register as a new patient</a>
+            </div>
+          </form>
+          
+          <div class="ssl-footer-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Secure connection encrypted with SSL
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Bottom Info Banner -->
+    <div class="login-bottom-banner">
+      <div class="login-bottom-inner">
+        <div class="login-certs-row">
+          <div class="login-cert-block">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Secure — Your data is protected
+          </div>
+          <div class="login-cert-block">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            99.9% System Uptime
+          </div>
+          <div class="login-cert-block">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            HIPAA Compliant
+          </div>
+          <div class="login-cert-block">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Real-time Monitoring
+          </div>
+        </div>
+        <span class="login-copyright-label">© 2026 CityCare. All rights reserved.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Context script -->
+  <script src="../../assets/js/storage.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>
+

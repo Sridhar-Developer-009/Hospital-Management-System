@@ -1,0 +1,247 @@
+/* ── Doctor Profile Page ── */
+
+.profile-header {
+  margin-bottom: 8px;
+}
+
+.profile-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark, #2D2A24);
+}
+
+.profile-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted, #7A7268);
+}
+
+.profile-divider {
+  height: 1px;
+  background: var(--border-color, #E5DDD5);
+  margin: 14px 0 20px;
+}
+
+/* ── Profile Card ── */
+
+.profile-card {
+  background: var(--bg-card, #F6F0E4);
+  border: 1px solid var(--border-color, #E5DDD5);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.profile-card-banner {
+  height: 40px;
+  background: linear-gradient(135deg, #047857, #065F46);
+  position: relative;
+}
+
+.profile-card-body {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 24px 14px;
+}
+
+.profile-avatar-lg {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  flex-shrink: 0;
+}
+
+.profile-name-section {
+  padding-bottom: 6px;
+}
+
+.profile-doctor-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-dark, #2D2A24);
+}
+
+.profile-doctor-id {
+  font-size: 0.8rem;
+  color: var(--text-muted, #7A7268);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.profile-card-actions {
+  margin-left: auto;
+  align-self: center;
+  padding-bottom: 6px;
+}
+
+.btn-profile-edit {
+  background: var(--primary-green, #047857) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 8px 20px !important;
+  font-weight: 600 !important;
+  font-size: 0.8rem !important;
+}
+
+.btn-profile-edit:hover {
+  background: #065F46 !important;
+}
+
+/* ── Profile Content Layout ── */
+
+.profile-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Info Grid ── */
+
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.profile-info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--bg-card, #F6F0E4);
+  border-radius: 10px;
+  border: 1px solid var(--border-color, #E5DDD5);
+}
+
+.pi-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #DCFCE7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pi-icon svg {
+  width: 16px;
+  height: 16px;
+  stroke: var(--primary-green, #047857);
+}
+
+.profile-info-item div label {
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--text-muted, #7A7268);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.profile-info-item div span {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-dark, #2D2A24);
+}
+
+/* ── About Section ── */
+
+.profile-section {
+  margin-top: 2px;
+}
+
+.profile-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-dark, #2D2A24);
+  margin-bottom: 8px;
+}
+
+.profile-about {
+  font-size: 0.85rem;
+  color: var(--text-muted, #7A7268);
+  line-height: 1.7;
+  padding: 14px 16px;
+  background: var(--bg-card, #F6F0E4);
+  border-radius: 10px;
+  border: 1px solid var(--border-color, #E5DDD5);
+}
+
+/* ── Side Panel Sections ── */
+
+.profile-panel {
+  background: var(--bg-card, #F6F0E4);
+  border: 1px solid var(--border-color, #E5DDD5);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.profile-panel-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-dark, #2D2A24);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color, #E5DDD5);
+}
+
+.profile-panel-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 0.82rem;
+}
+
+.profile-panel-row .label {
+  color: var(--text-muted, #7A7268);
+  font-weight: 500;
+}
+
+.profile-panel-row .value {
+  color: var(--text-dark, #2D2A24);
+  font-weight: 600;
+}
+
+/* ── Edit Modal ── */
+
+#editProfileModal .form-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted, #7A7268);
+  margin-bottom: 4px;
+}
+
+#editProfileModal .form-control,
+#editProfileModal .form-select {
+  background: var(--bg-card, #F6F0E4);
+  border: 1px solid var(--border-color, #E5DDD5);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--text-dark, #2D2A24);
+  padding: 8px 12px;
+}
+
+#editProfileModal .form-control:focus,
+#editProfileModal .form-select:focus {
+  border-color: var(--primary-green, #047857);
+  box-shadow: none;
+}

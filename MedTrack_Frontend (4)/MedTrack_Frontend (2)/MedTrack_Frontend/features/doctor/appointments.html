@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Appointments - CityCare Doctor Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+  <link rel="stylesheet" href="../../assets/css/doctor.css">
+  <link rel="stylesheet" href="../../assets/css/appointments.css?v=7">
+</head>
+<body>
+
+  <div class="admin-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button class="sidebar-close-btn" id="sidebar-close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="sidebar-brand-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <div class="sidebar-brand-text">CityCare</div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          Dashboard
+        </a>
+
+        <div class="sidebar-section-label">SCHEDULE</div>
+        <a href="appointments.html" class="sidebar-link active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          My Appointments
+        </a>
+        <a href="availability.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Availability & Slots
+        </a>
+
+        <div class="sidebar-section-label">PATIENT CARE</div>
+        <a href="patient-records.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Patient Records
+        </a>
+        <div class="sidebar-section-label">COMMUNICATION</div>
+        <a href="notifications.html" class="sidebar-link justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            Notifications
+          </div>
+          <span class="badge rounded-pill" style="background: #E0F2FE; color: #0369A1;">4</span>
+        </a>
+
+        <div class="sidebar-section-label">ACCOUNT</div>
+        <a href="profile.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          My Profile
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../../index.html" class="sidebar-link text-danger">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Logout
+        </a>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburger-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="header-search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted-text, #7A7268)" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" placeholder="Search patients, appointments, records...">
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="icon-btn-wrapper">
+            <button class="icon-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <span class="icon-badge">4</span>
+            </button>
+          </div>
+          <div class="icon-btn-wrapper">
+            <button class="icon-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            </button>
+          </div>
+          <div class="header-profile d-flex align-items-center">
+            <div class="profile-info text-end">
+              <span class="profile-name"></span>
+              <span class="profile-role"></span>
+            </div>
+            <div class="profile-avatar overflow-hidden" style="width: 36px; height: 36px; border-radius: 50%;">
+              <img src="" alt="Avatar" class="img-fluid">
+            </div>
+            <script>(function(){var n=sessionStorage.doctorName,r=sessionStorage.doctorDepartment,i=sessionStorage.currentDoctorId;if(n){var pn=document.querySelector('.profile-name');if(pn)pn.textContent=n;var pr=document.querySelector('.profile-role');if(pr)pr.textContent=(r||'Department')+' \u2022 '+i;var ai=document.querySelector('.profile-avatar img');if(ai)ai.src='https://ui-avatars.com/api/?name='+encodeURIComponent(n)+'&background=047857&color=fff';}})();</script>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <div class="dashboard-body container-fluid p-4">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb-bar" aria-label="Breadcrumb">
+          <a href="dashboard.html" class="breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Dashboard
+          </a>
+          <svg class="breadcrumb-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="breadcrumb-current">My Appointments</span>
+        </nav>
+
+        <div class="mb-4">
+          <h2 class="fw-bold mb-1">My Appointments</h2>
+          <p class="text-muted" style="font-size: 0.9rem;">View and manage your daily schedule.</p>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-bar">
+          <div class="d-flex gap-3 flex-wrap">
+            <div class="filter-dropdown" id="apptFilter">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
+              <span>All Appointments</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+            <div class="filter-dropdown" id="dateFilter">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <span>Wed, 10 June 2026</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+            <div class="filter-dropdown" id="statusFilter">
+              <span>All Status</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+            <div class="filter-dropdown" style="width: 240px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" placeholder="Search appointment..." style="border:none; outline:none; background:transparent; width:100%; font-size: 0.85rem;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Appointment Filter Menu -->
+        <div class="dropdown-menu-custom" id="apptFilterMenu">
+          <div class="dropdown-item" data-filter="all">All Appointments</div>
+          <div class="dropdown-item" data-filter="week">This Week</div>
+          <div class="dropdown-item" data-filter="today">Today</div>
+        </div>
+
+        <!-- Status Dropdown Menu -->
+        <div class="dropdown-menu-custom" id="statusMenu">
+          <div class="dropdown-item" data-value="all">All Status</div>
+          <div class="dropdown-item" data-value="booked">Booked</div>
+          <div class="dropdown-item" data-value="completed">Completed</div>
+          <div class="dropdown-item" data-value="pending">Pending</div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="row g-4">
+
+          <!-- Full-width Table -->
+          <div class="col-12">
+            <div class="table-card">
+
+              <!-- ═══ APPOINTMENTS LIST ═══ -->
+              <div id="appointmentsList">
+                <table class="table appts-table mb-0">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Date</th>
+                      <th>Time</th>
+                      <th>Patient Details</th>
+                      <th>Visit Reason</th>
+                      <th>Status</th>
+                      <th class="text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+
+              <!-- Pagination -->
+              <div class="p-3 border-top d-flex justify-content-between align-items-center pagination-bar" id="apptPagination" style="border-color: var(--border-color) !important; background: var(--bg-card);">
+                <span class="small text-muted appt-info" id="apptPageInfo">Loading...</span>
+                <div class="btn-group">
+                  <button class="btn btn-sm btn-outline-secondary" id="btnApptPrev">Prev</button>
+                  <button class="btn btn-sm btn-outline-secondary" id="btnApptNext">Next</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Help Card -->
+            <div class="help-card mt-3" style="max-width: 280px;">
+              <div style="color: var(--primary-green);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </div>
+              <div>
+                <div class="fw-bold text-dark" style="font-size: 0.85rem;">Need Help?</div>
+                <div class="text-muted" style="font-size: 0.75rem;">Contact Admin</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <footer class="dashboard-footer">
+        <span>&copy; 2026 CityCare. All rights reserved.</span>
+        <span>Version 2.4.0</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       NOTIFICATIONS PANEL
+       ══════════════════════════════════════════ -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-panel-header">
+      <span class="fw-bold">Notifications</span>
+      <button class="btn btn-sm text-success fw-medium" id="markAllRead" style="border:none; background:none; font-size:0.75rem;">Mark all read</button>
+    </div>
+    <div class="notif-panel-body" id="notifList"></div>
+    <div class="notif-panel-footer">
+        <a href="notifications.html" class="text-decoration-none text-success fw-medium" style="font-size:0.8rem;">View All Notifications</a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       MODALS
+       ══════════════════════════════════════════ -->
+
+  <!-- ── Consultation Wizard Modal (Step-by-Step) ── -->
+  <div class="appt-modal" id="consultWizard">
+    <div class="appt-modal-content" style="max-width: 640px;">
+      <div class="appt-modal-header">
+        <div>
+          <h3 id="wizard-patient-name">Patient</h3>
+          <div class="text-muted" style="font-size:0.8rem;" id="wizard-patient-info">Loading...</div>
+        </div>
+        <button class="appt-modal-close" onclick="closeConsultWizard()">&times;</button>
+      </div>
+      <div class="p-3" style="background:#F9FAFB;border-bottom:1px solid var(--border-color);">
+        <div class="step-tracker-bar" id="wizardStepTracker">
+          <div class="step-item" data-step="1">
+            <div class="step-circle">1</div>
+            <div class="step-label">Review</div>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-step="2">
+            <div class="step-circle">2</div>
+            <div class="step-label">Consult</div>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-step="3">
+            <div class="step-circle">3</div>
+            <div class="step-label">Diagnose</div>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-step="4">
+            <div class="step-circle">4</div>
+            <div class="step-label">Prescribe</div>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-item" data-step="5">
+            <div class="step-circle">5</div>
+            <div class="step-label">Done</div>
+          </div>
+        </div>
+      </div>
+      <div class="appt-modal-body">
+
+        <!-- Step 1: Review -->
+        <div class="wizard-step-content" id="wizStep1">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="avatar-circle" style="background: var(--primary-light); color: var(--primary-green); width:48px; height:48px; font-size:1rem;" id="wiz-patient-initials">--</div>
+            <div>
+              <div class="fw-bold fs-5" id="wiz-patient-name">--</div>
+              <div class="text-muted" style="font-size:0.85rem;" id="wiz-patient-id">--</div>
+            </div>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6"><span class="text-muted" style="font-size:0.75rem;">Phone</span><div class="fw-medium" id="wiz-patient-phone">--</div></div>
+            <div class="col-6"><span class="text-muted" style="font-size:0.75rem;">Blood Group</span><div class="fw-medium" id="wiz-patient-blood">--</div></div>
+          </div>
+          <div class="mb-3">
+            <span class="text-muted" style="font-size:0.75rem;">Visit Reason</span>
+            <div class="fw-medium" id="wiz-patient-reason">--</div>
+          </div>
+          <div class="mb-3">
+            <span class="text-muted" style="font-size:0.75rem;">Medical History</span>
+            <div class="fw-medium mt-1" id="wiz-patient-history" style="font-size:0.85rem;">--</div>
+          </div>
+          <div class="mt-3 pt-3 border-top" style="border-color:var(--border-color)!important;">
+            <button class="btn btn-sm" id="wiz-medical-history-btn" style="background:var(--primary-light);color:var(--primary-green);border:none;font-weight:600;font-size:0.75rem;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              View Full Medical History
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Consult -->
+        <div class="wizard-step-content" id="wizStep2" style="display:none;">
+          <div class="text-center py-3 mb-3 rounded" style="background:var(--bg-neutral);">
+            <div class="text-muted" style="font-size:0.75rem;">Elapsed Time</div>
+            <div class="fw-bold" style="font-size:2rem; font-family:'Outfit',sans-serif; color:var(--primary-green);" id="wiz-timer">00:00:00</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-medium text-muted" style="font-size:0.8rem;">Consultation Notes</label>
+            <textarea class="form-control" id="wiz-consult-notes" rows="3" placeholder="Type your notes here..." style="background:var(--bg-card); border:1px solid var(--border-color); font-size:0.85rem; resize:vertical;"></textarea>
+          </div>
+        </div>
+
+        <!-- Step 3: Diagnose -->
+        <div class="wizard-step-content" id="wizStep3" style="display:none;">
+          <div class="mb-3">
+            <label class="form-label fw-medium text-muted" style="font-size:0.8rem;">Primary Diagnosis <span style="color:#DC2626;">*</span></label>
+            <input type="text" class="form-control" id="wiz-diagnosis" placeholder="e.g. Type 2 Diabetes, Hypertension" style="background:var(--bg-card); border:1px solid var(--border-color); font-size:0.85rem;">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-medium text-muted" style="font-size:0.8rem;">Treatment Notes</label>
+            <textarea class="form-control" id="wiz-treatment-notes" rows="3" placeholder="e.g. Prescribed medication, advised dietary changes" style="background:var(--bg-card); border:1px solid var(--border-color); font-size:0.85rem; resize:vertical;"></textarea>
+          </div>
+        </div>
+
+        <!-- Step 4: Prescribe -->
+        <div class="wizard-step-content" id="wizStep4" style="display:none;">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-medium text-muted" style="font-size:0.8rem;">Prescriptions</span>
+            <button class="btn btn-sm" id="wiz-add-rx" style="background: var(--primary-light); color: var(--primary-green); font-weight:600; border:none; font-size:0.75rem;">+ Add Medicine</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="table table-borderless mb-0" id="wiz-rx-table" style="font-size:0.8rem;">
+              <thead><tr><th style="width:30%;">Medicine</th><th style="width:15%;">Dosage</th><th style="width:15%;">Frequency</th><th style="width:12%;">Days</th><th style="width:23%;">Instructions</th><th style="width:30px;"></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Step 5: Done -->
+        <div class="wizard-step-content" id="wizStep5" style="display:none;">
+          <div class="text-center py-4">
+            <div style="font-size:3rem; color:var(--primary-green);">&#10003;</div>
+            <h4 class="fw-bold mt-2">Ready to Complete</h4>
+            <p class="text-muted" style="font-size:0.85rem;">Review the details below and confirm to complete this appointment.</p>
+          </div>
+          <div class="mb-2 p-3 rounded" style="background:var(--bg-neutral);">
+            <div class="row g-2" style="font-size:0.85rem;">
+              <div class="col-6"><span class="text-muted">Diagnosis:</span><br><span class="fw-medium" id="wiz-summary-diagnosis">--</span></div>
+              <div class="col-6"><span class="text-muted">Prescriptions:</span><br><span class="fw-medium" id="wiz-summary-rx">--</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="appt-modal-footer d-flex justify-content-between" id="wizardFooter">
+        <div>
+          <button class="btn btn-sm px-3" style="background: var(--bg-card); border:1px solid var(--border-color);" id="wiz-back-btn" onclick="wizardPrevStep()">Back</button>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm px-3 text-white" id="wiz-start-btn" style="background:var(--primary-green);border:none;" onclick="wizardStartConsult()">Start Consultation</button>
+          <button class="btn btn-sm px-3 text-white" id="wiz-end-btn" style="background:var(--primary-green);border:none;display:none;" onclick="wizardEndConsult()">End Consultation</button>
+          <button class="btn btn-sm px-3 text-white" id="wiz-next-btn" style="background:var(--primary-green);border:none;display:none;" onclick="wizardNextStep()">Next</button>
+          <button class="btn btn-sm px-3 text-white" id="wiz-save-btn" style="background:var(--primary-green);border:none;display:none;" onclick="wizardSaveComplete()">Save & Complete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Manage Availability Modal ── -->
+  <div class="appt-modal" id="availModal">
+    <div class="appt-modal-content" style="max-width: 420px;">
+      <div class="appt-modal-header">
+        <h3>Manage Availability</h3>
+        <button class="appt-modal-close" onclick="document.getElementById('availModal').style.display='none'">&times;</button>
+      </div>
+      <div class="appt-modal-body">
+        <div class="mb-3">
+          <label class="form-label fw-medium text-muted" style="font-size:0.8rem;">Max Slots Per Day</label>
+          <input type="number" class="form-control" value="5" min="1" max="10" style="background:var(--bg-card); border:1px solid var(--border-color); font-size:0.85rem;">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-medium text-muted" style="font-size:0.8rem;">Slot Duration</label>
+          <select class="form-select" style="background:var(--bg-card); border:1px solid var(--border-color); font-size:0.85rem;">
+            <option>15 minutes</option>
+            <option selected>30 minutes</option>
+            <option>45 minutes</option>
+            <option>60 minutes</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-medium text-muted" style="font-size:0.8rem;">Break Times</label>
+          <div class="d-flex gap-2 mb-2">
+            <input type="time" class="form-control" value="11:00" style="background:var(--bg-card); border:1px solid var(--border-color); font-size:0.85rem;">
+            <input type="time" class="form-control" value="11:15" style="background:var(--bg-card); border:1px solid var(--border-color); font-size:0.85rem;">
+          </div>
+          <div class="d-flex gap-2">
+            <input type="time" class="form-control" value="13:00" style="background:var(--bg-card); border:1px solid var(--border-color); font-size:0.85rem;">
+            <input type="time" class="form-control" value="14:00" style="background:var(--bg-card); border:1px solid var(--border-color); font-size:0.85rem;">
+          </div>
+        </div>
+      </div>
+      <div class="appt-modal-footer d-flex justify-content-between">
+        <button class="btn btn-sm px-3" style="background: var(--bg-card); border:1px solid var(--border-color);" onclick="document.getElementById('availModal').style.display='none'">Cancel</button>
+        <button class="btn btn-sm px-4 text-white" id="save-avail" style="background: var(--primary-green); border:none;">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Consultation Queue Modal ── -->
+  <div class="appt-modal" id="queueModal">
+    <div class="appt-modal-content" style="max-width: 600px;">
+      <div class="appt-modal-header">
+        <h3>Consultation Queue</h3>
+        <button class="appt-modal-close" onclick="document.getElementById('queueModal').style.display='none'">&times;</button>
+      </div>
+      <div class="appt-modal-body">
+        <p class="text-muted mb-3" style="font-size:0.85rem;">Patients waiting for consultation</p>
+        <div style="overflow-x:auto;">
+          <table class="table table-borderless align-middle mb-0" id="queueTable" style="font-size:0.85rem;">
+            <thead>
+              <tr><th class="text-muted fw-medium" style="font-size:0.75rem;">Patient</th><th class="text-muted fw-medium" style="font-size:0.75rem;">Reason</th><th class="text-muted fw-medium" style="font-size:0.75rem;">Wait Time</th><th class="text-muted fw-medium" style="font-size:0.75rem;">Priority</th><th class="text-center text-muted fw-medium" style="font-size:0.75rem;">Action</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="appt-modal-footer">
+        <button class="btn btn-sm px-3" style="background: var(--bg-card); border:1px solid var(--border-color);" onclick="document.getElementById('queueModal').style.display='none'">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Patient Records Modal ── -->
+  <div class="appt-modal" id="recordsModal">
+    <div class="appt-modal-content" style="max-width: 700px;">
+      <div class="appt-modal-header">
+        <h3>Patient Records</h3>
+        <button class="appt-modal-close" onclick="document.getElementById('recordsModal').style.display='none'">&times;</button>
+      </div>
+      <div class="appt-modal-body">
+        <div class="mb-3">
+          <div class="filter-dropdown" style="width:100%;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="recordsSearch" placeholder="Search by name or patient ID..." style="border:none; outline:none; background:transparent; width:100%; font-size:0.85rem;">
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="table table-borderless align-middle mb-0" id="recordsTable" style="font-size:0.85rem;">
+            <thead>
+              <tr><th class="text-muted fw-medium" style="font-size:0.75rem;">Patient</th><th class="text-muted fw-medium" style="font-size:0.75rem;">Age/Gender</th><th class="text-muted fw-medium" style="font-size:0.75rem;">Phone</th><th class="text-muted fw-medium" style="font-size:0.75rem;">Last Visit</th><th class="text-muted fw-medium" style="font-size:0.75rem;">Condition</th><th class="text-center text-muted fw-medium" style="font-size:0.75rem;">Action</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="appt-modal-footer">
+        <button class="btn btn-sm px-3" style="background: var(--bg-card); border:1px solid var(--border-color);" onclick="document.getElementById('recordsModal').style.display='none'">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Calendar Modal ── -->
+  <div class="appt-modal" id="calModal">
+    <div class="appt-modal-content" style="max-width: 400px;">
+      <div class="appt-modal-header">
+        <h3>June 2026</h3>
+        <button class="appt-modal-close" onclick="document.getElementById('calModal').style.display='none'">&times;</button>
+      </div>
+      <div class="appt-modal-body">
+        <table class="table table-borderless text-center month-calendar mb-0">
+          <thead><tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr></thead>
+          <tbody>
+            <tr><td class="text-muted">31</td><td>1</td><td>2<div class="dot-container"><span class="dot dot-booked"></span></div></td><td>3<div class="dot-container"><span class="dot dot-completed"></span><span class="dot dot-pending"></span></div></td><td>4</td><td>5</td><td>6</td></tr>
+            <tr><td>7</td><td>8</td><td>9<div class="dot-container"><span class="dot dot-booked"></span></div></td><td class="active-day">10<div class="dot-container"><span class="dot" style="background:var(--bg-card);"></span></div></td><td>11<div class="dot-container"><span class="dot dot-cancelled"></span></div></td><td>12</td><td>13<div class="dot-container"><span class="dot dot-booked"></span></div></td></tr>
+            <tr><td>14</td><td>15<div class="dot-container"><span class="dot dot-pending"></span><span class="dot dot-booked"></span></div></td><td>16</td><td>17<div class="dot-container"><span class="dot dot-booked"></span></div></td><td>18</td><td>19<div class="dot-container"><span class="dot dot-completed"></span></div></td><td>20</td></tr>
+            <tr><td>21</td><td>22</td><td>23<div class="dot-container"><span class="dot dot-booked"></span></div></td><td>24</td><td>25</td><td>26</td><td>27</td></tr>
+            <tr><td>28</td><td>29<div class="dot-container"><span class="dot dot-completed"></span></div></td><td>30</td><td class="text-muted">1</td><td class="text-muted">2</td><td class="text-muted">3</td><td class="text-muted">4</td></tr>
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-center gap-3 mt-3 pt-3 border-top" style="border-color:var(--border-color)!important;">
+          <span class="legend-text d-flex align-items-center gap-1"><span class="dot dot-booked"></span> Booked</span>
+          <span class="legend-text d-flex align-items-center gap-1"><span class="dot dot-completed"></span> Completed</span>
+          <span class="legend-text d-flex align-items-center gap-1"><span class="dot dot-pending"></span> Pending</span>
+          <span class="legend-text d-flex align-items-center gap-1"><span class="dot dot-cancelled"></span> Cancelled</span>
+        </div>
+      </div>
+      <div class="appt-modal-footer">
+        <button class="btn btn-sm px-3" style="background: var(--bg-card); border:1px solid var(--border-color);" onclick="document.getElementById('calModal').style.display='none'">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Complete Appointment Modal (C# flow: diagnosis + prescriptions) ── -->
+  <div class="appt-modal" id="completeModal">
+    <div class="appt-modal-content" style="max-width: 640px;">
+      <div class="appt-modal-header">
+        <h3>Complete Appointment</h3>
+        <button class="appt-modal-close" onclick="document.getElementById('completeModal').style.display='none'">&times;</button>
+      </div>
+      <div class="appt-modal-body">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="avatar-circle" style="background: var(--primary-light); color: var(--primary-green); width:42px; height:42px; font-size:0.9rem;" id="complete-patient-initials">--</div>
+          <div>
+            <div class="fw-bold" id="complete-patient-name">--</div>
+            <div class="text-muted" style="font-size:0.8rem;" id="complete-patient-info">--</div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-medium text-muted" style="font-size:0.8rem;">Primary Diagnosis <span style="color:#DC2626;">*</span></label>
+          <input type="text" class="form-control" id="complete-diagnosis" placeholder="e.g. Type 2 Diabetes, Hypertension" style="background:var(--bg-card); border:1px solid var(--border-color); font-size:0.85rem;">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-medium text-muted" style="font-size:0.8rem;">Treatment Notes</label>
+          <textarea class="form-control" id="complete-notes" rows="2" placeholder="e.g. Prescribed medication, advised dietary changes" style="background:var(--bg-card); border:1px solid var(--border-color); font-size:0.85rem; resize:vertical;"></textarea>
+        </div>
+        <div>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-medium text-muted" style="font-size:0.8rem;">Prescriptions</span>
+            <button class="btn btn-sm" id="add-rx-to-complete" style="background: var(--primary-light); color: var(--primary-green); font-weight:600; border:none; font-size:0.75rem;">+ Add Medicine</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="table table-borderless mb-0" id="complete-rx-table" style="font-size:0.8rem;">
+              <thead><tr><th style="width:30%;">Medicine</th><th style="width:15%;">Dosage</th><th style="width:15%;">Frequency</th><th style="width:12%;">Days</th><th style="width:23%;">Instructions</th><th style="width:30px;"></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="appt-modal-footer d-flex justify-content-between">
+        <button class="btn btn-sm px-3" style="background: var(--bg-card); border:1px solid var(--border-color);" onclick="document.getElementById('completeModal').style.display='none'">Cancel</button>
+        <button class="btn btn-sm px-4 text-white" id="save-complete" style="background: var(--primary-green); border:none;">Save & Complete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Medical History Modal ── -->
+  <div class="appt-modal" id="historyModal">
+    <div class="appt-modal-content" style="max-width: 600px;">
+      <div class="appt-modal-header">
+        <h3>Medical History</h3>
+        <button class="appt-modal-close" onclick="document.getElementById('historyModal').style.display='none'">&times;</button>
+      </div>
+      <div class="appt-modal-body" id="historyModalBody">
+        <p class="text-muted" style="font-size:0.85rem;">Loading...</p>
+      </div>
+      <div class="appt-modal-footer">
+        <button class="btn btn-sm px-3" style="background: var(--bg-card); border:1px solid var(--border-color);" onclick="document.getElementById('historyModal').style.display='none'">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SCRIPTS
+       ══════════════════════════════════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../assets/js/storage.js"></script>
+  <script src="appointments.js?v=7"></script>
+</body>
+</html>

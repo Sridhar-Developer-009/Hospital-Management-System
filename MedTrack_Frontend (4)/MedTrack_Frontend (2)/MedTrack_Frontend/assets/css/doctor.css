@@ -1,0 +1,337 @@
+/* CityCare Doctor Dashboard Custom Styles */
+
+/* ── Bootstrap Overrides ───────────────────── */
+.main-content {
+  background: var(--bg-neutral, #F0E8DA);
+}
+
+/* Match doctor card palette to admin panel (beige background, border, subtle shadow) */
+.card {
+  background: var(--bg-card, #F6F0E4) !important;
+  border: 1px solid var(--light-border, #E5DDD5) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  border-radius: 12px !important;
+}
+
+.text-muted { color: #7A7268 !important; }
+.text-success { color: #047857 !important; }
+.btn-outline-success {
+  --bs-btn-color: #047857;
+  --bs-btn-border-color: #047857;
+  --bs-btn-hover-bg: #047857;
+  --bs-btn-hover-border-color: #047857;
+  --bs-btn-active-bg: #065F46;
+  --bs-btn-active-border-color: #065F46;
+}
+
+/* ── KPI Cards ──────────────────────────────────────────────────────────── */
+.kpi-card {
+  background: var(--bg-card, #F6F0E4);
+  border: 1px solid #E5DDD5;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+.kpi-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+.kpi-icon-wrap svg {
+  width: 24px;
+  height: 24px;
+}
+.kpi-details h4,
+.kpi-title {
+  font-size: 0.8rem;
+  color: #7A7268;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.kpi-details .value,
+.kpi-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2D2A24;
+  margin-bottom: 2px;
+  font-family: 'Outfit', sans-serif;
+  line-height: 1.2;
+}
+.kpi-details .subtext,
+.kpi-trend {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.trend-up { color: #10B981; }
+.trend-down { color: #EF4444; }
+.trend-neutral { color: #7A7268; }
+
+/* ── Schedule Grid ─────────────────────────────────────────────────────── */
+.schedule-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  color: #2D2A24;
+  font-size: 1.1rem;
+}
+.dashboard-body .card,
+.quick-action-card {
+  background: var(--bg-card, #F6F0E4) !important;
+}
+.dashboard-body .table thead,
+.dashboard-body .table tbody,
+.dashboard-body .table tr,
+.dashboard-body .table th,
+.dashboard-body .table td {
+  background: transparent !important;
+}
+.dashboard-body .table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #2D2A24;
+  --bs-table-striped-bg: rgba(0,0,0,0.02);
+  --bs-table-hover-bg: rgba(0,0,0,0.04);
+}
+.view-toggle .btn {
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  border: 1px solid #E5DDD5;
+  color: #5A5248;
+  background: var(--bg-card, #F6F0E4);
+  font-weight: 500;
+}
+.view-toggle .btn.active {
+  background: #047857;
+  color: white;
+  border-color: #047857;
+}
+
+/* Custom Month Calendar Styles */
+.month-calendar th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #7A7268;
+  text-align: center;
+  padding: 8px 0;
+}
+.month-calendar td {
+  text-align: center;
+  padding: 8px 0;
+  font-size: 0.9rem;
+  color: #2D2A24;
+  font-weight: 500;
+  position: relative;
+  cursor: pointer;
+  background: transparent !important;
+}
+.month-calendar th {
+  background: transparent !important;
+}
+.week-grid td,
+.week-grid th {
+  background: transparent !important;
+}
+.day-list-item {
+  background: transparent !important;
+}
+.month-calendar td.text-muted {
+  color: #C4BAAF !important;
+}
+.month-calendar td.active-day {
+  background: #047857;
+  color: white;
+  border-radius: 8px;
+}
+.dot-container {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  margin-top: 2px;
+}
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+.dot-booked { background: #047857; }
+.dot-completed { background: #3B82F6; }
+.dot-pending { background: #F59E0B; }
+.dot-cancelled { background: #EF4444; }
+
+.legend-text {
+  font-size: 0.65rem;
+  color: #7A7268;
+}
+
+/* Week Grid Styles */
+.week-grid th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #7A7268;
+  text-align: center;
+  border-bottom: 1px solid #E5DDD5;
+  padding: 8px 4px;
+}
+.week-grid th .date-num {
+  font-size: 1.1rem;
+  color: #1E293B;
+  font-family: 'Outfit', sans-serif;
+}
+.week-grid th.active-col .date-num {
+  display: inline-block;
+  background: #047857;
+  color: white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+}
+.week-grid td {
+  padding: 4px;
+  border-bottom: 1px solid #F0E8DA;
+  border-right: 1px solid #F0E8DA;
+  vertical-align: middle;
+}
+.week-grid td:first-child {
+  font-size: 0.7rem;
+  color: #7A7268;
+  font-weight: 500;
+  border-right: none;
+  width: 60px;
+  text-align: right;
+  padding-right: 8px;
+}
+.slot-badge {
+  display: block;
+  font-size: 0.65rem;
+  padding: 4px;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 500;
+}
+.slot-badge.booked { background: #E0F2FE; color: #0369A1; }
+.slot-badge.available { background: #DCFCE7; color: #166534; }
+.slot-badge.empty { background: transparent; color: transparent; }
+
+/* Day View Styles */
+.day-list-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #F0E8DA;
+}
+.day-list-item:last-child {
+  border-bottom: none;
+}
+.day-time {
+  width: 60px;
+  font-size: 0.75rem;
+  color: #7A7268;
+  font-weight: 500;
+}
+.day-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin: 0 12px;
+}
+.day-indicator.booked { background: #047857; }
+.day-indicator.pending { background: #F59E0B; }
+.day-indicator.available { background: #C4BAAF; }
+.day-patient {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #1E293B;
+}
+.day-badge {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.day-badge.booked { background: #DCFCE7; color: #166534; }
+.day-badge.pending { background: #FEF3C7; color: #B45309; }
+.day-badge.available { background: #F0E8DA; color: #7A7268; }
+
+/* ── Quick Actions Grid ────────────────────────────────────────────────── */
+.quick-action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 8px;
+  border: 1px solid #E5DDD5;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #2D2A24;
+  transition: all 0.2s ease;
+  background: var(--bg-card, #F6F0E4);
+  height: 100%;
+}
+.quick-action-card:hover {
+  border-color: #047857;
+  background: #F0E8DA;
+  transform: translateY(-2px);
+}
+.quick-action-card svg {
+  color: #047857;
+  margin-bottom: 8px;
+}
+.quick-action-card span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ── Status Badges ─────────────────────────────────────────────────────── */
+.status-badge {
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.status-booked { background: #DCFCE7; color: #166534; }
+.status-pending { background: #FEF3C7; color: #B45309; }
+.status-cancelled { background: #FEE2E2; color: #B91C1C; }
+.status-completed { background: #E0F2FE; color: #0369A1; }
+
+/* ── Entrance Animations ───────────────────── */
+.dashboard-body .card,
+.kpi-card {
+  animation: doctorFadeIn 0.5s ease forwards;
+  opacity: 0;
+}
+@keyframes doctorFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Stagger KPI cards */
+.row.g-3.mb-4 > .col:nth-child(1) .kpi-card { animation-delay: 0.05s; }
+.row.g-3.mb-4 > .col:nth-child(2) .kpi-card { animation-delay: 0.10s; }
+.row.g-3.mb-4 > .col:nth-child(3) .kpi-card { animation-delay: 0.15s; }
+.row.g-3.mb-4 > .col:nth-child(4) .kpi-card { animation-delay: 0.20s; }
+.row.g-3.mb-4 > .col:nth-child(5) .kpi-card { animation-delay: 0.25s; }
+
+/* Stagger schedule cards */
+.row.g-3.mb-4 .col-lg-4:nth-child(1) .card { animation-delay: 0.15s; }
+.row.g-3.mb-4 .col-lg-4:nth-child(2) .card { animation-delay: 0.25s; }
+.row.g-3.mb-4 .col-lg-4:nth-child(3) .card { animation-delay: 0.35s; }
+
+/* Stagger bottom row */
+.row.g-3 .col-lg-5 .card { animation-delay: 0.25s; }
+.row.g-3 .col-lg-4 .card { animation-delay: 0.35s; }
+.row.g-3 .col-lg-3 .card { animation-delay: 0.45s; }
+
+

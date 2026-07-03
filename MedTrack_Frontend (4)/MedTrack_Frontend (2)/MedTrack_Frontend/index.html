@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CityCare Hospital</title>
+  <!-- 
+    PAGE SECTIONS (10 total):
+     1. NAV      – Sticky top bar (logo + links + login buttons)
+     2. HERO     – 60/40 split: left text, right curved image with floating card
+     3. ABOUT    – Hospital story, mission, values
+     4. GATEWAY  – 3 portal cards (Patient / Doctor / Admin)
+     5. DEPARTMENTS – 6 medical specialties grid
+     6. FACILITIES  – 6 hospital infrastructure cards
+     7. STATS    – 5 counters in a row (Doctors, Patients, etc.)
+     8. STANDARDS  – 4 trust badges (Safe, Secure, Experienced, Patient-Centered)
+     9. CTA      – Dark green banner with buttons
+    10. FOOTER   – Left dark green logo + right beige links/contact
+  -->
+  
+  <!-- Instant hash-jump: prevents hero flash when navigating back with #anchor -->
+  <script>
+    (function () {
+      if (!location.hash) return;
+      // Only hide & jump when arriving from ANOTHER page — not on a refresh
+      var navType = (performance.getEntriesByType('navigation')[0] || {}).type;
+      if (navType === 'reload' || navType === 'back_forward') return;
+      if (history.scrollRestoration) history.scrollRestoration = 'manual';
+      document.documentElement.style.opacity = '0';
+    })();
+  </script>
+  
+  <!-- Google Fonts: Outfit, Inter, and Playfair Display -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="assets/css/global.css">
+  
+  <style>
+    /* Premium visual styles for landing page components */
+    
+    /* Navigation Header — white, curved over hero, flat on scroll */
+    #navbar-header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--light-border);
+      border-radius: 0 0 20px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      transition: box-shadow 0.3s ease, border-radius 0.3s ease;
+    }
+    #navbar-header.navbar-scrolled {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border-radius: 0;
+    }
+    
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    
+    .brand-logo-panel {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    
+    .brand-logo-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--primary-brand);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .brand-logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .brand-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--dark-text);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    
+    .brand-subtitle {
+      font-size: 0.78rem;
+      color: var(--muted-text);
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    
+    .nav-links-menu {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    
+    .nav-menu-link {
+      text-decoration: none;
+      color: var(--muted-text);
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    
+    .nav-menu-link:hover {
+      color: var(--primary-brand);
+    }
+    
+    .nav-chevron {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      fill: none;
+      flex-shrink: 0;
+    }
+    
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--light-border);
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary-brand);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .btn-outline:hover {
+      background: var(--primary-light);
+      border-color: var(--primary-brand);
+    }
+    
+    .btn-solid {
+      background: var(--primary-brand);
+      border: 1px solid var(--primary-brand);
+      border-radius: var(--radius-sm);
+      padding: 10px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(15, 118, 110, 0.25);
+      transition: all 0.2s ease;
+    }
+    .btn-solid:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    
+    /* Hero Section */
+    .hero-section-panel {
+      padding: 80px 0;
+      background: radial-gradient(circle at 10% 20%, rgba(240, 253, 250, 0.5) 0%, rgba(248, 245, 240, 1) 90%);
+    }
+    
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+      align-items: center;
+    }
+    
+    .hero-tag-badge {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary-brand);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .hero-main-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      letter-spacing: -0.03em;
+    }
+    .hero-main-title span {
+      color: var(--primary-brand);
+    }
+    
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--muted-text);
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+    
+    .hero-actions-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    
+    .hero-compliance-row {
+      display: flex;
+      gap: 24px;
+      font-size: 0.82rem;
+      color: var(--muted-text);
+      font-weight: 700;
+    }
+    
+    .compliance-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    /* Gateway Section */
+    .gateway-selection-panel {
+      padding: 80px 0;
+      background: var(--bg-neutral);
+      border-top: 1px solid var(--light-border);
+      border-bottom: 1px solid var(--light-border);
+      text-align: center;
+    }
+    
+    .section-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--muted-text);
+      margin-bottom: 48px;
+    }
+    
+    .gateway-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-bottom: 60px;
+      perspective: 800px;
+    }
+    
+    .gateway-card {
+      background: var(--bg-light);
+      border: 1px solid var(--light-border);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .gateway-card-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--bg-card);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .gateway-card-icon svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--primary-brand);
+      stroke-width: 2;
+      fill: none;
+    }
+    
+    .gateway-card-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    
+    .gateway-card-desc {
+      font-size: 0.9rem;
+      color: var(--muted-text);
+      margin-bottom: 28px;
+      min-height: 54px;
+      line-height: 1.5;
+    }
+    
+    /* Stats Bar */
+    .stats-counters-bar {
+      background: var(--bg-light);
+      border-bottom: 1px solid var(--light-border);
+      padding: 32px 0;
+    }
+    
+    .stats-inner-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    
+    .stat-counter-block {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .stat-icon-wrapper {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-brand);
+    }
+    
+    .stat-text-panel {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .stat-number {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--dark-text);
+      line-height: 1;
+    }
+    
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--muted-text);
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    
+    /* Module Features */
+    .modules-showcase-panel {
+      padding: 80px 0;
+      background: var(--bg-neutral);
+    }
+    
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      perspective: 800px;
+    }
+    
+    .module-card {
+      background: var(--bg-light);
+      border: 1px solid var(--light-border);
+      border-radius: var(--radius-md);
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0;
+    }
+    
+    .module-icon-panel {
+      color: var(--primary-brand);
+      font-size: 2rem;
+      margin-bottom: 14px;
+      width: 52px;
+      height: 52px;
+      background: var(--primary-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .module-info-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .module-name {
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--dark-text);
+    }
+    
+    .module-desc {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted-text);
+      line-height: 1.5;
+    }
+    
+    /* Product Showcase */
+    .product-showcase-panel {
+      padding: 80px 0;
+      background: var(--bg-light);
+      border-top: 1px solid var(--light-border);
+    }
+    
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 48px;
+      align-items: center;
+    }
+    
+    .checklist-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin: 28px 0 36px;
+    }
+    
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--dark-text);
+    }
+    
+    .checklist-item svg {
+      color: var(--primary-brand);
+    }
+    
+    .laptop-frame-wrapper img {
+      width: 100%;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--light-border);
+    }
+    
+    /* Certifications banner */
+    .certifications-banner {
+      background: var(--bg-neutral);
+      border-top: 1px solid var(--light-border);
+      border-bottom: 1px solid var(--light-border);
+      padding: 32px 0;
+    }
+    
+    .certs-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      perspective: 800px;
+    }
+    
+    .cert-item-block {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .cert-icon-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-brand);
+    }
+    
+    .cert-title-desc {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .cert-title {
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+    
+    .cert-desc {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted-text);
+      margin-top: 2px;
+    }
+    
+    /* CTA Footer Panel */
+    .cta-banner-panel {
+      background: linear-gradient(135deg, #115E59 0%, #0F766E 100%);
+      padding: 60px 0;
+      color: white;
+      text-align: left;
+    }
+    
+    .cta-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 40px;
+      align-items: center;
+    }
+    
+    .cta-title {
+      font-size: 2.25rem;
+      color: white;
+      margin-bottom: 8px;
+    }
+    
+    .cta-desc {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      margin-bottom: 24px;
+    }
+    
+    .cta-actions {
+      display: flex;
+      gap: 16px;
+    }
+    
+    /* Footer */
+    #main-footer {
+      background: var(--dark-text);
+      color: #94A3B8;
+      padding: 40px 0;
+      font-size: 0.85rem;
+    }
+    
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+    
+    .footer-link {
+      color: #94A3B8;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    
+    .footer-link:hover {
+      color: white;
+    }
+    
+    /* Common Gateway modal dialogue */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    
+    .modal-container {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      width: 500px;
+      max-width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    @keyframes modalSlideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .modal-header-bar {
+      padding: 24px;
+      border-bottom: 1px solid var(--light-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--muted-text);
+    }
+    
+    .modal-body-panel {
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .modal-action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border: 1px solid var(--light-border);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: var(--dark-text);
+      font-weight: 700;
+    }
+    
+  </style>
+</head>
+<body>
+
+  <!-- ===== SECTION 1: NAV ===== -->
+  <header id="navbar-header">
+    <div class="container">
+      <div class="nav-inner">
+        <!-- Brand Logo -->
+        <a href="#" class="brand-logo-panel" style="text-decoration: none;">
+          <div class="brand-logo-icon" style="background: var(--primary-brand); border-radius: 6px;">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </div>
+          <div class="brand-logo-text">
+            <span class="brand-title" style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--primary-brand);">CityCare</span>
+            <span class="brand-subtitle" style="font-size: 0.75rem; letter-spacing: 0.2em; color: var(--muted-text); font-weight: 500; text-transform: uppercase;">Hospital</span>
+          </div>
+        </a>
+        
+        <!-- Menu Nav links -->
+        <ul class="nav-links-menu">
+          <li><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="nav-menu-link">Home</a></li>
+          <li><a href="#about" class="nav-menu-link">About Us</a></li>
+          <li><a href="#departments" class="nav-menu-link">Departments</a></li>
+          <li><a href="#facilities" class="nav-menu-link">Facilities</a></li>
+          <li><a href="#main-footer" class="nav-menu-link">Contact Us</a></li>
+        </ul>
+        
+        <!-- Navbar Actions -->
+        <div class="nav-actions">
+          <button id="darkModeToggle" class="btn-outline" style="display: flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 0.85rem; border-radius: 50%; width: 38px; height: 38px; justify-content: center;" aria-label="Toggle dark mode">
+            <svg id="darkModeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+          <a href="login_selection.html" class="btn-solid" style="display: flex; align-items: center; gap: 8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+            Login
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== SECTION 2: HERO (50/50 split, left text + right image with curve) ===== -->
+  <section class="hero-section-panel" style="display: flex; min-height: 85vh; background: var(--bg-neutral); position: relative; overflow: hidden; align-items: center;">
+    
+    <!-- Left Text Content -->
+    <div style="flex: 1; padding: 48px; max-width: 550px; margin-left: 5%; z-index: 2; position: relative;">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px; color: var(--primary-brand); font-weight: 600;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <span>Compassionate Care. Every Patient. Every Time.</span>
+      </div>
+      
+      <h1 id="land-hero-heading" style="font-size: 3.4rem; font-family: var(--font-serif); color: var(--primary-brand); line-height: 1.1; margin-bottom: 24px;">Welcome to<br>CityCare Hospital</h1>
+      
+      <!-- Separator -->
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+        <div style="height: 1px; flex: 1; background: var(--accent-warm); opacity: 0.5;"></div>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--accent-warm)" stroke="none"><path d="M17.5,3.1C15.8,2.7,13.8,3,11.9,4c-1.8,1-3.4,2.5-4.6,4.4C6,10.2,5.2,12.3,5,14.5c-0.1,0.5-0.1,1,0,1.5 c-0.6,0.6-1.3,1.3-1.9,2c-0.4,0.4-0.4,1,0,1.4c0.4,0.4,1,0.4,1.4,0c0.7-0.7,1.4-1.3,2-1.9c0.5,0.1,1,0.1,1.5,0 c2.2-0.2,4.3-1,6.1-2.3c1.9-1.2,3.4-2.8,4.4-4.6C19.5,8.8,19.8,6.7,19.4,5C19.2,4,18.5,3.3,17.5,3.1z"></path></svg>
+        <div style="height: 1px; flex: 1; background: var(--accent-warm); opacity: 0.5;"></div>
+      </div>
+      
+      <p id="land-hero-subheading" style="font-size: 1.15rem; color: var(--dark-text); margin-bottom: 40px; max-width: 480px; line-height: 1.6;">Delivering trusted healthcare with compassion, advanced technology, and a patient-first approach.</p>
+      
+      <div class="hero-actions-row" style="display: flex; gap: 16px; justify-content: flex-start;">
+        <a href="features/auth/login.html?role=Patient" class="btn-solid" style="display: flex; align-items: center; gap: 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <span id="land-hero-primary-cta">Book Appointment</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Right Image Content with Curve -->
+    <div style="flex: 1; position: absolute; right: 0; top: 0; bottom: 0; width: 50%; z-index: 1;">
+      <div id="land-hero-bg" style="position: absolute; inset: 0; background-image: url('assets/images/hero_hospital.jpg'); background-size: cover; background-position: 20% center; border-bottom-left-radius: 300px; box-shadow: -10px 0 30px rgba(0,0,0,0.1);">
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3: ABOUT US (hospital story, mission, values) ===== -->
+  <section class="gateway-selection-panel" id="about" style="padding: 80px 0; background: var(--bg-light); border-top: 1px solid var(--light-border);">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+        <!-- Left: Text -->
+        <div>
+          <h2 class="section-title" style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; line-height: 1.2;">Caring for Our Community <span style="color: var(--primary-brand); white-space: nowrap;">Since 1995</span></h2>
+          <p style="color: var(--muted-text); line-height: 1.7; margin-bottom: 16px; text-align: justify;">CityCare Hospital has been a cornerstone of healthcare excellence, offering world-class medical services with a compassionate touch. Our team of dedicated professionals works tirelessly to ensure every patient receives personalized care.</p>
+          <p style="color: var(--muted-text); line-height: 1.7; margin-bottom: 24px; text-align: justify;">From advanced diagnostics to specialized treatments, we combine cutting-edge technology with a patient-first philosophy to deliver the best outcomes for our community.</p>
+          <div style="display: flex; gap: 24px;">
+            <div>
+              <span style="font-size: 2rem; font-weight: 800; color: var(--primary-brand); font-family: var(--font-serif);">500+</span>
+              <p style="font-size: 0.85rem; color: var(--muted-text); margin-top: 4px;">Staff Members</p>
+            </div>
+            <div>
+              <span style="font-size: 2rem; font-weight: 800; color: var(--primary-brand); font-family: var(--font-serif);">50K+</span>
+              <p style="font-size: 0.85rem; color: var(--muted-text); margin-top: 4px;">Patients Treated</p>
+            </div>
+            <div>
+              <span style="font-size: 2rem; font-weight: 800; color: var(--primary-brand); font-family: var(--font-serif);">30+</span>
+              <p style="font-size: 0.85rem; color: var(--muted-text); margin-top: 4px;">Years of Service</p>
+            </div>
+          </div>
+        </div>
+        <!-- Right: Values Cards -->
+        <div id="about-values" style="display: flex; flex-direction: column; gap: 20px;">
+          <div class="reveal" style="background: var(--bg-card); border: 1px solid var(--light-border); border-radius: var(--radius-md); padding: 24px; display: flex; gap: 16px; align-items: flex-start; box-shadow: var(--shadow-sm);">
+            <div style="background: var(--primary-light); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.4rem;">❤️</div>
+            <div>
+              <h4 style="font-size: 1.05rem; margin-bottom: 4px;">Compassionate Care</h4>
+              <p style="font-size: 0.85rem; color: var(--muted-text); line-height: 1.5;">Every patient is treated with dignity, respect, and empathy.</p>
+            </div>
+          </div>
+          <div class="reveal" style="background: var(--bg-card); border: 1px solid var(--light-border); border-radius: var(--radius-md); padding: 24px; display: flex; gap: 16px; align-items: flex-start; box-shadow: var(--shadow-sm);">
+            <div style="background: var(--primary-light); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.4rem;">🔬</div>
+            <div>
+              <h4 style="font-size: 1.05rem; margin-bottom: 4px;">Advanced Technology</h4>
+              <p style="font-size: 0.85rem; color: var(--muted-text); line-height: 1.5;">State-of-the-art medical equipment and modern treatment methods.</p>
+            </div>
+          </div>
+          <div class="reveal" style="background: var(--bg-card); border: 1px solid var(--light-border); border-radius: var(--radius-md); padding: 24px; display: flex; gap: 16px; align-items: flex-start; box-shadow: var(--shadow-sm);">
+            <div style="background: var(--primary-light); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.4rem;">👨‍⚕️</div>
+            <div>
+              <h4 style="font-size: 1.05rem; margin-bottom: 4px;">Expert Team</h4>
+              <p style="font-size: 0.85rem; color: var(--muted-text); line-height: 1.5;">Highly qualified doctors and healthcare professionals at your service.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- ===== SECTION 5: DEPARTMENTS (medical specialties grid) ===== -->
+  <section class="gateway-selection-panel" id="departments" style="padding: 80px 0; background: var(--bg-neutral); border-top: 1px solid var(--light-border);">
+    <div class="container" style="text-align: center;">
+      <h2 class="section-title" style="margin-bottom: 8px;">Comprehensive Medical <span style="color: var(--primary-brand);">Specialties</span></h2>
+      <p class="section-subtitle" style="margin-bottom: 40px;">Expert care across a wide range of medical disciplines under one roof.</p>
+      <div id="dept-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;"></div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 6: FACILITIES (hospital infrastructure) ===== -->
+  <section class="stats-counters-bar" id="facilities" style="padding: 80px 0; background: var(--bg-light);">
+    <div class="container" style="text-align: center;">
+      <h2 class="section-title" style="margin-bottom: 8px;">World-Class <span style="color: var(--primary-brand);">Infrastructure</span></h2>
+      <p class="section-subtitle" style="margin-bottom: 40px;">Modern facilities equipped with advanced medical technology for the best care.</p>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+        <div class="reveal" style="background: var(--bg-card); border: 1px solid var(--light-border); border-radius: var(--radius-md); padding: 28px 24px; text-align: left; display: flex; gap: 16px; align-items: flex-start; box-shadow: var(--shadow-sm);">
+          <div style="background: var(--primary-light); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">🏥</div>
+          <div>
+            <h4 style="font-size: 1rem; margin-bottom: 4px;">ICU & Critical Care</h4>
+            <p style="font-size: 0.85rem; color: var(--muted-text); line-height: 1.5;">Advanced intensive care units with round-the-clock monitoring.</p>
+          </div>
+        </div>
+        <div class="reveal" style="background: var(--bg-card); border: 1px solid var(--light-border); border-radius: var(--radius-md); padding: 28px 24px; text-align: left; display: flex; gap: 16px; align-items: flex-start; box-shadow: var(--shadow-sm);">
+          <div style="background: var(--primary-light); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">🔬</div>
+          <div>
+            <h4 style="font-size: 1rem; margin-bottom: 4px;">Diagnostic Labs</h4>
+            <p style="font-size: 0.85rem; color: var(--muted-text); line-height: 1.5;">Fully equipped pathology and radiology labs for accurate diagnosis.</p>
+          </div>
+        </div>
+        <div class="reveal" style="background: var(--bg-card); border: 1px solid var(--light-border); border-radius: var(--radius-md); padding: 28px 24px; text-align: left; display: flex; gap: 16px; align-items: flex-start; box-shadow: var(--shadow-sm);">
+          <div style="background: var(--primary-light); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">🚑</div>
+          <div>
+            <h4 style="font-size: 1rem; margin-bottom: 4px;">Emergency & Trauma</h4>
+            <p style="font-size: 0.85rem; color: var(--muted-text); line-height: 1.5;">24/7 emergency services with rapid response trauma care.</p>
+          </div>
+        </div>
+        <div class="reveal" style="background: var(--bg-card); border: 1px solid var(--light-border); border-radius: var(--radius-md); padding: 28px 24px; text-align: left; display: flex; gap: 16px; align-items: flex-start; box-shadow: var(--shadow-sm);">
+          <div style="background: var(--primary-light); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">💊</div>
+          <div>
+            <h4 style="font-size: 1rem; margin-bottom: 4px;">Pharmacy</h4>
+            <p style="font-size: 0.85rem; color: var(--muted-text); line-height: 1.5;">In-house pharmacy with a wide range of medications available.</p>
+          </div>
+        </div>
+        <div class="reveal" style="background: var(--bg-card); border: 1px solid var(--light-border); border-radius: var(--radius-md); padding: 28px 24px; text-align: left; display: flex; gap: 16px; align-items: flex-start; box-shadow: var(--shadow-sm);">
+          <div style="background: var(--primary-light); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">🛏️</div>
+          <div>
+            <h4 style="font-size: 1rem; margin-bottom: 4px;">Inpatient Wards</h4>
+            <p style="font-size: 0.85rem; color: var(--muted-text); line-height: 1.5;">Comfortable private and shared rooms for patient recovery.</p>
+          </div>
+        </div>
+        <div class="reveal" style="background: var(--bg-card); border: 1px solid var(--light-border); border-radius: var(--radius-md); padding: 28px 24px; text-align: left; display: flex; gap: 16px; align-items: flex-start; box-shadow: var(--shadow-sm);">
+          <div style="background: var(--primary-light); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">🏋️</div>
+          <div>
+            <h4 style="font-size: 1rem; margin-bottom: 4px;">Rehabilitation Center</h4>
+            <p style="font-size: 0.85rem; color: var(--muted-text); line-height: 1.5;">Physical therapy and rehabilitation programs for recovery.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 7: STATS COUNTERS (5 numbers in a row) ===== -->
+  <section class="stats-counters-bar" id="stats">
+    <div class="container">
+      <div class="stats-inner-grid">
+        <div class="stat-counter-block">
+          <div class="stat-icon-wrapper">🩺</div>
+          <div class="stat-text-panel">
+            <span class="stat-number">25+</span>
+            <span class="stat-label">Doctors</span>
+          </div>
+        </div>
+        <div class="stat-counter-block">
+          <div class="stat-icon-wrapper">🏥</div>
+          <div class="stat-text-panel">
+            <span class="stat-number">5</span>
+            <span class="stat-label">Departments</span>
+          </div>
+        </div>
+        <div class="stat-counter-block">
+          <div class="stat-icon-wrapper">👥</div>
+          <div class="stat-text-panel">
+            <span class="stat-number">500+</span>
+            <span class="stat-label">Patients Registered</span>
+          </div>
+        </div>
+        <div class="stat-counter-block">
+          <div class="stat-icon-wrapper">📅</div>
+          <div class="stat-text-panel">
+            <span class="stat-number">1000+</span>
+            <span class="stat-label">Appointments Managed</span>
+          </div>
+        </div>
+        <div class="stat-counter-block">
+          <div class="stat-icon-wrapper">🚑</div>
+          <div class="stat-text-panel">
+            <span class="stat-number">24/7</span>
+            <span class="stat-label">Emergency Support</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- ===== SECTION 8: HOSPITAL TRUST BANNER ===== -->
+  <section class="certifications-banner" id="standards">
+    <div class="container">
+      <div class="certs-grid">
+        <div class="cert-item-block">
+          <div class="cert-icon-circle">✨</div>
+          <div class="cert-title-desc">
+            <span class="cert-title">Safe &amp; Hygienic</span>
+            <span class="cert-desc">Environment maintained to the highest health standards.</span>
+          </div>
+        </div>
+        <div class="cert-item-block">
+          <div class="cert-icon-circle">🔒</div>
+          <div class="cert-title-desc">
+            <span class="cert-title">Secure Records</span>
+            <span class="cert-desc">Your patient records are kept strictly confidential.</span>
+          </div>
+        </div>
+        <div class="cert-item-block">
+          <div class="cert-icon-circle">🩺</div>
+          <div class="cert-title-desc">
+            <span class="cert-title">Experienced Team</span>
+            <span class="cert-desc">Dedicated medical professionals for your care.</span>
+          </div>
+        </div>
+        <div class="cert-item-block">
+          <div class="cert-icon-circle">❤️</div>
+          <div class="cert-title-desc">
+            <span class="cert-title">Patient-Centered</span>
+            <span class="cert-desc">Care focused entirely on your recovery and well-being.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- ===== SECTION 9: CTA BANNER ===== -->
+  <section class="cta-banner-panel" id="book">
+    <div class="container">
+      <div class="cta-grid">
+        <div class="cta-info">
+          <h2 class="cta-title" id="land-cta-heading">Access CityCare Hospital Portal</h2>
+          <p class="cta-desc">Manage your health seamlessly. Book appointments and view your medical records online.</p>
+          <div class="cta-actions">
+            <a href="features/auth/login.html?role=Patient" class="btn-solid" style="background:#FFFFFF; color:var(--primary-brand); border-color:#FFFFFF;">Book Appointment</a>
+          </div>
+        </div>
+        <div style="border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+          <img src="assets/images/cta_doctor_patient.jpg" alt="CityCare Healthcare Professionals" style="width:100%; height:240px; object-fit:cover; object-position:center; display:block; border-radius: var(--radius-lg);">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 10: FOOTER (left dark green logo + right beige links) ===== -->
+  <footer id="main-footer" style="background: var(--bg-neutral); border-top: 1px solid var(--light-border);">
+    <div style="display: flex; flex-wrap: wrap;">
+      
+      <!-- Left Dark Green Section -->
+      <div style="flex: 1; min-width: 300px; background: var(--primary-brand); padding: 48px; color: white; display: flex; align-items: center; justify-content: center;">
+        <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-family: var(--font-serif); font-size: 2rem; color: white; line-height: 1;">CityCare</span>
+              <span style="font-size: 0.85rem; letter-spacing: 0.25em; color: rgba(255,255,255,0.7); font-weight: 500; text-transform: uppercase;">Hospital</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Beige Section -->
+      <div style="flex: 2; min-width: 500px; padding: 48px; display: flex; justify-content: space-around; gap: 32px; background: #fdfaf6;">
+        
+        <!-- Quick Links -->
+        <div>
+          <h4 style="font-family: var(--font-sans); color: var(--primary-brand); font-size: 1rem; margin-bottom: 16px;">Quick Links</h4>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+            <li><a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" style="color: var(--dark-text); text-decoration: none; font-size: 0.9rem;">Home</a></li>
+            <li><a href="#about" style="color: var(--dark-text); text-decoration: none; font-size: 0.9rem;">About Us</a></li>
+            <li><a href="#departments" style="color: var(--dark-text); text-decoration: none; font-size: 0.9rem;">Departments</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 style="font-family: var(--font-sans); color: transparent; font-size: 1rem; margin-bottom: 16px; user-select: none;">.</h4>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+            <li><a href="#facilities" style="color: var(--dark-text); text-decoration: none; font-size: 0.9rem;">Facilities</a></li>
+            <li><a href="#main-footer" style="color: var(--dark-text); text-decoration: none; font-size: 0.9rem;">Contact Us</a></li>
+            <li><a href="features/auth/login.html?role=Patient" style="color: var(--dark-text); text-decoration: none; font-size: 0.9rem;">Book Appointment</a></li>
+          </ul>
+        </div>
+        
+        <!-- Contact Us -->
+        <div>
+          <h4 style="font-family: var(--font-sans); color: var(--primary-brand); font-size: 1rem; margin-bottom: 16px;">Contact Us</h4>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
+            <li style="display: flex; gap: 8px; color: var(--dark-text); font-size: 0.9rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary-brand)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span>123, Green Avenue, City Center,<br>Your City, State - 123456</span>
+            </li>
+            <li style="display: flex; gap: 8px; color: var(--dark-text); font-size: 0.9rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary-brand)" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              +91 98765 43210
+            </li>
+            <li style="display: flex; gap: 8px; color: var(--dark-text); font-size: 0.9rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary-brand)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              info@citycarehospital.com
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Follow Us -->
+        <div>
+          <h4 style="font-family: var(--font-sans); color: var(--dark-text); font-size: 1rem; margin-bottom: 16px;">Follow Us</h4>
+          <div style="display: flex; gap: 12px;">
+            <a href="https://facebook.com/citycarehospital" target="_blank" rel="noopener" style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary-brand); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: transform 0.2s ease, background 0.2s ease;" onmouseover="this.style.transform='translateY(-3px)';this.style.background='#1877F2'" onmouseout="this.style.transform='';this.style.background='var(--primary-brand)'">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://twitter.com/citycarehospital" target="_blank" rel="noopener" style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary-brand); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: transform 0.2s ease, background 0.2s ease;" onmouseover="this.style.transform='translateY(-3px)';this.style.background='#000'" onmouseout="this.style.transform='';this.style.background='var(--primary-brand)'">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://instagram.com/citycarehospital" target="_blank" rel="noopener" style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary-brand); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: transform 0.2s ease, background 0.2s ease;" onmouseover="this.style.transform='translateY(-3px)';this.style.background='#E4405F'" onmouseout="this.style.transform='';this.style.background='var(--primary-brand)'">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="https://linkedin.com/company/citycarehospital" target="_blank" rel="noopener" style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary-brand); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: transform 0.2s ease, background 0.2s ease;" onmouseover="this.style.transform='translateY(-3px)';this.style.background='#0A66C2'" onmouseout="this.style.transform='';this.style.background='var(--primary-brand)'">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    
+    <!-- Bottom Bar -->
+    <div style="background: #efebe4; text-align: center; padding: 16px; color: var(--muted-text); font-size: 0.85rem;">
+      <span id="land-footer-copyright">© 2026 CityCare Hospital. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <!-- ===== MODAL: Gateway portal selection (overlay popup) ===== -->
+  <div class="modal-overlay" id="gateway-modal">
+    <div class="modal-container">
+      <div class="modal-header-bar">
+        <h3 class="modal-title">Secure Portal Access Gate</h3>
+        <button class="close-btn" id="close-modal-btn">❌</button>
+      </div>
+      <div class="modal-body-panel">
+        <a href="features/auth/login.html?role=Admin" class="modal-action-row">
+          <span>Administrator Access Portal</span>
+          <span>→</span>
+        </a>
+        <a href="features/auth/login.html?role=Doctor" class="modal-action-row">
+          <span>Physician / Doctor Portal</span>
+          <span>→</span>
+        </a>
+        <a href="features/auth/login.html?role=Patient" class="modal-action-row">
+          <span>Patient Care Portal</span>
+          <span>→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load published landing content from admin CMS -->
+  <script src="assets/js/storage.js"></script>
+  <script>
+    (function() {
+      if (!window.StorageDB) return;
+      var published = window.StorageDB.getPublishedLanding() || window.StorageDB.getLandingContent();
+
+      function esc(s) { return s.replace(/[&<>"']/g, function(m) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
+      function renderDepartments(data) {
+        var grid = document.getElementById('dept-grid');
+        if (!grid || !data) return;
+        grid.innerHTML = '';
+        for (var di = 0; di < data.length; di++) {
+          var d = data[di];
+          var card = document.createElement('div');
+          card.className = 'gateway-card';
+          card.style.cssText = 'background: var(--bg-card); padding: 28px 20px; display: flex; flex-direction: column; align-items: center; text-align: center;';
+          card.innerHTML =
+            '<div style="background: var(--primary-light); width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin-bottom: 16px;">' + (d.icon || '🏥') + '</div>' +
+            '<h3 style="font-family: var(--font-serif); font-size: 1.1rem; color: var(--primary-brand); margin-bottom: 6px;">' + esc(d.name) + '</h3>' +
+            '<p style="font-size: 0.85rem; color: var(--muted-text); line-height: 1.5;">' + esc(d.desc) + '</p>';
+          grid.appendChild(card);
+        }
+      }
+      renderDepartments(published.departments);
+
+      function setText(id, text) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = text;
+      }
+      function setVal(id, text) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = text;
+      }
+
+      // Brand
+      var brandTitle = document.querySelector('.brand-title');
+      var brandSub = document.querySelector('.brand-subtitle');
+      if (brandTitle) brandTitle.textContent = published.brand.name;
+      if (brandSub) brandSub.textContent = published.brand.subtitle;
+
+      // Hero
+      setText('land-hero-heading', 'Welcome to ' + published.brand.name);
+      setText('land-hero-subheading', published.hero.subheading);
+      setText('land-hero-primary-cta', published.hero.primaryCTA);
+      setText('land-hero-secondary-cta', published.hero.secondaryCTA);
+      // Hero badge text
+      var heroBadge = document.querySelector('.hero-section-panel [style*="color: var(--primary-brand); font-weight: 600;"]');
+      if (heroBadge) heroBadge.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> ' + published.hero.badge;
+
+      // Footer brand
+      var footerBrandName = document.querySelector('#main-footer [style*="font-family: var(--font-serif); font-size: 2rem"]');
+      var footerBrandSub = document.querySelector('#main-footer [style*="letter-spacing: 0.25em"]');
+      if (footerBrandName) footerBrandName.textContent = published.brand.name;
+      if (footerBrandSub) footerBrandSub.textContent = published.brand.subtitle;
+
+      // Footer contact
+      var footerAddressEl = document.querySelector('#main-footer li:nth-child(1) span');
+      var footerPhoneEl = document.querySelector('#main-footer li:nth-child(2) span');
+      var footerEmailEl = document.querySelector('#main-footer li:nth-child(3) span');
+      if (footerAddressEl) footerAddressEl.textContent = published.footer.address;
+      if (footerPhoneEl) footerPhoneEl.textContent = published.footer.phone;
+      if (footerEmailEl) footerEmailEl.textContent = published.footer.email;
+
+      // CTA
+      setText('land-cta-heading', published.cta.heading);
+      var ctaDesc = document.querySelector('.cta-banner-panel .cta-desc');
+      if (ctaDesc) ctaDesc.textContent = published.cta.desc;
+      var ctaBtns = document.querySelectorAll('.cta-banner-panel .btn-solid');
+      if (ctaBtns.length) ctaBtns[0].textContent = published.cta.buttonText;
+      var ctaBtns2 = document.querySelectorAll('.cta-banner-panel .btn-outline');
+      if (ctaBtns2.length) ctaBtns2[0].textContent = published.cta.button2Text;
+
+      // Portal cards
+      var portalSection = document.getElementById('portals');
+      if (portalSection) {
+        var portalCards = portalSection.querySelectorAll('.gateway-card');
+        if (portalCards.length >= 3) {
+          var portalTitles = portalCards[0].querySelector('.gateway-card-title');
+          var portalDescs = portalCards[0].querySelector('.gateway-card-desc');
+          if (portalTitles) portalTitles.textContent = published.portals[0].title;
+          if (portalDescs) portalDescs.textContent = published.portals[0].desc;
+          var portalTitles2 = portalCards[1].querySelector('.gateway-card-title');
+          var portalDescs2 = portalCards[1].querySelector('.gateway-card-desc');
+          if (portalTitles2) portalTitles2.textContent = published.portals[1].title;
+          if (portalDescs2) portalDescs2.textContent = published.portals[1].desc;
+          var portalTitles3 = portalCards[2].querySelector('.gateway-card-title');
+          var portalDescs3 = portalCards[2].querySelector('.gateway-card-desc');
+          if (portalTitles3) portalTitles3.textContent = published.portals[2].title;
+          if (portalDescs3) portalDescs3.textContent = published.portals[2].desc;
+        }
+      }
+
+      // About section
+      var aboutSection = document.getElementById('about');
+      if (aboutSection && published.about) {
+        var aboutEls = aboutSection.querySelectorAll('.container > div > div:first-child');
+        if (aboutEls.length) {
+          var aboutLeft = aboutEls[0];
+          var badgeEl = aboutLeft.querySelector('span[style*="border-radius: 20px"]');
+          if (badgeEl) badgeEl.textContent = published.about.badge;
+          var headingEl = aboutLeft.querySelector('h2');
+          if (headingEl) headingEl.innerHTML = published.about.heading;
+          var paras = aboutLeft.querySelectorAll('p');
+          if (paras.length >= 2) {
+            paras[0].textContent = published.about.paras[0];
+            paras[1].textContent = published.about.paras[1];
+          }
+          if (published.about.stats) {
+            var statSpans = aboutLeft.querySelectorAll('[style*="font-size: 2rem"]');
+            var statPEls = aboutLeft.querySelectorAll('[style*="display: flex; gap: 24px;"] > div p');
+            for (var si = 0; si < Math.min(3, published.about.stats.length); si++) {
+              if (statSpans[si]) statSpans[si].textContent = published.about.stats[si].value;
+              if (statPEls[si]) statPEls[si].textContent = published.about.stats[si].label;
+            }
+          }
+        }
+        // Values cards
+        var valueCards = aboutSection.querySelectorAll('[style*="display: flex; flex-direction: column; gap: 20px;"] > div');
+        if (valueCards.length && published.about.values) {
+          for (var vi = 0; vi < Math.min(valueCards.length, published.about.values.length); vi++) {
+            var card = valueCards[vi];
+            var titleEl = card.querySelector('h4');
+            var descEl = card.querySelector('p');
+            if (titleEl) titleEl.textContent = published.about.values[vi].title;
+            if (descEl) descEl.textContent = published.about.values[vi].desc;
+          }
+        }
+      }
+
+      // Facilities
+      var facSection = document.getElementById('facilities');
+      if (facSection && published.facilities) {
+        var facCards = facSection.querySelectorAll('[style*="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;"] > div');
+        for (var fi = 0; fi < Math.min(facCards.length, published.facilities.length); fi++) {
+          var fName = facCards[fi].querySelector('h4');
+          var fDesc = facCards[fi].querySelector('p');
+          if (fName) fName.textContent = published.facilities[fi].name;
+          if (fDesc) fDesc.textContent = published.facilities[fi].desc;
+        }
+      }
+
+      // Stats bar
+      var statsSection = document.getElementById('stats');
+      if (statsSection && published.stats) {
+        var statBlocks = statsSection.querySelectorAll('.stat-counter-block');
+        for (var sti = 0; sti < Math.min(statBlocks.length, published.stats.length); sti++) {
+          var numEl = statBlocks[sti].querySelector('.stat-number');
+          var lblEl = statBlocks[sti].querySelector('.stat-label');
+          if (numEl) numEl.textContent = published.stats[sti].value;
+          if (lblEl) lblEl.textContent = published.stats[sti].label;
+        }
+      }
+
+      // Standards
+      var stdSection = document.getElementById('standards');
+      if (stdSection && published.standards) {
+        var stdItems = stdSection.querySelectorAll('.cert-item-block');
+        for (var si2 = 0; si2 < Math.min(stdItems.length, published.standards.length); si2++) {
+          var titleEl = stdItems[si2].querySelector('.cert-title');
+          var descEl = stdItems[si2].querySelector('.cert-desc');
+          if (titleEl) titleEl.textContent = published.standards[si2].title;
+          if (descEl) descEl.textContent = published.standards[si2].desc;
+        }
+      }
+
+      // Footer copyright
+      var copyright = document.getElementById('land-footer-copyright');
+      if (copyright) copyright.textContent = '\u00A9 2026 ' + published.brand.name + '. All rights reserved.';
+    })();
+  </script>
+  <!-- Dark Mode Toggle -->
+  <script>
+    (function() {
+      var toggle = document.getElementById('darkModeToggle');
+      var icon = document.getElementById('darkModeIcon');
+      if (!toggle) return;
+      var stored = localStorage.getItem('citycare_theme');
+      if (stored === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+      function updateIcon() {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        icon.innerHTML = isDark
+          ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+          : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+      }
+      updateIcon();
+      toggle.addEventListener('click', function() {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+          document.documentElement.removeAttribute('data-theme');
+          localStorage.setItem('citycare_theme', 'light');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          localStorage.setItem('citycare_theme', 'dark');
+        }
+        updateIcon();
+      });
+    })();
+  </script>
+  <!-- Main app script -->
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

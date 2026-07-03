@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Settings - CityCare</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+
+    <!-- ============================================= -->
+    <!-- SIDEBAR                                        -->
+    <!-- ============================================= -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button class="sidebar-close-btn" id="sidebar-close" aria-label="Close sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="sidebar-brand-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <div class="sidebar-brand-text" data-i18n="CityCare">CityCare</div>
+      </div>
+
+            <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span data-i18n="Dashboard">Dashboard</span>
+        </a>
+
+        <div class="sidebar-section-label" data-i18n="MANAGEMENT">MANAGEMENT</div>
+        <a href="doctors.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          <span data-i18n="Doctor Management">Doctor Management</span>
+        </a>
+        <a href="patients.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span data-i18n="Patient Management">Patient Management</span>
+        </a>
+        <a href="appointments.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <span data-i18n="Appointment Management">Appointment Management</span>
+        </a>
+
+        <div class="sidebar-section-label" data-i18n="COMMUNICATION">COMMUNICATION</div>
+        <a href="notifications.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <span data-i18n="Notification Management">Notification Management</span>
+          <span class="sidebar-badge">5</span>
+        </a>
+
+        <div class="sidebar-section-label" data-i18n="ANALYTICS">ANALYTICS</div>
+        <a href="reports.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          <span data-i18n="Reports & Analytics">Reports &amp; Analytics</span>
+        </a>
+
+        <div class="sidebar-section-label" data-i18n="ADMINISTRATION">ADMINISTRATION</div>
+        <a href="content.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          <span data-i18n="Content Management">Content Management</span>
+        </a>
+        <a href="backup.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span data-i18n="Backup & Restore">Backup &amp; Restore</span>
+        </a>
+        <a href="settings.html" class="sidebar-link active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span data-i18n="System Settings">System Settings</span>
+        </a>
+        <a href="audit-logs.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          <span data-i18n="Audit Logs">Audit Logs</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../../index.html" class="sidebar-link logout-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          <span data-i18n="Log Out">Log Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- ============================================= -->
+    <!-- OVERLAY FOR MOBILE SIDEBAR                     -->
+    <!-- ============================================= -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ============================================= -->
+    <!-- MAIN CONTENT                                   -->
+    <!-- ============================================= -->
+    <main class="main-content">
+
+      <!-- ========== TOP HEADER ========== -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle sidebar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="header-search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" placeholder="Search patients, doctors, or ID..." aria-label="Search">
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="header-time" id="system-time"></div>
+          <div class="icon-btn-wrapper">
+            <button class="icon-btn" id="notif-btn" aria-label="Notifications">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <span class="icon-badge">5</span>
+            </button>
+            <div class="header-dropdown" id="notif-dropdown">
+              <div class="dropdown-header">
+                <span class="dropdown-title">Notifications</span>
+                <span class="dropdown-count">5 new</span>
+              </div>
+              <div class="dropdown-body" id="notif-dropdown-body">
+                <!-- populated by JS -->
+              </div>
+              <a href="#" class="dropdown-footer" id="view-all-notif-dropdown">View All Notifications</a>
+            </div>
+          </div>
+          <div class="icon-btn-wrapper">
+            <button class="icon-btn" id="msg-btn" aria-label="Messages">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span class="icon-badge icon-badge--blue">2</span>
+            </button>
+            <div class="header-dropdown" id="msg-dropdown">
+              <div class="dropdown-header">
+                <span class="dropdown-title">Messages</span>
+                <span class="dropdown-count">2 unread</span>
+              </div>
+              <div class="dropdown-body" id="msg-dropdown-body">
+                <!-- populated by JS -->
+              </div>
+              <a href="#" class="dropdown-footer" id="view-all-msg-dropdown">View All Messages</a>
+            </div>
+          </div>
+          <div class="header-profile">
+            <div class="profile-info">
+              <span class="profile-name">Admin</span>
+              <span class="profile-role">System Administrator</span>
+            </div>
+            <div class="profile-avatar">A</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ========== DASHBOARD BODY ========== -->
+      <div class="dashboard-body">
+
+        <nav class="breadcrumb-bar" aria-label="Breadcrumb">
+          <a href="dashboard.html" class="breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span data-i18n="Dashboard">Dashboard</span>
+          </a>
+          <svg class="breadcrumb-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="breadcrumb-current">System Settings</span>
+        </nav>
+
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+          <div>
+            <h1 style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:700;color:var(--dark-text,#2D2A24);margin:0" data-i18n="System Settings">System Settings</h1>
+            <p style="color:var(--muted-text,#7A7268);font-size:0.88rem;margin:4px 0 0" data-i18n="Configure system preferences, security, and integrations.">Configure system preferences, security, and integrations.</p>
+          </div>
+          <button class="quick-action-btn save-settings-btn" style="padding:10px 20px;font-size:0.85rem;gap:8px;background:var(--primary-brand,#047857);color:#fff;border-color:var(--primary-brand,#047857)">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span data-i18n="Save All">Save All</span>
+          </button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px">
+          <div class="panel" style="margin-bottom:0">
+            <div class="panel-header">
+              <h3 class="panel-title" data-i18n="General Settings">General Settings</h3>
+            </div>
+            <div style="padding:20px 24px">
+              <div class="mb-3">
+                <label class="form-label fw-semibold" style="font-size:0.82rem;color:var(--dark-text,#2D2A24)" data-i18n="System Language">System Language</label>
+                <select class="chart-filter" style="width:100%" id="set-lang">
+                  <option>English (US)</option>
+                  <option>Spanish</option>
+                  <option>French</option>
+                  <option>Arabic</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold" style="font-size:0.82rem;color:var(--dark-text,#2D2A24)" data-i18n="Time Zone">Time Zone</label>
+                <select class="chart-filter" style="width:100%" id="set-tz">
+                  <option>UTC-5 (Eastern)</option>
+                  <option>UTC-6 (Central)</option>
+                  <option>UTC-7 (Mountain)</option>
+                  <option>UTC-8 (Pacific)</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold" style="font-size:0.82rem;color:var(--dark-text,#2D2A24)" data-i18n="Date Format">Date Format</label>
+                <select class="chart-filter" style="width:100%" id="set-dfmt">
+                  <option>MM/DD/YYYY</option>
+                  <option>DD/MM/YYYY</option>
+                  <option>YYYY-MM-DD</option>
+                </select>
+              </div>
+              <div class="mb-0">
+                <label class="form-label fw-semibold" style="font-size:0.82rem;color:var(--dark-text,#2D2A24)" data-i18n="Currency">Currency</label>
+                <select class="chart-filter" style="width:100%" id="set-currency">
+                  <option>USD ($)</option>
+                  <option>EUR (€)</option>
+                  <option>GBP (£)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="panel" style="margin-bottom:0">
+            <div class="panel-header">
+              <h3 class="panel-title" data-i18n="Notification Preferences">Notification Preferences</h3>
+            </div>
+            <div style="padding:20px 24px">
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="set-email" checked>
+                <label class="form-check-label" for="set-email" style="font-size:0.85rem" data-i18n="Email Notifications">Email Notifications</label>
+              </div>
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="set-sms" checked>
+                <label class="form-check-label" for="set-sms" style="font-size:0.85rem" data-i18n="SMS Alerts">SMS Alerts</label>
+              </div>
+              <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="set-push">
+                <label class="form-check-label" for="set-push" style="font-size:0.85rem" data-i18n="Push Notifications">Push Notifications</label>
+              </div>
+              <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" id="set-auto-backup" checked>
+                <label class="form-check-label" for="set-auto-backup" style="font-size:0.85rem" data-i18n="Auto Backup">Auto Backup</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom:24px">
+          <div class="panel-header">
+            <h3 class="panel-title" data-i18n="Security Settings">Security Settings</h3>
+          </div>
+          <div style="padding:20px 24px">
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size:0.82rem;color:var(--dark-text,#2D2A24)" data-i18n="Session Timeout (minutes)">Session Timeout (minutes)</label>
+              <input type="number" class="chart-filter" style="width:200px" value="30" id="set-timeout">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size:0.82rem;color:var(--dark-text,#2D2A24)" data-i18n="Password Policy">Password Policy</label>
+              <select class="chart-filter" style="width:300px" id="set-pwd-policy">
+                <option>Standard (8+ chars, letters + numbers)</option>
+                <option>Strong (12+ chars, mixed case + numbers + symbols)</option>
+                <option>Maximum (16+ chars, multi-factor required)</option>
+              </select>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="set-mfa" checked>
+              <label class="form-check-label" for="set-mfa" style="font-size:0.85rem" data-i18n="Require Multi-Factor Authentication for Admin">Require Multi-Factor Authentication for Admin</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-footer">
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <span class="footer-text">© 2026 CityCare — Smart Healthcare Platform</span>
+            <span class="footer-text">System v3.2.1 · Uptime 99.9%</span>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Bootstrap Modal -->
+  <div class="modal fade" id="actionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold" id="actionModalLabel">Action</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="actionModalBody">
+          <!-- populated by JS -->
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success" id="actionModalSubmit">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+
+  <!-- Custom Modal (keep for "View All" functionality) -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Details</h3>
+        <button class="modal-close-btn" id="modal-close" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- populated by JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-close" id="modal-close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../assets/js/storage.js"></script>
+  <script src="dashboard.js"></script>
+  <script>
+    var I18N = {
+      'English (US)': {},
+      'Spanish': {
+        'System Settings': 'Configuración del Sistema',
+        'Configure system preferences, security, and integrations.': 'Configure preferencias, seguridad e integraciones.',
+        'General Settings': 'Configuración General',
+        'System Language': 'Idioma del Sistema',
+        'Time Zone': 'Zona Horaria',
+        'Date Format': 'Formato de Fecha',
+        'Currency': 'Moneda',
+        'Notification Preferences': 'Preferencias de Notificación',
+        'Email Notifications': 'Notificaciones por Correo',
+        'SMS Alerts': 'Alertas SMS',
+        'Push Notifications': 'Notificaciones Push',
+        'Auto Backup': 'Copia de Seguridad Automática',
+        'Security Settings': 'Configuración de Seguridad',
+        'Session Timeout (minutes)': 'Tiempo de Sesión (minutos)',
+        'Password Policy': 'Política de Contraseña',
+        'Require Multi-Factor Authentication for Admin': 'Requerir Autenticación Multifactor para Admin',
+        'Save All': 'Guardar Todo',
+        'Settings saved successfully': 'Configuración guardada correctamente',
+        'Dashboard': 'Tablero',
+        'CityCare': 'CiudadSalud',
+        'MANAGEMENT': 'GESTIÓN',
+        'Doctor Management': 'Gestión de Doctores',
+        'Patient Management': 'Gestión de Pacientes',
+        'Appointment Management': 'Gestión de Citas',
+        'COMMUNICATION': 'COMUNICACIÓN',
+        'Notification Management': 'Gestión de Notificaciones',
+        'ANALYTICS': 'ANÁLISIS',
+        'Reports & Analytics': 'Informes y Análisis',
+        'ADMINISTRATION': 'ADMINISTRACIÓN',
+        'Content Management': 'Gestión de Contenido',
+        'Backup & Restore': 'Copia de Seguridad',
+        'System Settings': 'Configuración del Sistema',
+        'Audit Logs': 'Registros de Auditoría',
+        'Log Out': 'Cerrar Sesión'
+      },
+      'French': {
+        'System Settings': 'Paramètres Système',
+        'Configure system preferences, security, and integrations.': 'Configurez les préférences, la sécurité et les intégrations.',
+        'General Settings': 'Paramètres Généraux',
+        'System Language': 'Langue du Système',
+        'Time Zone': 'Fuseau Horaire',
+        'Date Format': 'Format de Date',
+        'Currency': 'Devise',
+        'Notification Preferences': 'Préférences de Notification',
+        'Email Notifications': 'Notifications par Email',
+        'SMS Alerts': 'Alertes SMS',
+        'Push Notifications': 'Notifications Push',
+        'Auto Backup': 'Sauvegarde Automatique',
+        'Security Settings': 'Paramètres de Sécurité',
+        'Session Timeout (minutes)': 'Délai d\'Expiration (minutes)',
+        'Password Policy': 'Politique de Mot de Passe',
+        'Require Multi-Factor Authentication for Admin': 'Exiger l\'Authentification Multi-Facteurs pour Admin',
+        'Save All': 'Tout Enregistrer',
+        'Settings saved successfully': 'Paramètres enregistrés avec succès',
+        'Dashboard': 'Tableau de Bord',
+        'CityCare': 'SoinsVille',
+        'MANAGEMENT': 'GESTION',
+        'Doctor Management': 'Gestion des Médecins',
+        'Patient Management': 'Gestion des Patients',
+        'Appointment Management': 'Gestion des Rendez-vous',
+        'COMMUNICATION': 'COMMUNICATION',
+        'Notification Management': 'Gestion des Notifications',
+        'ANALYTICS': 'ANALYTIQUE',
+        'Reports & Analytics': 'Rapports et Analyses',
+        'ADMINISTRATION': 'ADMINISTRATION',
+        'Content Management': 'Gestion de Contenu',
+        'Backup & Restore': 'Sauvegarde et Restauration',
+        'System Settings': 'Paramètres Système',
+        'Audit Logs': 'Journaux d\'Audit',
+        'Log Out': 'Déconnexion'
+      },
+      'Arabic': {
+        'System Settings': 'إعدادات النظام',
+        'Configure system preferences, security, and integrations.': 'قم بتكوين تفضيلات النظام والأمان والتكاملات.',
+        'General Settings': 'الإعدادات العامة',
+        'System Language': 'لغة النظام',
+        'Time Zone': 'المنطقة الزمنية',
+        'Date Format': 'تنسيق التاريخ',
+        'Currency': 'العملة',
+        'Notification Preferences': 'تفضيلات الإشعارات',
+        'Email Notifications': 'إشعارات البريد الإلكتروني',
+        'SMS Alerts': 'تنبيهات SMS',
+        'Push Notifications': 'إشعارات الدفع',
+        'Auto Backup': 'النسخ الاحتياطي التلقائي',
+        'Security Settings': 'إعدادات الأمان',
+        'Session Timeout (minutes)': 'مهلة الجلسة (دقائق)',
+        'Password Policy': 'سياسة كلمة المرور',
+        'Require Multi-Factor Authentication for Admin': 'طلب المصادقة متعددة العوامل للمشرف',
+        'Save All': 'حفظ الكل',
+        'Settings saved successfully': 'تم حفظ الإعدادات بنجاح',
+        'Dashboard': 'لوحة القيادة',
+        'CityCare': 'مدينة الرعاية',
+        'MANAGEMENT': 'الإدارة',
+        'Doctor Management': 'إدارة الأطباء',
+        'Patient Management': 'إدارة المرضى',
+        'Appointment Management': 'إدارة المواعيد',
+        'COMMUNICATION': 'التواصل',
+        'Notification Management': 'إدارة الإشعارات',
+        'ANALYTICS': 'التحليلات',
+        'Reports & Analytics': 'التقارير والتحليلات',
+        'ADMINISTRATION': 'الإدارة',
+        'Content Management': 'إدارة المحتوى',
+        'Backup & Restore': 'النسخ الاحتياطي والاستعادة',
+        'Audit Logs': 'سجلات التدقيق',
+        'Log Out': 'تسجيل الخروج'
+      }
+    };
+
+    function applyLanguage(lang) {
+      var dict = I18N[lang] || I18N['English (US)'];
+      document.querySelectorAll('[data-i18n]').forEach(function(el) {
+        var key = el.getAttribute('data-i18n');
+        if (dict[key]) {
+          if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.placeholder = dict[key];
+          } else {
+            el.textContent = dict[key];
+          }
+        }
+      });
+      document.documentElement.dir = lang === 'Arabic' ? 'rtl' : 'ltr';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!window.StorageDB) return;
+
+      var s = window.StorageDB.getSettings();
+
+      function setVal(id, val) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (el.type === 'checkbox') el.checked = val;
+        else el.value = val;
+      }
+
+      setVal('set-lang', s.language);
+      setVal('set-tz', s.timezone);
+      setVal('set-dfmt', s.dateFormat);
+      setVal('set-currency', s.currency);
+      setVal('set-email', s.emailNotifications);
+      setVal('set-sms', s.smsAlerts);
+      setVal('set-push', s.pushNotifications);
+      setVal('set-auto-backup', s.autoBackup);
+      setVal('set-timeout', s.sessionTimeout);
+      setVal('set-pwd-policy', s.passwordPolicy);
+      setVal('set-mfa', s.mfaEnabled);
+
+      applyLanguage(s.language);
+
+      document.getElementById('set-lang').addEventListener('change', function() {
+        applyLanguage(this.value);
+      });
+
+      // ── Save All ──
+      document.querySelector('.quick-action-btn.save-settings-btn').addEventListener('click', function() {
+        var settings = {
+          language: document.getElementById('set-lang').value,
+          timezone: document.getElementById('set-tz').value,
+          dateFormat: document.getElementById('set-dfmt').value,
+          currency: document.getElementById('set-currency').value,
+          emailNotifications: document.getElementById('set-email').checked,
+          smsAlerts: document.getElementById('set-sms').checked,
+          pushNotifications: document.getElementById('set-push').checked,
+          autoBackup: document.getElementById('set-auto-backup').checked,
+          sessionTimeout: parseInt(document.getElementById('set-timeout').value, 10) || 30,
+          passwordPolicy: document.getElementById('set-pwd-policy').value,
+          mfaEnabled: document.getElementById('set-mfa').checked
+        };
+        window.StorageDB.saveSettings(settings);
+        if (window.StorageDB.addAuditLog) {
+          window.StorageDB.addAuditLog('Admin', 'Update', 'Settings', 'Updated system settings');
+        }
+        applyLanguage(settings.language);
+        var toast = document.querySelector('.custom-toast-msg');
+        if (toast) toast.remove();
+        var el = document.createElement('div');
+        el.className = 'custom-toast-msg position-fixed top-0 start-50 translate-middle-x mt-4 px-4 py-2 rounded-pill shadow z-3';
+        el.style.background = '#059669';
+        el.style.color = '#fff';
+        el.style.animation = 'fadeInOut 2.5s ease forwards';
+        el.textContent = dictKey('Settings saved successfully', settings.language);
+        document.body.appendChild(el);
+        setTimeout(function() { if (el.parentNode) el.remove(); }, 2600);
+      });
+
+      function dictKey(key, lang) {
+        var d = I18N[lang] || {};
+        return d[key] || key;
+      }
+    });
+  </script>
+</body>
+</html>
+

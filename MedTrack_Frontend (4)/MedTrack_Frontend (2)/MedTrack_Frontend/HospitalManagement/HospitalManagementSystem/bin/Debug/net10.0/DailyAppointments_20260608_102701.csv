@@ -1,0 +1,9 @@
+﻿# Report: Appointment Summary Report
+# Date Range: 06-Jun-2026 to 06-Jun-2026
+# Generated: 08-Jun-2026 10:27:01
+# Total Records: 3
+#
+Department Name,Doctor Name,Status,Appointment Count
+Cardiology,Dr. Arvind Swamy,Cancelled,2
+Cardiology,Dr. Arvind Swamy,Completed,3
+Cardiology,Dr. Arvind Swamy,NoShow,1

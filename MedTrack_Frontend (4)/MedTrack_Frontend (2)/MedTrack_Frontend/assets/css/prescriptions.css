@@ -1,0 +1,355 @@
+/* ── Prescriptions Page ── */
+
+.rx-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.rx-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark, #2D2A24);
+}
+
+.rx-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted, #7A7268);
+}
+
+.rx-stats {
+  display: flex;
+  gap: 10px;
+}
+
+.rx-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted, #7A7268);
+  background: var(--bg-card, #F6F0E4);
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+
+.rx-stat .stat-value {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--primary-green, #047857);
+}
+
+.rx-new-btn {
+  background: var(--primary-green, #047857) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 8px 20px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  white-space: nowrap;
+}
+
+.rx-new-btn:hover {
+  background: #065F46 !important;
+}
+
+.rx-divider {
+  height: 1px;
+  background: var(--border-color, #E5DDD5);
+  margin: 14px 0;
+}
+
+/* ── Toolbar ── */
+
+.rx-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.rx-search-input {
+  flex: 1;
+  min-width: 200px;
+  max-width: 360px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-color, #E5DDD5);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-card, #F6F0E4);
+  outline: none;
+  color: var(--text-dark, #2D2A24);
+}
+
+.rx-search-input:focus {
+  border-color: var(--primary-green, #047857);
+}
+
+.rx-filter-group {
+  display: flex;
+  gap: 6px;
+}
+
+.rx-filter-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border-color, #E5DDD5);
+  background: var(--bg-card, #F6F0E4);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted, #7A7268);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s;
+}
+
+.rx-filter-btn.active {
+  background: var(--primary-green, #047857);
+  color: white;
+  border-color: var(--primary-green, #047857);
+}
+
+.rx-filter-btn:hover:not(.active) {
+  background: var(--bg-neutral, #F0E8DA);
+}
+
+/* ── Table ── */
+
+.rx-table-wrapper {
+  border: 1px solid var(--border-color, #E5DDD5);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.rx-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.rx-table thead th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted, #7A7268);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--bg-card, #F6F0E4);
+  border-bottom: 1px solid var(--border-color, #E5DDD5);
+}
+
+.rx-table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color, #E5DDD5);
+  vertical-align: middle;
+}
+
+.rx-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.rx-table tbody tr:hover td {
+  background: rgba(4, 120, 87, 0.03);
+}
+
+.rx-patient-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rx-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.rx-medicines-cell {
+  font-size: 0.85rem;
+  color: var(--text-muted, #7A7268);
+}
+
+.rx-medicine-item {
+  display: inline-block;
+  background: var(--bg-card, #F6F0E4);
+  padding: 2px 10px;
+  border-radius: 4px;
+  margin: 2px 4px 2px 0;
+  font-size: 0.8rem;
+}
+
+.rx-date-cell {
+  font-size: 0.85rem;
+  color: var(--text-muted, #7A7268);
+}
+
+.rx-status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.rx-status-issued {
+  background: #DCFCE7;
+  color: var(--primary-green, #047857);
+}
+
+.rx-status-pending {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.btn-rx-view {
+  background: transparent !important;
+  border: 1px solid var(--border-color, #E5DDD5) !important;
+  border-radius: 8px !important;
+  padding: 5px 14px !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  color: var(--text-muted, #7A7268) !important;
+}
+
+.btn-rx-view:hover {
+  background: var(--bg-card, #F6F0E4) !important;
+  border-color: var(--border-color, #E5DDD5) !important;
+}
+
+.rx-empty {
+  text-align: center;
+  padding: 50px 16px;
+  color: var(--text-muted, #7A7268);
+  font-size: 0.9rem;
+}
+
+/* ── Rx Modal Inputs ── */
+
+.rx-input {
+  width: 100%;
+  border: 1px solid var(--border-color, #E5DDD5);
+  background: var(--bg-card, #F6F0E4);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-dark, #2D2A24);
+  outline: none;
+}
+
+.rx-input:focus {
+  border-color: var(--primary-green, #047857);
+}
+
+.rx-remove-btn {
+  background: none;
+  border: none;
+  color: #EF4444;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+/* ── View Modal ── */
+
+.rx-view-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-color, #E5DDD5);
+}
+
+.rx-view-id {
+  font-size: 0.75rem;
+  color: var(--text-muted, #7A7268);
+  margin-top: 2px;
+}
+
+.rx-view-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.rx-view-meta-item {
+  font-size: 0.8rem;
+}
+
+.rx-view-meta-label {
+  color: var(--text-muted, #7A7268);
+  margin-bottom: 2px;
+}
+
+.rx-view-meta-value {
+  font-weight: 600;
+  color: var(--text-dark, #2D2A24);
+}
+
+.rx-view-medicines {
+  margin-bottom: 12px;
+}
+
+.rx-view-medicines-title {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-dark, #2D2A24);
+  margin-bottom: 8px;
+}
+
+.rx-view-medicine-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--bg-card, #F6F0E4);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+}
+
+.rx-view-medicine-name {
+  font-weight: 600;
+  flex: 1;
+}
+
+.rx-view-medicine-detail {
+  color: var(--text-muted, #7A7268);
+  font-size: 0.8rem;
+}
+
+.rx-view-notes {
+  font-size: 0.85rem;
+  color: var(--text-muted, #7A7268);
+  background: var(--bg-card, #F6F0E4);
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+/* ── Modal Overrides ── */
+
+#newRxModal .appt-modal-footer,
+#viewRxModal .appt-modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border-color, #E5DDD5);
+  display: flex;
+}

@@ -1,0 +1,5 @@
+﻿DoctorId,DoctorName,DepartmentName,Status,AppointmentCount
+1,Dr. Arvind Swamy,Cardiology,Booked,8
+1,Dr. Arvind Swamy,Cardiology,Cancelled,6
+1,Dr. Arvind Swamy,Cardiology,Completed,3
+1,Dr. Arvind Swamy,Cardiology,NoShow,2

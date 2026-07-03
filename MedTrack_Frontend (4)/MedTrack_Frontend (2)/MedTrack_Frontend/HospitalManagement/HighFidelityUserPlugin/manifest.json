@@ -1,0 +1,9 @@
+{
+  "name": "HighFidelityUserPlugin",
+  "id": "high-fidelity-user-plugin-medtrack-landing-page",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": [
+    "figma"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "MedTrack Landing Page Generator",
+  "id": "medtrack-landing-generator",
+  "api": "1.0.0",
+  "main": "code.js",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "documentAccess": "dynamic-page",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["fonts.googleapis.com", "fonts.gstatic.com"]
+  }
+}

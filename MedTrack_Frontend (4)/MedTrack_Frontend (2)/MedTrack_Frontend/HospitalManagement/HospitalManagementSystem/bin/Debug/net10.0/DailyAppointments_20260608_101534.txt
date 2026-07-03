@@ -1,0 +1,4 @@
+﻿DepartmentName | DoctorName | Status | AppointmentCount
+Cardiology | Dr. Arvind Swamy | Cancelled | 2
+Cardiology | Dr. Arvind Swamy | Completed | 3
+Cardiology | Dr. Arvind Swamy | NoShow | 1

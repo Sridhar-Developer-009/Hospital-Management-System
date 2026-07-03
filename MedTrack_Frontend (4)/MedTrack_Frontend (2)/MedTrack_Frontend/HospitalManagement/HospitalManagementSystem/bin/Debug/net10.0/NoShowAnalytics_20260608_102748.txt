@@ -1,0 +1,16 @@
+﻿==============================================================================
+  Patient No-Show Analytics Report
+==============================================================================
+  Date Range      : 06-Jun-2026 to 10-Oct-2026
+  Generated At    : 08-Jun-2026 10:27:48
+  Total Records   : 2
+==============================================================================
+
+  Appointment ID │ Appointment Number │ Appointment Date     │ Status │ Reason For Visit           │ Booking Date Time   │ Patient ID │ UHID     │ Patient Name │ Doctor ID │ Doctor Code │ Doctor Name      │ Department ID │ Department Name │ Slot ID │ Start Time │ End Time │ Is Booked
+  ───────────────┼────────────────────┼──────────────────────┼────────┼────────────────────────────┼─────────────────────┼────────────┼──────────┼──────────────┼───────────┼─────────────┼──────────────────┼───────────────┼─────────────────┼─────────┼────────────┼──────────┼──────────
+  270            │ APPT-2026-0001     │ 6/7/2026 12:00:00 AM │ NoShow │ Annual cardiac checkup     │ 6/7/2026 7:23:42 PM │ 1          │ 87452136 │ Sridhar V    │ 1         │ DR-0001     │ Dr. Arvind Swamy │ 1             │ Cardiology      │ 17      │ 09:00:00   │ 09:30:00 │ True     
+  289            │ APPT-2026-0020     │ 6/6/2026 12:00:00 AM │ NoShow │ Patient forgot appointment │ 6/7/2026 7:23:42 PM │ 4          │ 10000003 │ Rajesh Kumar │ 1         │ DR-0001     │ Dr. Arvind Swamy │ 1             │ Cardiology      │ 14      │ 11:30:00   │ 12:00:00 │ False    
+
+──────────────────────────────────────────────────────────────────────────────
+                                                          Total Records: 2
+==============================================================================
