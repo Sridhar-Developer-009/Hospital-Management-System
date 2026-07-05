@@ -160,12 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (!username) {
         showError('Please enter your username.');
-        if (usernameInput) { usernameInput.classList.add('error'); usernameInput.focus(); }
+        if (usernameInput) { usernameInput.classList.remove('valid'); usernameInput.classList.add('error'); usernameInput.focus(); }
         return;
       }
       if (!password) {
         showError('Please enter your password.');
-        if (passwordInput) { passwordInput.classList.add('error'); passwordInput.focus(); }
+        if (passwordInput) { passwordInput.classList.remove('valid'); passwordInput.classList.add('error'); passwordInput.focus(); }
         return;
       }
 
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (usernameInput) { usernameInput.classList.add('error'); usernameInput.focus(); }
           return;
         }
-        if (doctor.password !== password) {
+        if (doctor.password !== StorageDB.hashPassword(password)) {
           showError('Invalid username or password.');
           if (passwordInput) { passwordInput.classList.add('error'); passwordInput.focus(); }
           return;
@@ -195,7 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.setItem('currentDoctorId', doctor.id);
         sessionStorage.setItem('doctorName', doctor.name);
         sessionStorage.setItem('doctorDepartment', doctor.department || '');
-        window.location.href = '../doctor/dashboard.html';
+        if (window.StorageDB.addAuditLog) window.StorageDB.addAuditLog(doctor.name, 'Login', 'System', 'Successful login from doctor console', 'Info');
+        window.location.href = '../dashboard/doctor-dashboard.html';
         return;
       }
 
@@ -210,7 +211,10 @@ document.addEventListener('DOMContentLoaded', () => {
           if (usernameInput) { usernameInput.classList.add('error'); usernameInput.focus(); }
           return;
         }
-        window.location.href = '../admin/dashboard.html';
+        sessionStorage.setItem('currentAdminId', 'ADMIN-001');
+        sessionStorage.setItem('userRole', 'admin');
+        if (window.StorageDB.addAuditLog) window.StorageDB.addAuditLog('Admin', 'Login', 'System', 'Successful login from admin console', 'Info');
+        window.location.href = '../dashboard/admin-dashboard.html';
         return;
       }
 
@@ -226,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (usernameInput) { usernameInput.classList.add('error'); usernameInput.focus(); }
           return;
         }
-        if (patient.password !== password) {
+        if (patient.password !== StorageDB.hashPassword(password)) {
           showError('Invalid username or password.');
           if (passwordInput) { passwordInput.classList.add('error'); passwordInput.focus(); }
           return;
@@ -237,16 +241,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         sessionStorage.setItem('currentPatientId', patient.id);
         sessionStorage.setItem('patientName', patient.name);
-        window.location.href = '../patient/dashboard.html';
+        if (window.StorageDB.addAuditLog) window.StorageDB.addAuditLog(patient.name, 'Login', 'System', 'Successful login from patient portal', 'Info');
+        window.location.href = '../dashboard/patient-dashboard.html';
         return;
       }
     });
 
-    // Clear error state as user types
+    // Clear error and show success state as user types
     form.querySelectorAll('.form-field-control').forEach(input => {
       input.addEventListener('input', () => {
         input.classList.remove('error');
         clearError();
+        if (input.value.trim()) {
+          input.classList.add('valid');
+        } else {
+          input.classList.remove('valid');
+        }
       });
     });
   }

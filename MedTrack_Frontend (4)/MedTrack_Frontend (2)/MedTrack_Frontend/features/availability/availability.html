@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Availability & Slots - CityCare Doctor Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../shared/components/layout.css">
+  <link rel="stylesheet" href="../../shared/components/doctor-theme.css">
+  <link rel="stylesheet" href="availability.css">
+  <!-- Theme Initialization & OS Listener -->
+  <script>
+    (function() {
+      function updateIcon(isDark) {
+        var icon = document.getElementById('darkModeIcon');
+        if(icon) {
+          icon.innerHTML = isDark
+            ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+            : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+        }
+      }
+      function applyTheme() {
+        var stored = localStorage.getItem('citycare_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var isDark = stored === 'dark' || (!stored && prefersDark);
+        if (isDark) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+        updateIcon(isDark);
+      }
+      // Apply immediately
+      applyTheme();
+      
+      // Listen for OS changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+        if (!localStorage.getItem('citycare_theme')) {
+          applyTheme();
+        }
+      });
+      
+      // Attach click listener for toggle button when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        var toggle = document.getElementById('darkModeToggle');
+        if(toggle) {
+          toggle.addEventListener('click', function() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+              document.documentElement.removeAttribute('data-theme');
+              localStorage.setItem('citycare_theme', 'light');
+              updateIcon(false);
+            } else {
+              document.documentElement.setAttribute('data-theme', 'dark');
+              localStorage.setItem('citycare_theme', 'dark');
+              updateIcon(true);
+            }
+          });
+        }
+        // Initial icon setup in case DOM wasn't ready during applyTheme()
+        applyTheme();
+      });
+    })();
+  </script>
+</head>
+<body>
+  <div class="admin-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button class="sidebar-close-btn" id="sidebar-close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="sidebar-brand-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <div class="sidebar-brand-text">CityCare</div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../dashboard/doctor-dashboard.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          Dashboard
+        </a>
+        <div class="sidebar-section-label">SCHEDULE</div>
+        <a href="../appointments/doctor-appointments.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          My Appointments
+        </a>
+        <a href="../availability/availability.html" class="sidebar-link active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Availability & Slots
+        </a>
+        <div class="sidebar-section-label">PATIENT CARE</div>
+        <a href="../patient-records/patient-records.html" class="sidebar-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>Patient Records</a>
+        <div class="sidebar-section-label">COMMUNICATION</div>
+        <a href="../notifications/doctor-notifications.html" class="sidebar-link justify-content-between">
+          <div class="d-flex align-items-center gap-3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>Notifications</div>
+          <span class="badge rounded-pill" style="background: #E0F2FE; color: #0369A1;">4</span>
+        </a>
+        <div class="sidebar-section-label">ACCOUNT</div>
+        <a href="../profile/doctor-profile.html" class="sidebar-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>My Profile</a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="../../index.html" class="sidebar-link text-danger"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>Logout</a>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-header">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburger-btn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="header-search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted-text, #7A7268)" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" placeholder="Search...">
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="icon-btn-wrapper">
+            <button class="icon-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <span class="icon-badge">4</span>
+            </button>
+          </div>
+          <div class="header-profile d-flex align-items-center">
+            <div class="profile-info text-end">
+              <span class="profile-name"></span>
+              <span class="profile-role"></span>
+            </div>
+            <div class="profile-avatar overflow-hidden" style="width:36px;height:36px;border-radius:50%;">
+              <img src="" alt="Avatar" class="img-fluid">
+            </div>
+            <script>(function(){var n=sessionStorage.doctorName,r=sessionStorage.doctorDepartment,i=sessionStorage.currentDoctorId;if(n){var pn=document.querySelector('.profile-name');if(pn)pn.textContent=n;var pr=document.querySelector('.profile-role');if(pr)pr.textContent=(r||'Department')+' \u2022 '+i;var ai=document.querySelector('.profile-avatar img');if(ai)ai.src='https://ui-avatars.com/api/?name='+encodeURIComponent(n)+'&background=047857&color=fff';}})();</script>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-body container-fluid p-4">
+        <nav class="breadcrumb-bar">
+          <a href="../dashboard/doctor-dashboard.html" class="breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>Dashboard
+          </a>
+          <svg class="breadcrumb-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="breadcrumb-current">Availability & Slots</span>
+        </nav>
+
+        <!-- Page Title -->
+        <div class="avail-header">
+          <div>
+            <div class="avail-title">Availability &amp; Slots</div>
+            <div class="avail-subtitle">Configure your weekly schedule and manage slot availability</div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="avail-tabs">
+          <button class="avail-tab active" id="tabSetup">Setup</button>
+          <button class="avail-tab" id="tabGrid">Slots Grid</button>
+        </div>
+
+        <!-- Panel 1: Setup -->
+        <div class="avail-panel" id="panelSetup" style="display:block;">
+          <!-- Day override banner -->
+          <div id="dayOverrideBanner" class="d-flex align-items-center justify-content-between gap-2 px-3 py-2 rounded-3 mb-3" style="display:none;background:#FEF3C7;border:1px solid #FCD34D;">
+            <div class="d-flex align-items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span class="fw-medium" style="font-size:0.85rem;color:#92400E;">Editing: <span id="dayOverrideLabel"></span></span>
+            </div>
+            <button class="btn btn-sm px-3" id="dayOverrideCancel" style="background:white;border:1px solid #FCD34D;color:#92400E;font-size:0.78rem;">Cancel</button>
+          </div>
+          <div class="card border-0 shadow-sm rounded-4" style="background:var(--bg-card,#F6F0E4);">
+            <div class="card-body p-4">
+
+              <!-- Section 1: Duration -->
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="d-flex align-items-center justify-content-center rounded-circle fw-bold text-white flex-shrink-0" style="width:30px;height:30px;background:var(--primary-brand,#047857);font-size:0.8rem;">1</span>
+                <h6 class="fw-bold mb-0" style="color:var(--dark-text,#2D2A24);font-family:'Outfit',sans-serif;">Slot Duration</h6>
+              </div>
+              <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                  <label class="form-label"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--primary-brand,#047857)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg> Appointment Duration</label>
+                  <select class="form-select" id="setupDuration">
+                    <option value="15">15 minutes</option>
+                    <option value="30">30 minutes</option>
+                    <option value="45">45 minutes</option>
+                    <option value="60">60 minutes</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="border-top my-4" style="border-color:var(--border-color,#E5DDD5) !important;"></div>
+
+              <!-- Section 2: Breaks & Lunch -->
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="d-flex align-items-center justify-content-center rounded-circle fw-bold text-white flex-shrink-0" style="width:30px;height:30px;background:var(--primary-brand,#047857);font-size:0.8rem;">2</span>
+                <h6 class="fw-bold mb-0" style="color:var(--dark-text,#2D2A24);font-family:'Outfit',sans-serif;">Breaks &amp; Lunch</h6>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-3">
+                  <label class="form-label"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--primary-brand,#047857)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Break 1 Start</label>
+                  <input type="time" class="form-control" id="setupB1S">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--primary-brand,#047857)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Break 1 End</label>
+                  <input type="time" class="form-control" id="setupB1E">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--primary-brand,#047857)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Lunch Start</label>
+                  <input type="time" class="form-control" id="setupLunchS">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--primary-brand,#047857)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Lunch End</label>
+                  <input type="time" class="form-control" id="setupLunchE">
+                </div>
+              </div>
+              <div class="row g-3 mt-1">
+                <div class="col-md-3">
+                  <label class="form-label"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--primary-brand,#047857)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Break 2 Start</label>
+                  <input type="time" class="form-control" id="setupB2S">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--primary-brand,#047857)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-1"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Break 2 End</label>
+                  <input type="time" class="form-control" id="setupB2E">
+                </div>
+              </div>
+
+              <div class="border-top my-4" style="border-color:var(--border-color,#E5DDD5) !important;"></div>
+
+              <!-- Section 3: Slot Times -->
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="d-flex align-items-center justify-content-center rounded-circle fw-bold text-white flex-shrink-0" style="width:30px;height:30px;background:var(--primary-brand,#047857);font-size:0.8rem;">3</span>
+                <h6 class="fw-bold mb-0" style="color:var(--dark-text,#2D2A24);font-family:'Outfit',sans-serif;">Slot Times</h6>
+                <span class="badge rounded-pill ms-1" style="background:var(--bg-neutral,#F0E8DA);color:var(--muted-text,#7A7268);font-size:0.7rem;font-weight:600;">5 per day</span>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-2 col-4">
+                  <label class="form-label"><span class="d-inline-flex align-items-center justify-content-center rounded-circle fw-bold text-white flex-shrink-0 me-1" style="width:20px;height:20px;background:var(--primary-brand,#047857);font-size:0.65rem;">1</span> Slot 1</label>
+                  <input type="time" class="form-control" id="setupSlot1">
+                </div>
+                <div class="col-md-2 col-4">
+                  <label class="form-label"><span class="d-inline-flex align-items-center justify-content-center rounded-circle fw-bold text-white flex-shrink-0 me-1" style="width:20px;height:20px;background:var(--primary-brand,#047857);font-size:0.65rem;">2</span> Slot 2</label>
+                  <input type="time" class="form-control" id="setupSlot2">
+                </div>
+                <div class="col-md-2 col-4">
+                  <label class="form-label"><span class="d-inline-flex align-items-center justify-content-center rounded-circle fw-bold text-white flex-shrink-0 me-1" style="width:20px;height:20px;background:var(--primary-brand,#047857);font-size:0.65rem;">3</span> Slot 3</label>
+                  <input type="time" class="form-control" id="setupSlot3">
+                </div>
+                <div class="col-md-2 col-4">
+                  <label class="form-label"><span class="d-inline-flex align-items-center justify-content-center rounded-circle fw-bold text-white flex-shrink-0 me-1" style="width:20px;height:20px;background:var(--primary-brand,#047857);font-size:0.65rem;">4</span> Slot 4</label>
+                  <input type="time" class="form-control" id="setupSlot4">
+                </div>
+                <div class="col-md-2 col-4">
+                  <label class="form-label"><span class="d-inline-flex align-items-center justify-content-center rounded-circle fw-bold text-white flex-shrink-0 me-1" style="width:20px;height:20px;background:var(--primary-brand,#047857);font-size:0.65rem;">5</span> Slot 5</label>
+                  <input type="time" class="form-control" id="setupSlot5">
+                </div>
+              </div>
+
+              <div id="setupError" class="text-danger small fw-medium mt-3" style="min-height:20px;"></div>
+
+              <div class="mt-4 pt-3 d-flex gap-2 flex-wrap">
+                <button class="btn text-white px-4 d-inline-flex align-items-center gap-2" id="generateGridBtn" style="background:linear-gradient(135deg,var(--primary-brand,#047857),#065F46);border:none;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Generate Grid
+                </button>
+                <button class="btn px-3 d-inline-flex align-items-center gap-2" id="setupResetBtn" style="background:var(--bg-neutral,#F0E8DA);border:1px solid var(--border-color,#E5DDD5);color:var(--muted-text,#7A7268);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  Reset to Defaults
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Slots Grid -->
+        <div class="avail-panel" id="panelGrid" style="display:none;">
+          <!-- Stats -->
+          <div class="avail-stats">
+            <div class="avail-stat"><span class="stat-value" id="statAvailable">0</span> Available</div>
+            <div class="avail-stat"><span class="stat-value" id="statBlocked">0</span> Blocked</div>
+            <div class="avail-stat"><span class="stat-value" id="statBooked">0</span> Booked</div>
+            <div class="avail-stat"><span class="stat-value" id="statCompleted">0</span> Completed</div>
+            <div class="avail-stat"><span class="stat-value" id="statEmpty">0</span> No Slot</div>
+          </div>
+
+          <div class="avail-divider"></div>
+
+          <!-- Grid -->
+          <div class="avail-grid-wrapper">
+            <table class="avail-grid" id="availGrid">
+              <thead>
+                <tr>
+                  <th class="date-col">Day</th>
+                  <th class="slot-header">Slot 1 <span class="slot-time-header"></span></th>
+                  <th class="slot-header">Slot 2 <span class="slot-time-header"></span></th>
+                  <th class="slot-header">Slot 3 <span class="slot-time-header"></span></th>
+                  <th class="slot-header">Slot 4 <span class="slot-time-header"></span></th>
+                  <th class="slot-header">Slot 5 <span class="slot-time-header"></span></th>
+                </tr>
+              </thead>
+              <tbody id="gridBody"></tbody>
+            </table>
+          </div>
+
+          <div class="avail-divider"></div>
+
+          <!-- Legend (Paint Mode) -->
+          <div class="avail-legend">
+            <div class="legend-item" data-state="available" style="cursor:pointer;"><span class="legend-swatch swatch-available"></span> Available (A)</div>
+            <div class="legend-item" data-state="blocked" style="cursor:pointer;"><span class="legend-swatch swatch-blocked"></span> Blocked (R)</div>
+            <div class="legend-item" data-state="booked" style="cursor:pointer;"><span class="legend-swatch swatch-booked"></span> Booked (K)</div>
+            <div class="legend-item" data-state="completed" style="cursor:pointer;"><span class="legend-swatch swatch-completed"></span> Completed (C)</div>
+            <div class="legend-item" data-state="empty" style="cursor:pointer;"><span class="legend-swatch swatch-empty"></span> No Slot (-)</div>
+          </div>
+
+          <div class="avail-legend-hint">Click a legend item to enter paint mode, then click cells. Click again to exit.</div>
+
+          <div class="avail-divider"></div>
+
+          <!-- Actions -->
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="btn text-white px-4 d-inline-flex align-items-center gap-2" id="saveGridBtn" style="background:linear-gradient(135deg,var(--primary-brand,#047857),#065F46);border:none;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save Availability
+            </button>
+            <button class="btn px-3 d-inline-flex align-items-center gap-2" id="fillAvailableBtn" style="background:var(--bg-neutral,#F0E8DA);border:1px solid var(--border-color,#E5DDD5);color:var(--dark-text,#2D2A24);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Set All Available
+            </button>
+            <button class="btn px-3 d-inline-flex align-items-center gap-2" id="resetGridBtn" style="background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              Reset All
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <footer class="dashboard-footer d-flex justify-content-center align-items-center gap-3 w-100 mt-4 text-muted" style="font-size: 0.85rem; padding-bottom: 20px;">
+        <span>&copy; 2026 CityCare. All rights reserved.</span>
+        <span>Version 2.4.0</span>
+      </footer>
+    </main>
+  </div>
+
+
+
+  <!-- Slot Action Modal -->
+  <div class="appt-modal" id="slotOverlay">
+    <div class="appt-modal-content" style="max-width:360px;">
+      <div class="appt-modal-header">
+        <h3 id="slotCardTitle">Slot Action</h3>
+        <button class="appt-modal-close" id="slotCardClose">&times;</button>
+      </div>
+      <div class="appt-modal-body">
+        <div id="slotCardInfo" style="text-align:center;margin-bottom:16px;"></div>
+        <div id="slotCardOptions" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+      <div class="appt-modal-footer justify-content-center">
+        <button class="btn btn-sm px-4 text-white" id="slotCardCancel" style="background:var(--text-muted);border:none;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../shared/utils/storage.js"></script>
+  <script src="availability.js"></script>
+</body>
+</html>
+

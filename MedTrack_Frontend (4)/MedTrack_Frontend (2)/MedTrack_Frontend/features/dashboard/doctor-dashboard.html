@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Dashboard - CityCare</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- CityCare Custom Styles -->
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../shared/components/layout.css">
+  <link rel="stylesheet" href="../../shared/components/doctor-theme.css">
+  <!-- Theme Initialization & OS Listener -->
+  <script>
+    (function() {
+      function updateIcon(isDark) {
+        var icon = document.getElementById('darkModeIcon');
+        if(icon) {
+          icon.innerHTML = isDark
+            ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+            : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+        }
+      }
+      function applyTheme() {
+        var stored = localStorage.getItem('citycare_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var isDark = stored === 'dark' || (!stored && prefersDark);
+        if (isDark) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+        updateIcon(isDark);
+      }
+      // Apply immediately
+      applyTheme();
+      
+      // Listen for OS changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+        if (!localStorage.getItem('citycare_theme')) {
+          applyTheme();
+        }
+      });
+      
+      // Attach click listener for toggle button when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        var toggle = document.getElementById('darkModeToggle');
+        if(toggle) {
+          toggle.addEventListener('click', function() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+              document.documentElement.removeAttribute('data-theme');
+              localStorage.setItem('citycare_theme', 'light');
+              updateIcon(false);
+            } else {
+              document.documentElement.setAttribute('data-theme', 'dark');
+              localStorage.setItem('citycare_theme', 'dark');
+              updateIcon(true);
+            }
+          });
+        }
+        // Initial icon setup in case DOM wasn't ready during applyTheme()
+        applyTheme();
+      });
+    })();
+  </script>
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <!-- Left Navigation Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button class="sidebar-close-btn" id="sidebar-close" aria-label="Close sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="sidebar-brand-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <div class="sidebar-brand-text">CityCare</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="../dashboard/doctor-dashboard.html" class="sidebar-link active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          Dashboard
+        </a>
+        
+        <div class="sidebar-section-label">SCHEDULE</div>
+        <a href="../appointments/doctor-appointments.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          My Appointments
+        </a>
+        <a href="../availability/availability.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Availability & Slots
+        </a>
+
+        <div class="sidebar-section-label">PATIENT CARE</div>
+        <a href="../patient-records/patient-records.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Patient Records
+        </a>
+        <div class="sidebar-section-label">COMMUNICATION</div>
+        <a href="../notifications/doctor-notifications.html" class="sidebar-link justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            Notifications
+          </div>
+          <span class="badge rounded-pill" id="sidebarNotifBadge" style="background: #E0F2FE; color: #0369A1;">0</span>
+        </a>
+
+        <div class="sidebar-section-label">ACCOUNT</div>
+        <a href="../profile/doctor-profile.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          My Profile
+        </a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <a href="../../index.html" class="sidebar-link text-danger">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Logout
+        </a>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header Panel -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle sidebar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="header-search position-relative dropdown" id="global-search-container">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted-text, #7A7268)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="globalSearchInput" class="form-control border-0 shadow-none bg-transparent" placeholder="Search patients, appointments, records..." autocomplete="off">
+            <ul class="dropdown-menu w-100 shadow-sm border-0 mt-2 rounded-3" id="searchResultsDropdown" style="max-height: 400px; overflow-y: auto;">
+              <!-- Dynamic Content injected via JS -->
+            </ul>
+          </div>
+        </div>
+        
+        <div class="header-right">
+          <div class="icon-btn-wrapper dropdown">
+            <button class="icon-btn" aria-label="Notifications" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <span class="icon-badge" id="headerNotifBadge">0</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 p-0 rounded-4" style="width: 320px; overflow: hidden;">
+              <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="background: #FAFAFA;">
+                <h6 class="mb-0 fw-bold">Notifications</h6>
+                <a href="../notifications/doctor-notifications.html" class="text-decoration-none text-success" style="font-size: 0.8rem; font-weight: 600;">View All</a>
+              </div>
+              <div class="list-group list-group-flush text-center py-4 text-muted" style="font-size:0.8rem;" id="notifDropdownContent">No new notifications</div>
+            </div>
+          </div>
+          <div class="header-profile d-flex align-items-center dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="profile-info text-end">
+              <span class="profile-name"></span>
+              <span class="profile-role"></span>
+            </div>
+            <div class="profile-avatar overflow-hidden ms-3" style="width: 36px; height: 36px; border-radius: 50%;">
+              <img src="" alt="Avatar" class="img-fluid">
+            </div>
+            <script>(function(){var n=sessionStorage.doctorName,r=sessionStorage.doctorDepartment,i=sessionStorage.currentDoctorId;if(n){var pn=document.querySelector('.profile-name');if(pn)pn.textContent=n;var pr=document.querySelector('.profile-role');if(pr)pr.textContent=(r||'Department')+' \u2022 '+i;var ai=document.querySelector('.profile-avatar img');if(ai)ai.src='https://ui-avatars.com/api/?name='+encodeURIComponent(n)+'&background=047857&color=fff';}})();</script>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-3 rounded-3" style="min-width: 200px;">
+               <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="../profile/doctor-profile.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> My Profile</a></li>
+              <li><a class="dropdown-item d-flex align-items-center gap-2 py-2" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger" href="../../index.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      
+      <!-- Dashboard Body -->
+      <div class="dashboard-body container-fluid p-4">
+
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb-bar" aria-label="Breadcrumb">
+          <a href="../../index.html" class="breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Home
+          </a>
+          <svg class="breadcrumb-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="breadcrumb-current">Doctor Dashboard</span>
+        </nav>
+
+        <!-- Hero / Greeting Section -->
+        <div class="row g-3 mb-3">
+          <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 p-3" style="background: linear-gradient(135deg, #F6F0E4 0%, #F0E8DA 100%);">
+              <div class="card-body p-2">
+                <h2 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif; color: #2D2A24; font-size: 1.3rem;" id="heroGreeting">Good Morning, Dr. Arvind Kumar</h2>
+                <p class="text-muted mb-0" style="font-size: 0.85rem;" id="heroSub">Cardiology Department &bull; Doctor ID: DOC-1001</p>
+                <p class="mb-0 mt-2 fw-medium text-dark" style="font-size: 0.9rem;">You have <span style="color: var(--primary-brand, #047857);" class="fw-bold" id="heroApptCount">0</span> appointment(s) scheduled today.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compact Stats Row (3 real-data metrics) -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 text-center h-100">
+              <div class="text-muted fw-medium mb-1" style="font-size: 0.75rem;">TODAY'S APPOINTMENTS</div>
+              <div class="fw-bold" style="font-size: 1.6rem; color: var(--primary-green, #047857);" id="statAppts">0</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 text-center h-100">
+              <div class="text-muted fw-medium mb-1" style="font-size: 0.75rem;">AVAILABLE SLOTS</div>
+              <div class="fw-bold" style="font-size: 1.6rem; color: var(--primary-green, #047857);" id="statSlots">0 / 0</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 text-center h-100">
+              <div class="text-muted fw-medium mb-1" style="font-size: 0.75rem;">COMPLETED TODAY</div>
+              <div class="fw-bold" style="font-size: 1.6rem; color: var(--primary-green, #047857);" id="statCompleted">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's Appointments Table (full width) -->
+        <div class="card border-0 shadow-sm rounded-4 p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+            <h6 class="fw-bold text-dark mb-0">Today's Schedule</h6>
+            <a href="../appointments/doctor-appointments.html" class="text-decoration-none text-success" style="font-size: 0.8rem; font-weight: 600;">View All</a>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-borderless align-middle mb-0" style="font-size: 0.8rem;">
+              <thead class="text-muted border-bottom" style="font-size: 0.75rem;">
+                <tr>
+                  <th class="fw-medium pb-2">Time</th>
+                  <th class="fw-medium pb-2">Patient Name</th>
+                  <th class="fw-medium pb-2">Type</th>
+                  <th class="fw-medium pb-2 text-end">Status</th>
+                </tr>
+              </thead>
+              <tbody id="todayApptBody">
+                <tr><td colspan="4" class="text-center text-muted py-4" style="font-size:0.85rem;">No appointments scheduled for today.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="text-center mt-3 pt-2">
+            <a href="../appointments/doctor-appointments.html" class="text-decoration-none text-success fw-medium d-flex align-items-center justify-content-center gap-1" style="font-size: 0.8rem;">
+              View Full Schedule <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <footer class="dashboard-footer">
+        <span>&copy; 2026 CityCare. All rights reserved.</span>
+        <span>Version 2.4.0</span>
+      </footer>
+    </main>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../shared/utils/storage.js"></script>
+  <script src="../../shared/utils/doctor-portal.js"></script>
+</body>
+</html>
+

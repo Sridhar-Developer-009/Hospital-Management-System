@@ -219,6 +219,8 @@
       </div>
     </div>
   </div>
+  <script src="../../shared/utils/storage.js"></script>
+  <script src="../../shared/utils/profile-validation.js"></script>
   <script>
     document.getElementById('register-form').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -265,12 +267,42 @@
           throw new Error('Passwords do not match. Please try again.');
         }
         
-        // Success path
+        // Success path — persist to StorageDB
         msg.style.color = '#047857';
         msg.style.background = '#d1fae5';
         msg.style.borderColor = '#6ee7b7';
         msg.textContent = 'Validation successful! Redirecting to login...';
         msg.classList.add('visible');
+
+        if (window.StorageDB) {
+          var patient = {
+            id: window.StorageDB.generatePatientCode(),
+            name: name,
+            contact: phone,
+            email: email,
+            username: username,
+            password: window.StorageDB.hashPassword(password),
+            status: 'ACTIVE',
+            registeredAt: new Date().toISOString(),
+            bloodGroup: '',
+            gender: '',
+            age: '',
+            address: '',
+            emergencyContact: '',
+            medicalHistory: '',
+            department: 'General Medicine',
+            assignedDoctor: '',
+            dateOfBirth: ''
+          };
+          window.StorageDB.savePatient(patient);
+          window.StorageDB.dispatchNotification(
+            'Welcome to CityCare!',
+            'Your account has been created successfully. Please log in to continue.',
+            'patient',
+            patient.id,
+            'success'
+          );
+        }
         
         setTimeout(function() {
           window.location.href = 'login.html?role=Patient';
@@ -282,6 +314,35 @@
         msg.classList.add('visible');
       }
     });
+
+    // ── Live validation for register fields ──
+    if (window.ProfileValidation) {
+      var fields = [
+        { input: 'reg-name', validator: ProfileValidation.validateName, label: 'Full Name' },
+        { input: 'reg-email', validator: ProfileValidation.validateEmail, label: 'Email' },
+        { input: 'reg-phone', validator: ProfileValidation.validatePhone, label: 'Phone' },
+        { input: 'reg-username', validator: ProfileValidation.validateUsername, label: 'Username' },
+        { input: 'reg-password', validator: ProfileValidation.validatePassword, label: 'Password' },
+        { input: 'reg-confirm-password', validator: function(v) {
+          var pw = document.getElementById('reg-password');
+          if (!v) return 'Confirm Password is required.';
+          if (pw && v !== pw.value) return 'Passwords do not match.';
+          return '';
+        }, label: 'Confirm Password' }
+      ];
+      fields.forEach(function(f) {
+        var el = document.getElementById(f.input);
+        if (!el) return;
+        var handler = function() {
+          var msg = f.validator(el.value, f.label);
+          if (!el.value.trim()) { el.classList.remove('error', 'valid'); return; }
+          if (msg) { el.classList.remove('valid'); el.classList.add('error'); }
+          else { el.classList.remove('error'); el.classList.add('valid'); }
+        };
+        el.addEventListener('input', handler);
+        el.addEventListener('change', handler);
+      });
+    }
   </script>
 </body>
 </html>

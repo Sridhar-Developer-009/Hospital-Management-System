@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports & Analytics - CityCare</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../shared/components/layout.css">
+  <!-- Theme Initialization & OS Listener -->
+  <script>
+    (function() {
+      function updateIcon(isDark) {
+        var icon = document.getElementById('darkModeIcon');
+        if(icon) {
+          icon.innerHTML = isDark
+            ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+            : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+        }
+      }
+      function applyTheme() {
+        var stored = localStorage.getItem('citycare_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var isDark = stored === 'dark' || (!stored && prefersDark);
+        if (isDark) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+        updateIcon(isDark);
+      }
+      // Apply immediately
+      applyTheme();
+      
+      // Listen for OS changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+        if (!localStorage.getItem('citycare_theme')) {
+          applyTheme();
+        }
+      });
+      
+      // Attach click listener for toggle button when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        var toggle = document.getElementById('darkModeToggle');
+        if(toggle) {
+          toggle.addEventListener('click', function() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+              document.documentElement.removeAttribute('data-theme');
+              localStorage.setItem('citycare_theme', 'light');
+              updateIcon(false);
+            } else {
+              document.documentElement.setAttribute('data-theme', 'dark');
+              localStorage.setItem('citycare_theme', 'dark');
+              updateIcon(true);
+            }
+          });
+        }
+        // Initial icon setup in case DOM wasn't ready during applyTheme()
+        applyTheme();
+      });
+    })();
+  </script>
+</head>
+<body>
+  <div class="admin-layout">
+
+    <!-- ============================================= -->
+    <!-- SIDEBAR                                        -->
+    <!-- ============================================= -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button class="sidebar-close-btn" id="sidebar-close" aria-label="Close sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="sidebar-brand-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <div class="sidebar-brand-text">CityCare</div>
+      </div>
+
+            <nav class="sidebar-nav">
+        <a href="../dashboard/admin-dashboard.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+
+        <!-- Management -->
+        <div class="sidebar-section-label">MANAGEMENT</div>
+        <a href="../doctors/admin-doctors.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          Doctor Management
+        </a>
+        <a href="../patients/admin-patients.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Patient Management
+        </a>
+        <a href="../appointments/admin-appointments.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Appointment Management
+        </a>
+
+        <!-- Communication -->
+        <div class="sidebar-section-label">COMMUNICATION</div>
+        <a href="../notifications/admin-notifications.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          Notification Management
+          <span class="sidebar-badge">5</span>
+        </a>
+
+        <!-- Analytics -->
+        <div class="sidebar-section-label">ANALYTICS</div>
+        <a href="../reports/reports.html" class="sidebar-link active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          Reports &amp; Analytics
+        </a>
+
+        <!-- Administration -->
+        <div class="sidebar-section-label">ADMINISTRATION</div>
+        <a href="../content/content.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          Content Management
+        </a>
+        <a href="../backup/backup.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          Backup &amp; Restore
+        </a>
+        <a href="../settings/settings.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          System Settings
+        </a>
+        <a href="../audit-logs/audit-logs.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          Audit Logs
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="../../index.html" class="sidebar-link logout-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Log Out
+        </a>
+      </div>
+    </aside>
+
+    <!-- ============================================= -->
+    <!-- OVERLAY FOR MOBILE SIDEBAR                     -->
+    <!-- ============================================= -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ============================================= -->
+    <!-- MAIN CONTENT                                   -->
+    <!-- ============================================= -->
+    <main class="main-content">
+
+      <!-- ========== TOP HEADER ========== -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle sidebar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="header-search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" placeholder="Search patients, doctors, or ID..." aria-label="Search">
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="header-time" id="system-time"></div>
+          <div class="icon-btn-wrapper">
+            <button class="icon-btn" id="notif-btn" aria-label="Notifications">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <span class="icon-badge">5</span>
+            </button>
+            <div class="header-dropdown" id="notif-dropdown">
+              <div class="dropdown-header">
+                <span class="dropdown-title">Notifications</span>
+                <span class="dropdown-count">5 new</span>
+              </div>
+              <div class="dropdown-body" id="notif-dropdown-body">
+                <!-- populated by JS -->
+              </div>
+              <a href="#" class="dropdown-footer" id="view-all-notif-dropdown">View All Notifications</a>
+            </div>
+          </div>
+          <div class="icon-btn-wrapper">
+            <button class="icon-btn" id="msg-btn" aria-label="Messages">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span class="icon-badge icon-badge--blue">2</span>
+            </button>
+            <div class="header-dropdown" id="msg-dropdown">
+              <div class="dropdown-header">
+                <span class="dropdown-title">Messages</span>
+                <span class="dropdown-count">2 unread</span>
+              </div>
+              <div class="dropdown-body" id="msg-dropdown-body">
+                <!-- populated by JS -->
+              </div>
+              <a href="#" class="dropdown-footer" id="view-all-msg-dropdown">View All Messages</a>
+            </div>
+          </div>
+          <div class="header-profile">
+            <div class="profile-info">
+              <span class="profile-name">Admin</span>
+              <span class="profile-role">System Administrator</span>
+            </div>
+            <div class="profile-avatar">A</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ========== DASHBOARD BODY ========== -->
+      <div class="dashboard-body">
+
+        <nav class="breadcrumb-bar" aria-label="Breadcrumb">
+          <a href="../dashboard/admin-dashboard.html" class="breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Dashboard
+          </a>
+          <svg class="breadcrumb-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="breadcrumb-current">Reports &amp; Analytics</span>
+        </nav>
+
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+          <div>
+            <h1 style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:700;color:var(--dark-text,#2D2A24);margin:0">Reports &amp; Analytics</h1>
+            <p style="color:var(--muted-text,#7A7268);font-size:0.88rem;margin:4px 0 0">Generate and view detailed reports across all departments.</p>
+          </div>
+          <span style="font-size:0.85rem;color:var(--muted-text,#7A7268)">Live data from hospital records</span>
+        </div>
+
+        
+
+        <style>
+          .report-row { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--border-color,#E8E2D9); }
+          .report-row:last-child { border-bottom:none; }
+          .report-info { flex:1; min-width:0; }
+          .report-name { font-weight:600; font-size:0.88rem; color:var(--dark-text,#2D2A24); }
+          .report-desc { font-size:0.78rem; color:var(--muted-text,#7A7268); margin-top:2px; }
+          .report-gen { font-size:0.7rem; color:var(--muted-text,#7A7268); margin-top:2px; }
+          .export-btn-group { display:flex; gap:4px; flex-shrink:0; margin-left:12px; }
+          .export-fmt-btn {
+            padding:4px 8px; font-size:0.7rem; font-weight:600; border:1px solid var(--border-color,#E8E2D9);
+            border-radius:4px; cursor:pointer; background:var(--card-bg,#fff); color:var(--dark-text,#2D2A24);
+            transition:all .15s ease; white-space:nowrap;
+          }
+          .export-fmt-btn:hover { background:var(--primary-color,#4A90A4); color:#fff; border-color:var(--primary-color,#4A90A4); }
+          .export-fmt-btn[data-format="pdf"] { color:#dc3545; border-color:#dc3545; }
+          .export-fmt-btn[data-format="pdf"]:hover { background:#dc3545; color:#fff; }
+          .export-fmt-btn[data-format="excel"] { color:#198754; border-color:#198754; }
+          .export-fmt-btn[data-format="excel"]:hover { background:#198754; color:#fff; }
+          .export-fmt-btn[data-format="csv"] { color:#0d6efd; border-color:#0d6efd; }
+          .export-fmt-btn[data-format="csv"]:hover { background:#0d6efd; color:#fff; }
+          .export-fmt-btn[data-format="print"] { color:#6f42c1; border-color:#6f42c1; }
+          .export-fmt-btn[data-format="print"]:hover { background:#6f42c1; color:#fff; }
+          .export-fmt-btn[data-format="json"] { color:#fd7e14; border-color:#fd7e14; }
+          .export-fmt-btn[data-format="json"]:hover { background:#fd7e14; color:#fff; }
+        </style>
+
+        <div class="panel" style="margin-bottom:0">
+          <div class="panel-header">
+            <h3 class="panel-title">Download Reports</h3>
+            <span style="font-size:0.8rem;color:var(--muted-text,#7A7268)">Export from live data</span>
+          </div>
+          <div style="padding:0 0 8px">
+            <div class="report-row">
+              <div class="report-info">
+                <div class="report-name">Patient No-Show Analytics</div>
+                <div class="report-desc">Patients who missed appointments with details</div>
+                <div class="report-gen" id="noshow-last-gen"></div>
+              </div>
+              <div class="export-btn-group">
+                <button class="export-fmt-btn" data-report="noshow" data-format="pdf" title="Export as PDF">PDF</button>
+                <button class="export-fmt-btn" data-report="noshow" data-format="excel" title="Export as Excel">Excel</button>
+                <button class="export-fmt-btn" data-report="noshow" data-format="csv" title="Export as CSV">CSV</button>
+                <button class="export-fmt-btn" data-report="noshow" data-format="print" title="Print report">Print</button>
+                <button class="export-fmt-btn" data-report="noshow" data-format="json" title="Export as JSON">JSON</button>
+              </div>
+            </div>
+            <div class="report-row">
+              <div class="report-info">
+                <div class="report-name">Appointment Summary</div>
+                <div class="report-desc">Appointment counts grouped by status and department</div>
+                <div class="report-gen" id="apptsummary-last-gen"></div>
+              </div>
+              <div class="export-btn-group">
+                <button class="export-fmt-btn" data-report="apptsummary" data-format="pdf" title="Export as PDF">PDF</button>
+                <button class="export-fmt-btn" data-report="apptsummary" data-format="excel" title="Export as Excel">Excel</button>
+                <button class="export-fmt-btn" data-report="apptsummary" data-format="csv" title="Export as CSV">CSV</button>
+                <button class="export-fmt-btn" data-report="apptsummary" data-format="print" title="Print report">Print</button>
+                <button class="export-fmt-btn" data-report="apptsummary" data-format="json" title="Export as JSON">JSON</button>
+              </div>
+            </div>
+            <div class="report-row">
+              <div class="report-info">
+                <div class="report-name">Doctor Directory</div>
+                <div class="report-desc">All registered doctors with department, contact, and status</div>
+                <div class="report-gen" id="doctors-last-gen"></div>
+              </div>
+              <div class="export-btn-group">
+                <button class="export-fmt-btn" data-report="doctors" data-format="pdf" title="Export as PDF">PDF</button>
+                <button class="export-fmt-btn" data-report="doctors" data-format="excel" title="Export as Excel">Excel</button>
+                <button class="export-fmt-btn" data-report="doctors" data-format="csv" title="Export as CSV">CSV</button>
+                <button class="export-fmt-btn" data-report="doctors" data-format="print" title="Print report">Print</button>
+                <button class="export-fmt-btn" data-report="doctors" data-format="json" title="Export as JSON">JSON</button>
+              </div>
+            </div>
+            <div class="report-row">
+              <div class="report-info">
+                <div class="report-name">Patient Registry</div>
+                <div class="report-desc">Full patient list with demographics and assigned doctors</div>
+                <div class="report-gen" id="patients-last-gen"></div>
+              </div>
+              <div class="export-btn-group">
+                <button class="export-fmt-btn" data-report="patients" data-format="pdf" title="Export as PDF">PDF</button>
+                <button class="export-fmt-btn" data-report="patients" data-format="excel" title="Export as Excel">Excel</button>
+                <button class="export-fmt-btn" data-report="patients" data-format="csv" title="Export as CSV">CSV</button>
+                <button class="export-fmt-btn" data-report="patients" data-format="print" title="Print report">Print</button>
+                <button class="export-fmt-btn" data-report="patients" data-format="json" title="Export as JSON">JSON</button>
+              </div>
+            </div>
+            <div class="report-row">
+              <div class="report-info">
+                <div class="report-name">Audit Trail</div>
+                <div class="report-desc">System audit log entries with user actions and timestamps</div>
+                <div class="report-gen" id="audit-last-gen"></div>
+              </div>
+              <div class="export-btn-group">
+                <button class="export-fmt-btn" data-report="audit" data-format="pdf" title="Export as PDF">PDF</button>
+                <button class="export-fmt-btn" data-report="audit" data-format="excel" title="Export as Excel">Excel</button>
+                <button class="export-fmt-btn" data-report="audit" data-format="csv" title="Export as CSV">CSV</button>
+                <button class="export-fmt-btn" data-report="audit" data-format="print" title="Print report">Print</button>
+                <button class="export-fmt-btn" data-report="audit" data-format="json" title="Export as JSON">JSON</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-footer">
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <span class="footer-text">© 2026 CityCare — Smart Healthcare Platform</span>
+            <span class="footer-text">System v3.2.1 · Uptime 99.9%</span>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Bootstrap Modal -->
+  <div class="modal fade" id="actionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold" id="actionModalLabel">Action</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="actionModalBody">
+          <!-- populated by JS -->
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-success" id="actionModalSubmit">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+
+  <!-- Custom Modal (keep for "View All" functionality) -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Details</h3>
+        <button class="modal-close-btn" id="modal-close" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- populated by JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-close" id="modal-close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../shared/utils/storage.js"></script>
+  <script src="../../shared/utils/admin-portal.js"></script>
+  <script>
+  (function() {
+    'use strict';
+    if (!window.StorageDB) return;
+    var SDB = window.StorageDB;
+
+    function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function nowStamp() { return new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }); }
+    function updateGenDate(id) { var el = document.getElementById(id); if (el) el.textContent = 'Last exported: ' + nowStamp(); }
+    function toast(msg) { if (window.showToast) window.showToast(msg, 'success'); }
+
+    var REPORTS = {
+      noshow: {
+        title: 'Patient No-Show Analytics',
+        filename: 'Patient_NoShow_Report',
+        genId: 'noshow-last-gen',
+        getData: function() {
+          var appts = SDB.getAppointments();
+          var noshows = appts.filter(function(a) { return a.status === 'NoShow'; });
+          return {
+            headers: ['Patient Name','Doctor','Department','Date','Time','Notes'],
+            rows: noshows.map(function(a) { return [a.patientName||'',a.doctorName||'',a.department||'',a.appointmentDate||'',a.startTime||'',a.notes||'']; }),
+            raw: noshows
+          };
+        }
+      },
+      apptsummary: {
+        title: 'Appointment Summary',
+        filename: 'Appointment_Summary_Report',
+        genId: 'apptsummary-last-gen',
+        getData: function() {
+          var appts = SDB.getAppointments();
+          var statusCounts = {}, deptCounts = {};
+          appts.forEach(function(a) {
+            var s = a.status || 'Unknown'; statusCounts[s] = (statusCounts[s]||0)+1;
+            var d = a.department || 'Unknown'; deptCounts[d] = (deptCounts[d]||0)+1;
+          });
+          var rows = [['Total Appointments', appts.length], ['Generated', new Date().toISOString().split('T')[0]]];
+          Object.keys(statusCounts).sort().forEach(function(k) { rows.push(['Status: '+k, statusCounts[k]]); });
+          Object.keys(deptCounts).sort().forEach(function(k) { rows.push(['Department: '+k, deptCounts[k]]); });
+          return { headers: ['Metric','Value'], rows: rows, raw: appts };
+        }
+      },
+      doctors: {
+        title: 'Doctor Directory',
+        filename: 'Doctor_Directory_Report',
+        genId: 'doctors-last-gen',
+        getData: function() {
+          var docs = SDB.getDoctors();
+          return {
+            headers: ['ID','Name','Department','Specialization','Contact','Email','Status'],
+            rows: docs.map(function(d) { return [d.id||'',d.name||'',d.department||'',d.specialization||'',d.contact||'',d.email||'',d.status||'']; }),
+            raw: docs
+          };
+        }
+      },
+      patients: {
+        title: 'Patient Registry',
+        filename: 'Patient_Registry_Report',
+        genId: 'patients-last-gen',
+        getData: function() {
+          var pts = SDB.getPatients();
+          return {
+            headers: ['ID','Name','Gender','Contact','Email','Department','Blood Group','Status'],
+            rows: pts.map(function(p) { return [p.id||'',p.name||'',p.gender||'',p.contact||'',p.email||'',p.department||'',p.bloodGroup||'',p.status||'']; }),
+            raw: pts
+          };
+        }
+      },
+      audit: {
+        title: 'Audit Trail',
+        filename: 'Audit_Trail_Report',
+        genId: 'audit-last-gen',
+        getData: function() {
+          var logs = SDB.getAuditLogs ? SDB.getAuditLogs() : [];
+          return {
+            headers: ['Timestamp','User','Action','Resource','Details','Severity'],
+            rows: logs.map(function(l) { return [l.timestamp||'',l.user||'',l.action||'',l.resource||'',l.details||'',l.severity||'']; }),
+            raw: logs
+          };
+        }
+      }
+    };
+
+    // ── CSV export ──
+    function exportCSV(report) {
+      var data = report.getData();
+      if (!data.rows.length) { toast('No data found for this report'); return; }
+      var csv = data.headers.join(',') + '\n';
+      data.rows.forEach(function(r) {
+        csv += r.map(function(cell) {
+          var s = String(cell);
+          return (s.indexOf(',')>-1||s.indexOf('"')>-1||s.indexOf('\n')>-1) ? '"'+s.replace(/"/g,'""')+'"' : s;
+        }).join(',') + '\n';
+      });
+      downloadBlob(csv, report.filename+'.csv', 'text/csv;charset=utf-8;');
+      updateGenDate(report.genId);
+      toast(report.title + ' exported as CSV');
+    }
+
+    // ── JSON export ──
+    function exportJSON(report) {
+      var data = report.getData();
+      if (!data.rows.length) { toast('No data found for this report'); return; }
+      var json = JSON.stringify({ report: report.title, generatedAt: new Date().toISOString(), count: data.rows.length, data: data.raw }, null, 2);
+      downloadBlob(json, report.filename+'.json', 'application/json;charset=utf-8;');
+      updateGenDate(report.genId);
+      toast(report.title + ' exported as JSON');
+    }
+
+    // ── Excel (XML Spreadsheet) ──
+    function exportExcel(report) {
+      var data = report.getData();
+      if (!data.rows.length) { toast('No data found for this report'); return; }
+      var xml = '<?xml version="1.0"?>\n<?mso-application progid="Excel.Sheet"?>\n';
+      xml += '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n';
+      xml += '<Worksheet ss:Name="Report"><Table>\n';
+      xml += '<Row>' + data.headers.map(function(h) { return '<Cell><Data ss:Type="String">' + esc(h) + '</Data></Cell>'; }).join('') + '</Row>\n';
+      data.rows.forEach(function(r) {
+        xml += '<Row>' + r.map(function(cell) {
+          var v = String(cell);
+          var type = isNaN(v) || v === '' ? 'String' : 'Number';
+          return '<Cell><Data ss:Type="' + type + '">' + esc(v) + '</Data></Cell>';
+        }).join('') + '</Row>\n';
+      });
+      xml += '</Table></Worksheet></Workbook>';
+      downloadBlob(xml, report.filename+'.xls', 'application/vnd.ms-excel');
+      updateGenDate(report.genId);
+      toast(report.title + ' exported as Excel');
+    }
+
+    // ── Print / PDF ──
+    function exportPrintOrPDF(report, isPDF) {
+      var data = report.getData();
+      if (!data.rows.length) { toast('No data found for this report'); return; }
+      var html = '<!DOCTYPE html><html><head><title>' + esc(report.title) + '</title>';
+      html += '<style>body{font-family:Arial,sans-serif;margin:20px;color:#333}h1{font-size:18px;margin-bottom:4px}';
+      html += '.meta{font-size:12px;color:#777;margin-bottom:16px}';
+      html += 'table{width:100%;border-collapse:collapse;font-size:13px}th,td{border:1px solid #ccc;padding:6px 10px;text-align:left}';
+      html += 'th{background:#f0f0f0;font-weight:600}tr:nth-child(even){background:#fafafa}';
+      html += '@media print{body{margin:0}.no-print{display:none}}</style></head><body>';
+      html += '<h1>' + esc(report.title) + '</h1>';
+      html += '<div class="meta">Generated: ' + new Date().toLocaleString() + ' &mdash; Records: ' + data.rows.length + '</div>';
+      if (isPDF) html += '<p class="no-print" style="font-size:12px;color:#0d6efd">Use your browser\'s "Save as PDF" option in the print dialog.</p>';
+      html += '<table><thead><tr>' + data.headers.map(function(h) { return '<th>' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>';
+      data.rows.forEach(function(r) {
+        html += '<tr>' + r.map(function(c) { return '<td>' + esc(String(c)) + '</td>'; }).join('') + '</tr>';
+      });
+      html += '</tbody></table></body></html>';
+      var w = window.open('', '_blank');
+      if (!w) { toast('Please allow popups to export'); return; }
+      w.document.write(html);
+      w.document.close();
+      setTimeout(function() { w.print(); }, 400);
+      updateGenDate(report.genId);
+      toast(report.title + (isPDF ? ' — use Save as PDF in print dialog' : ' sent to printer'));
+    }
+
+    // ── Download helper ──
+    function downloadBlob(content, filename, mimeType) {
+      var blob = new Blob(['﻿' + content], { type: mimeType });
+      var link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    }
+
+    // ── Bind all export buttons ──
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.export-fmt-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var reportKey = btn.getAttribute('data-report');
+          var format = btn.getAttribute('data-format');
+          var report = REPORTS[reportKey];
+          if (!report) return;
+          if (SDB.addAuditLog) SDB.addAuditLog('Admin', 'Export', 'Report', 'Exported ' + report.title + ' as ' + format.toUpperCase(), 'Info');
+          switch (format) {
+            case 'csv':   exportCSV(report); break;
+            case 'json':  exportJSON(report); break;
+            case 'excel': exportExcel(report); break;
+            case 'pdf':   exportPrintOrPDF(report, true); break;
+            case 'print': exportPrintOrPDF(report, false); break;
+          }
+        });
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
+
+

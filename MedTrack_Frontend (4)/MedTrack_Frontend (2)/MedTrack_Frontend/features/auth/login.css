@@ -326,6 +326,10 @@
 .form-field-control.error ~ .field-error-icon {
   display: flex;
 }
+.form-field-control.valid {
+  border-color: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+}
 
 /* ── Field-level error ────────────────────────────────────────────────────── */
 .field-error-icon {

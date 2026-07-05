@@ -751,7 +751,7 @@
     <div style="flex: 1; padding: 48px; max-width: 550px; margin-left: 5%; z-index: 2; position: relative;">
       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px; color: var(--primary-brand); font-weight: 600;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-        <span>Compassionate Care. Every Patient. Every Time.</span>
+        <span id="land-hero-badge">Compassionate Care. Every Patient. Every Time.</span>
       </div>
       
       <h1 id="land-hero-heading" style="font-size: 3.4rem; font-family: var(--font-serif); color: var(--primary-brand); line-height: 1.1; margin-bottom: 24px;">Welcome to<br>CityCare Hospital</h1>
@@ -1112,7 +1112,7 @@
   </div>
 
   <!-- Load published landing content from admin CMS -->
-  <script src="assets/js/storage.js"></script>
+  <script src="shared/utils/storage.js"></script>
   <script>
     (function() {
       if (!window.StorageDB) return;
@@ -1157,9 +1157,7 @@
       setText('land-hero-subheading', published.hero.subheading);
       setText('land-hero-primary-cta', published.hero.primaryCTA);
       setText('land-hero-secondary-cta', published.hero.secondaryCTA);
-      // Hero badge text
-      var heroBadge = document.querySelector('.hero-section-panel [style*="color: var(--primary-brand); font-weight: 600;"]');
-      if (heroBadge) heroBadge.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg> ' + published.hero.badge;
+      setText('land-hero-badge', published.hero.badge);
 
       // Footer brand
       var footerBrandName = document.querySelector('#main-footer [style*="font-family: var(--font-serif); font-size: 2rem"]');

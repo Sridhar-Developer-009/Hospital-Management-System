@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Management - CityCare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../shared/components/layout.css">
+  <style>
+    .content-tab { cursor:pointer; padding:10px 18px; font-size:0.82rem; font-weight:600; border-radius:8px; transition:all 0.2s; color:#7A7268; white-space:nowrap }
+    .content-tab:hover { background:#F0ECE6 }
+    .content-tab.active { background:#059669; color:#fff }
+    .section-card { border:1px solid #E5DDD5; border-radius:12px; padding:24px; margin-bottom:20px; background:#fff }
+    .section-card h4 { font-family:'Outfit',sans-serif; font-weight:700; color:#2D2A24; margin-bottom:16px; font-size:1.05rem }
+    .field-label { font-size:0.82rem; font-weight:600; color:#2D2A24; margin-bottom:4px }
+    .form-control, .form-select { font-size:0.88rem; border-color:#E5DDD5 }
+    .form-control:focus, .form-select:focus { border-color:#059669; box-shadow:0 0 0 2px rgba(5,150,105,0.15) }
+    .status-pill { display:inline-block; padding:4px 14px; border-radius:20px; font-size:0.78rem; font-weight:700 }
+    .status-pill.draft { background:#FEF3C7; color:#D97706 }
+    .status-pill.published { background:#D1FAE5; color:#059669 }
+    .status-pill.default { background:#E5DDD5; color:#7A7268 }
+  </style>
+  <!-- Theme Initialization & OS Listener -->
+  <script>
+    (function() {
+      function updateIcon(isDark) {
+        var icon = document.getElementById('darkModeIcon');
+        if(icon) {
+          icon.innerHTML = isDark
+            ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+            : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+        }
+      }
+      function applyTheme() {
+        var stored = localStorage.getItem('citycare_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var isDark = stored === 'dark' || (!stored && prefersDark);
+        if (isDark) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+        updateIcon(isDark);
+      }
+      // Apply immediately
+      applyTheme();
+      
+      // Listen for OS changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+        if (!localStorage.getItem('citycare_theme')) {
+          applyTheme();
+        }
+      });
+      
+      // Attach click listener for toggle button when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        var toggle = document.getElementById('darkModeToggle');
+        if(toggle) {
+          toggle.addEventListener('click', function() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+              document.documentElement.removeAttribute('data-theme');
+              localStorage.setItem('citycare_theme', 'light');
+              updateIcon(false);
+            } else {
+              document.documentElement.setAttribute('data-theme', 'dark');
+              localStorage.setItem('citycare_theme', 'dark');
+              updateIcon(true);
+            }
+          });
+        }
+        // Initial icon setup in case DOM wasn't ready during applyTheme()
+        applyTheme();
+      });
+    })();
+  </script>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button class="sidebar-close-btn" id="sidebar-close" aria-label="Close sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="sidebar-brand-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <div class="sidebar-brand-text">CityCare</div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../dashboard/admin-dashboard.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <div class="sidebar-section-label">MANAGEMENT</div>
+        <a href="../doctors/admin-doctors.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          Doctor Management
+        </a>
+        <a href="../patients/admin-patients.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Patient Management
+        </a>
+        <a href="../appointments/admin-appointments.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Appointment Management
+        </a>
+        <div class="sidebar-section-label">COMMUNICATION</div>
+        <a href="../notifications/admin-notifications.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          Notification Management
+          <span class="sidebar-badge">5</span>
+        </a>
+        <div class="sidebar-section-label">ANALYTICS</div>
+        <a href="../reports/reports.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          Reports &amp; Analytics
+        </a>
+        <div class="sidebar-section-label">ADMINISTRATION</div>
+        <a href="../content/content.html" class="sidebar-link active">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          Content Management
+        </a>
+        <a href="../backup/backup.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          Backup &amp; Restore
+        </a>
+        <a href="../settings/settings.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          System Settings
+        </a>
+        <a href="../audit-logs/audit-logs.html" class="sidebar-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+          Audit Logs
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="../../index.html" class="sidebar-link logout-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Log Out
+        </a>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <main class="main-content">
+      <header class="top-header">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle sidebar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="header-search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" placeholder="Search patients, doctors, or ID..." aria-label="Search">
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-time" id="system-time"></div>
+          <div class="icon-btn-wrapper">
+            <button class="icon-btn" id="notif-btn" aria-label="Notifications">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <span class="icon-badge">5</span>
+            </button>
+            <div class="header-dropdown" id="notif-dropdown">
+              <div class="dropdown-header">
+                <span class="dropdown-title">Notifications</span>
+                <span class="dropdown-count">5 new</span>
+              </div>
+              <div class="dropdown-body" id="notif-dropdown-body"></div>
+              <a href="#" class="dropdown-footer" id="view-all-notif-dropdown">View All Notifications</a>
+            </div>
+          </div>
+          <div class="icon-btn-wrapper">
+            <button class="icon-btn" id="msg-btn" aria-label="Messages">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span class="icon-badge icon-badge--blue">2</span>
+            </button>
+            <div class="header-dropdown" id="msg-dropdown">
+              <div class="dropdown-header">
+                <span class="dropdown-title">Messages</span>
+                <span class="dropdown-count">2 unread</span>
+              </div>
+              <div class="dropdown-body" id="msg-dropdown-body"></div>
+              <a href="#" class="dropdown-footer" id="view-all-msg-dropdown">View All Messages</a>
+            </div>
+          </div>
+          <div class="header-profile">
+            <div class="profile-info">
+              <span class="profile-name">Admin</span>
+              <span class="profile-role">System Administrator</span>
+            </div>
+            <div class="profile-avatar">A</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-body">
+        <nav class="breadcrumb-bar" aria-label="Breadcrumb">
+          <a href="../dashboard/admin-dashboard.html" class="breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Dashboard
+          </a>
+          <svg class="breadcrumb-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="breadcrumb-current">Content Management</span>
+        </nav>
+
+        <!-- Header + Actions -->
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+          <div style="display:flex;align-items:center;gap:16px">
+            <div>
+              <h1 style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:700;color:var(--dark-text,#2D2A24);margin:0">Content Management</h1>
+              <p style="color:var(--muted-text,#7A7268);font-size:0.85rem;margin:4px 0 0">Edit text content shown on the public home page.</p>
+            </div>
+            <span class="status-pill" id="statusPill">Default</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="quick-action-btn" id="saveDraftBtn" style="padding:8px 16px;font-size:0.82rem;gap:6px;background:#F59E0B;color:#fff;border:none">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+              Save Draft
+            </button>
+            <button class="quick-action-btn" id="publishBtn" style="padding:8px 16px;font-size:0.82rem;gap:6px;background:#059669;color:#fff;border:none">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+              Publish
+            </button>
+            <button class="quick-action-btn" id="previewBtn" style="padding:8px 16px;font-size:0.82rem;gap:6px;background:#3B82F6;color:#fff;border:none">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              Preview
+            </button>
+            <a href="../../index.html" target="_blank" class="quick-action-btn" id="viewPageBtn" style="padding:8px 16px;font-size:0.82rem;gap:6px;background:#fff;color:#2D2A24;border:1px solid #E5DDD5;text-decoration:none;display:inline-flex;align-items:center">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              View Page
+            </a>
+            <button class="quick-action-btn" id="restoreBtn" style="padding:8px 16px;font-size:0.82rem;gap:6px;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+              Restore Defaults
+            </button>
+          </div>
+        </div>
+
+        <!-- Section Tabs -->
+        <div style="display:flex;gap:6px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px" id="sectionTabs">
+          <div class="content-tab active" data-section="brand">Brand</div>
+          <div class="content-tab" data-section="hero">Hero</div>
+          <div class="content-tab" data-section="about">About</div>
+          <div class="content-tab" data-section="departments">Departments</div>
+          <div class="content-tab" data-section="facilities">Facilities</div>
+          <div class="content-tab" data-section="stats">Stats</div>
+          <div class="content-tab" data-section="standards">Standards</div>
+          <div class="content-tab" data-section="cta">CTA Banner</div>
+          <div class="content-tab" data-section="footer">Footer</div>
+        </div>
+
+        <!-- Editor Form -->
+        <div id="editorForm"></div>
+
+        <!-- Custom Modal (for preview) -->
+        <div class="modal-overlay" id="modal-overlay">
+          <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <div class="modal-header">
+              <h3 class="modal-title" id="modal-title">Preview</h3>
+              <button class="modal-close-btn" id="modal-close" aria-label="Close modal">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            <div class="modal-body" id="modal-body" style="max-height:70vh;overflow-y:auto"></div>
+            <div class="modal-footer">
+              <button class="btn-modal-close" id="modal-close-btn">Close</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bootstrap Modal (keep for dashboard.js compat) -->
+        <div class="modal fade" id="actionModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="actionModalLabel">Action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="actionModalBody"></div>
+              <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="actionModalSubmit">Confirm</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-footer">
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <span class="footer-text">&copy; 2026 CityCare &mdash; Smart Healthcare Platform</span>
+            <span class="footer-text">System v3.2.1 &middot; Uptime 99.9%</span>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../shared/utils/storage.js"></script>
+  <script src="../../shared/utils/admin-portal.js"></script>
+  <script>
+    (function() {
+      var currentSection = 'brand';
+      var contentData = null;
+      var defaults = null;
+
+      function loadContent() {
+        if (!window.StorageDB) return {};
+        contentData = window.StorageDB.getLandingContent();
+        defaults = JSON.parse(JSON.stringify(window.StorageDB.DEFAULT_LANDING));
+        updateStatus();
+        return contentData;
+      }
+
+      function updateStatus() {
+        var status = window.StorageDB ? window.StorageDB.getLandingStatus() : 'default';
+        var pill = document.getElementById('statusPill');
+        if (pill) {
+          pill.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+          pill.className = 'status-pill ' + status;
+        }
+      }
+
+      function collectForm() {
+        var data = JSON.parse(JSON.stringify(defaults));
+        data.brand.name = document.getElementById('brand_name').value;
+        data.brand.subtitle = document.getElementById('brand_subtitle').value;
+        data.hero.heading = document.getElementById('hero_heading').value;
+        data.hero.subheading = document.getElementById('hero_subheading').value;
+        data.hero.badge = document.getElementById('hero_badge').value;
+        data.hero.primaryCTA = document.getElementById('hero_primaryCTA').value;
+        data.about.heading = document.getElementById('about_heading').value;
+        data.about.paras[0] = document.getElementById('about_para1').value;
+        data.about.paras[1] = document.getElementById('about_para2').value;
+        data.about.stats[0].value = document.getElementById('about_stat1_val').value;
+        data.about.stats[0].label = document.getElementById('about_stat1_lbl').value;
+        data.about.stats[1].value = document.getElementById('about_stat2_val').value;
+        data.about.stats[1].label = document.getElementById('about_stat2_lbl').value;
+        data.about.stats[2].value = document.getElementById('about_stat3_val').value;
+        data.about.stats[2].label = document.getElementById('about_stat3_lbl').value;
+        data.about.values[0].title = document.getElementById('about_val1_title').value;
+        data.about.values[0].desc = document.getElementById('about_val1_desc').value;
+        data.about.values[1].title = document.getElementById('about_val2_title').value;
+        data.about.values[1].desc = document.getElementById('about_val2_desc').value;
+        data.about.values[2].title = document.getElementById('about_val3_title').value;
+        data.about.values[2].desc = document.getElementById('about_val3_desc').value;
+        for (var i = 0; i < 6; i++) {
+          var d = data.departments[i];
+          d.name = document.getElementById('dept_' + i + '_name').value;
+          d.desc = document.getElementById('dept_' + i + '_desc').value;
+        }
+        for (var i = 0; i < 6; i++) {
+          var f = data.facilities[i];
+          f.name = document.getElementById('fac_' + i + '_name').value;
+          f.desc = document.getElementById('fac_' + i + '_desc').value;
+        }
+        for (var i = 0; i < 5; i++) {
+          var s = data.stats[i];
+          s.value = document.getElementById('stat_' + i + '_val').value;
+          s.label = document.getElementById('stat_' + i + '_lbl').value;
+        }
+        for (var i = 0; i < 4; i++) {
+          var st = data.standards[i];
+          st.title = document.getElementById('std_' + i + '_title').value;
+          st.desc = document.getElementById('std_' + i + '_desc').value;
+        }
+        data.cta.heading = document.getElementById('cta_heading').value;
+        data.cta.desc = document.getElementById('cta_desc').value;
+        data.cta.buttonText = document.getElementById('cta_btn1').value;
+        data.footer.address = document.getElementById('footer_address').value;
+        data.footer.phone = document.getElementById('footer_phone').value;
+        data.footer.email = document.getElementById('footer_email').value;
+        data.footer.facebook = document.getElementById('footer_facebook').value;
+        data.footer.twitter = document.getElementById('footer_twitter').value;
+        data.footer.instagram = document.getElementById('footer_instagram').value;
+        return data;
+      }
+
+      function renderAllSections() {
+        var data = contentData || loadContent();
+        var container = document.getElementById('editorForm');
+        var sections = ['brand','hero','about','departments','facilities','stats','standards','cta','footer'];
+        var html = '';
+        for (var si = 0; si < sections.length; si++) {
+          var s = sections[si];
+          var display = s === currentSection ? 'block' : 'none';
+          html += '<div id="section_' + s + '" style="display:' + display + '">';
+
+          if (s === 'brand') {
+            html += '<div class="section-card"><h4>Brand / Logo</h4>' +
+              '<div class="row g-3"><div class="col-md-6"><div class="field-label">Hospital Name</div><input class="form-control" id="brand_name" value="' + esc(data.brand.name) + '"></div>' +
+              '<div class="col-md-6"><div class="field-label">Tagline</div><input class="form-control" id="brand_subtitle" value="' + esc(data.brand.subtitle) + '"></div></div></div>';
+          } else if (s === 'hero') {
+            html += '<div class="section-card"><h4>Hero Section</h4>' +
+              '<div class="row g-3"><div class="col-12"><div class="field-label">Badge Text</div><input class="form-control" id="hero_badge" value="' + esc(data.hero.badge) + '"></div>' +
+              '<div class="col-md-6"><div class="field-label">Heading</div><input class="form-control" id="hero_heading" value="' + esc(data.hero.heading) + '"></div>' +
+              '<div class="col-md-6"><div class="field-label">Primary CTA Button</div><input class="form-control" id="hero_primaryCTA" value="' + esc(data.hero.primaryCTA) + '"></div>' +
+              '<div class="col-12"><div class="field-label">Subheading</div><textarea class="form-control" id="hero_subheading" rows="2">' + esc(data.hero.subheading) + '</textarea></div></div></div>';
+          } else if (s === 'about') {
+            html += '<div class="section-card"><h4>About Section</h4>' +
+              '<div class="row g-3"><div class="col-12"><div class="field-label">Heading</div><input class="form-control" id="about_heading" value="' + esc(data.about.heading) + '"></div>' +
+              '<div class="col-md-6"><div class="field-label">Paragraph 1</div><textarea class="form-control" id="about_para1" rows="3">' + esc(data.about.paras[0]) + '</textarea></div>' +
+              '<div class="col-md-6"><div class="field-label">Paragraph 2</div><textarea class="form-control" id="about_para2" rows="3">' + esc(data.about.paras[1]) + '</textarea></div></div>' +
+              '<h5 style="margin-top:16px;font-size:0.9rem;font-weight:700;color:#2D2A24">Stats</h5><div class="row g-3">' +
+              statsFields(data.about.stats) +
+              '</div><h5 style="margin-top:16px;font-size:0.9rem;font-weight:700;color:#2D2A24">Values Cards</h5><div class="row g-3">' +
+              valuesFields(data.about.values) +
+              '</div></div>';
+          } else if (s === 'departments') {
+            html += '<div class="section-card"><h4>Departments (6 cards)</h4>';
+            for (var i = 0; i < data.departments.length; i++) {
+              var d = data.departments[i];
+              html += '<div class="row g-3 mb-3 pb-3" style="border-bottom:1px solid #F0ECE6"><div class="col-md-4"><div class="field-label">Department ' + (i+1) + ' Name</div><input class="form-control" id="dept_' + i + '_name" value="' + esc(d.name) + '"></div>' +
+                '<div class="col-md-8"><div class="field-label">Description</div><textarea class="form-control" id="dept_' + i + '_desc" rows="2">' + esc(d.desc) + '</textarea></div></div>';
+            }
+            html += '</div>';
+          } else if (s === 'facilities') {
+            html += '<div class="section-card"><h4>Facilities (6 cards)</h4>';
+            for (var i = 0; i < data.facilities.length; i++) {
+              var f = data.facilities[i];
+              html += '<div class="row g-3 mb-3 pb-3" style="border-bottom:1px solid #F0ECE6"><div class="col-md-4"><div class="field-label">Facility ' + (i+1) + ' Name</div><input class="form-control" id="fac_' + i + '_name" value="' + esc(f.name) + '"></div>' +
+                '<div class="col-md-8"><div class="field-label">Description</div><textarea class="form-control" id="fac_' + i + '_desc" rows="2">' + esc(f.desc) + '</textarea></div></div>';
+            }
+            html += '</div>';
+          } else if (s === 'stats') {
+            html += '<div class="section-card"><h4>Stats Bar (5 counters)</h4>';
+            for (var i = 0; i < data.stats.length; i++) {
+              var st = data.stats[i];
+              html += '<div class="row g-3 mb-3 pb-3" style="border-bottom:1px solid #F0ECE6"><div class="col-md-4"><div class="field-label">Stat ' + (i+1) + ' Value</div><input class="form-control" id="stat_' + i + '_val" value="' + esc(st.value) + '"></div>' +
+                '<div class="col-md-8"><div class="field-label">Label</div><input class="form-control" id="stat_' + i + '_lbl" value="' + esc(st.label) + '"></div></div>';
+            }
+            html += '</div>';
+          } else if (s === 'standards') {
+            html += '<div class="section-card"><h4>Trust Standards (4 badges)</h4>';
+            for (var i = 0; i < data.standards.length; i++) {
+              var st2 = data.standards[i];
+              html += '<div class="row g-3 mb-3 pb-3" style="border-bottom:1px solid #F0ECE6"><div class="col-md-4"><div class="field-label">Standard ' + (i+1) + ' Title</div><input class="form-control" id="std_' + i + '_title" value="' + esc(st2.title) + '"></div>' +
+                '<div class="col-md-8"><div class="field-label">Description</div><textarea class="form-control" id="std_' + i + '_desc" rows="2">' + esc(st2.desc) + '</textarea></div></div>';
+            }
+            html += '</div>';
+          } else if (s === 'cta') {
+            html += '<div class="section-card"><h4>CTA Banner</h4>' +
+              '<div class="row g-3"><div class="col-12"><div class="field-label">Heading</div><input class="form-control" id="cta_heading" value="' + esc(data.cta.heading) + '"></div>' +
+              '<div class="col-12"><div class="field-label">Description</div><textarea class="form-control" id="cta_desc" rows="2">' + esc(data.cta.desc) + '</textarea></div>' +
+              '<div class="col-12"><div class="field-label">Button Text</div><input class="form-control" id="cta_btn1" value="' + esc(data.cta.buttonText) + '"></div></div></div>';
+          } else if (s === 'footer') {
+            html += '<div class="section-card"><h4>Footer Contact</h4>' +
+              '<div class="row g-3"><div class="col-12"><div class="field-label">Address</div><textarea class="form-control" id="footer_address" rows="2">' + esc(data.footer.address) + '</textarea></div>' +
+              '<div class="col-md-6"><div class="field-label">Phone</div><input class="form-control" id="footer_phone" value="' + esc(data.footer.phone) + '"></div>' +
+              '<div class="col-md-6"><div class="field-label">Email</div><input class="form-control" id="footer_email" value="' + esc(data.footer.email) + '"></div></div></div>' +
+              '<div class="section-card"><h4>Social Links</h4>' +
+              '<div class="row g-3"><div class="col-md-4"><div class="field-label">Facebook URL</div><input class="form-control" id="footer_facebook" value="' + esc(data.footer.facebook || '') + '" placeholder="https://facebook.com/..."></div>' +
+              '<div class="col-md-4"><div class="field-label">Twitter / X URL</div><input class="form-control" id="footer_twitter" value="' + esc(data.footer.twitter || '') + '" placeholder="https://twitter.com/..."></div>' +
+              '<div class="col-md-4"><div class="field-label">Instagram URL</div><input class="form-control" id="footer_instagram" value="' + esc(data.footer.instagram || '') + '" placeholder="https://instagram.com/..."></div></div></div>';
+          }
+
+          html += '</div>';
+        }
+        container.innerHTML = html;
+      }
+
+      function showSection(section) {
+        var sections = ['brand','hero','about','departments','facilities','stats','standards','cta','footer'];
+        for (var i = 0; i < sections.length; i++) {
+          var el = document.getElementById('section_' + sections[i]);
+          if (el) el.style.display = sections[i] === section ? 'block' : 'none';
+        }
+      }
+
+      function esc(str) {
+        if (!str) return '';
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+      }
+
+      function statsFields(stats) {
+        var h = '';
+        for (var i = 0; i < stats.length; i++) {
+          h += '<div class="col-md-4"><div class="field-label">Stat ' + (i+1) + ' Value</div><input class="form-control" id="about_stat' + (i+1) + '_val" value="' + esc(stats[i].value) + '">' +
+            '<div class="field-label mt-2">Label</div><input class="form-control" id="about_stat' + (i+1) + '_lbl" value="' + esc(stats[i].label) + '"></div>';
+        }
+        return h;
+      }
+
+      function valuesFields(vals) {
+        var h = '';
+        for (var i = 0; i < vals.length; i++) {
+          h += '<div class="col-md-4"><div class="field-label">Card ' + (i+1) + ' Title</div><input class="form-control" id="about_val' + (i+1) + '_title" value="' + esc(vals[i].title) + '">' +
+            '<div class="field-label mt-2">Description</div><textarea class="form-control" id="about_val' + (i+1) + '_desc" rows="2">' + esc(vals[i].desc) + '</textarea></div>';
+        }
+        return h;
+      }
+
+      function switchSection(section) {
+        currentSection = section;
+        document.querySelectorAll('.content-tab').forEach(function(t) {
+          t.classList.toggle('active', t.dataset.section === section);
+        });
+        showSection(section);
+      }
+
+      function showToast(msg, type) {
+        var existing = document.querySelector('.custom-toast-msg');
+        if (existing) existing.remove();
+        var toast = document.createElement('div');
+        toast.className = 'custom-toast-msg';
+        toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 28px;border-radius:100px;background:' + (type === 'warning' ? '#F59E0B' : '#059669') + ';color:#fff;font-size:0.9rem;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.2);transition:opacity 0.3s ease';
+        toast.textContent = msg;
+        document.body.appendChild(toast);
+        setTimeout(function() {
+          toast.style.opacity = '0';
+          setTimeout(function() { if (toast.parentNode) toast.remove(); }, 400);
+        }, 2000);
+      }
+
+      function previewContent() {
+        var data = collectForm();
+        var overlay = document.getElementById('modal-overlay');
+        var titleEl = document.getElementById('modal-title');
+        var bodyEl = document.getElementById('modal-body');
+        if (!overlay || !titleEl || !bodyEl) return;
+        titleEl.textContent = 'Landing Page Preview';
+        var html = '';
+        html += '<div style="margin-bottom:16px"><strong style="color:#059669">Brand:</strong> ' + esc(data.brand.name) + ' &mdash; ' + esc(data.brand.subtitle) + '</div>';
+        html += '<div style="margin-bottom:16px"><strong style="color:#059669">Hero:</strong> ' + esc(data.hero.heading) + '<br><span style="color:#7A7268;font-size:0.85rem">' + esc(data.hero.subheading) + '</span></div>';
+        html += '<div style="margin-bottom:16px"><strong style="color:#059669">About Heading:</strong> ' + esc(data.about.heading) + '</div>';
+        html += '<div style="margin-bottom:16px"><strong style="color:#059669">Departments:</strong> ' + data.departments.map(function(d){return esc(d.name)}).join(', ') + '</div>';
+        html += '<div style="margin-bottom:16px"><strong style="color:#059669">Facilities:</strong> ' + data.facilities.map(function(f){return esc(f.name)}).join(', ') + '</div>';
+        html += '<div style="margin-bottom:16px"><strong style="color:#059669">Stats:</strong> ' + data.stats.map(function(s){return esc(s.value)+' '+esc(s.label)}).join(' | ') + '</div>';
+        html += '<div style="margin-bottom:16px"><strong style="color:#059669">Standards:</strong> ' + data.standards.map(function(s){return esc(s.title)}).join(', ') + '</div>';
+        html += '<div style="margin-bottom:16px"><strong style="color:#059669">CTA:</strong> ' + esc(data.cta.heading) + '</div>';
+        html += '<div style="margin-bottom:16px"><strong style="color:#059669">Footer:</strong> ' + esc(data.footer.phone) + ' | ' + esc(data.footer.email) + '</div>';
+        bodyEl.innerHTML = html;
+        overlay.classList.add('open');
+      }
+
+      // ── Init ──
+      loadContent();
+      renderAllSections();
+
+      // Tab switching
+      document.querySelectorAll('.content-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          switchSection(this.dataset.section);
+        });
+      });
+
+      function validateFields() {
+        var required = [
+          { id: 'brand_name', label: 'Hospital Name' },
+          { id: 'hero_heading', label: 'Hero Heading' },
+          { id: 'footer_phone', label: 'Footer Phone' },
+          { id: 'footer_email', label: 'Footer Email' }
+        ];
+        var missing = [];
+        required.forEach(function(f) {
+          var el = document.getElementById(f.id);
+          if (!el) return;
+          if (!el.value.trim()) {
+            el.classList.add('is-invalid');
+            missing.push(f.label);
+          } else {
+            el.classList.remove('is-invalid');
+            el.classList.add('is-valid');
+          }
+        });
+        return missing;
+      }
+
+      // Save Draft
+      document.getElementById('saveDraftBtn').addEventListener('click', function() {
+        if (!window.StorageDB) return;
+        var missing = validateFields();
+        if (missing.length) { showToast('Required: ' + missing.join(', '), 'warning'); return; }
+        var data = collectForm();
+        window.StorageDB.saveLandingDraft(data);
+        if (window.StorageDB.addAuditLog) window.StorageDB.addAuditLog('Admin', 'Update', 'Content', 'Saved landing page draft');
+        updateStatus();
+        showToast('Draft saved successfully', 'success');
+      });
+
+      // Publish
+      document.getElementById('publishBtn').addEventListener('click', function() {
+        if (!window.StorageDB) return;
+        var missing = validateFields();
+        if (missing.length) { showToast('Required: ' + missing.join(', '), 'warning'); return; }
+        var data = collectForm();
+        window.StorageDB.publishLanding(data);
+        if (window.StorageDB.addAuditLog) window.StorageDB.addAuditLog('Admin', 'Update', 'Content', 'Published landing page');
+        updateStatus();
+        showToast('Published! Click "View Page" to see changes on the landing page.', 'success');
+      });
+
+      // Preview
+      document.getElementById('previewBtn').addEventListener('click', previewContent);
+
+      // Restore
+      document.getElementById('restoreBtn').addEventListener('click', function() {
+        if (!window.StorageDB) return;
+        if (!confirm('Restore all landing page content to factory defaults? This cannot be undone.')) return;
+        window.StorageDB.restoreDefaultLanding();
+        if (window.StorageDB.addAuditLog) window.StorageDB.addAuditLog('Admin', 'Update', 'Content', 'Restored landing page to defaults');
+        loadContent();
+        renderAllSections();
+        showToast('Content restored to defaults', 'success');
+      });
+
+
+    })();
+  </script>
+</body>
+</html>
+
