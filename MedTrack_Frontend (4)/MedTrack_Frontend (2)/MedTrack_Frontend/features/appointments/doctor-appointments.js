@@ -54,6 +54,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var allAppointments = [];
   var allPatients = [];
   var currentFilter = 'all';
+  var currentStatusFilter = 'all';
+  var currentDateFilter = '';
+  var currentSearchQuery = '';
   var _apptPage = 1;
   var APPT_PER_PAGE = 10;
 
@@ -148,6 +151,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!tbody) return;
 
     var filtered = allAppointments.slice();
+
+    // Period filter (all / today / week)
     if (currentFilter === 'today') {
       filtered = filtered.filter(function(a) { return a.appointmentDate === todayStr; });
     } else if (currentFilter === 'week') {
@@ -160,6 +165,31 @@ document.addEventListener('DOMContentLoaded', function () {
       var e = endOfWeek.toISOString().split('T')[0];
       filtered = filtered.filter(function(a) { return a.appointmentDate >= s && a.appointmentDate <= e; });
     }
+
+    // Status filter
+    if (currentStatusFilter !== 'all') {
+      filtered = filtered.filter(function(a) {
+        var st = (a.status || '').toLowerCase();
+        if (currentStatusFilter === 'no-show') return st === 'noshow';
+        return st === currentStatusFilter;
+      });
+    }
+
+    // Date filter (specific date from native input)
+    if (currentDateFilter) {
+      filtered = filtered.filter(function(a) { return a.appointmentDate === currentDateFilter; });
+    }
+
+    // Search filter (patient name, ID, or reason)
+    if (currentSearchQuery) {
+      var q = currentSearchQuery.toLowerCase();
+      filtered = filtered.filter(function(a) {
+        return (a.patientName || '').toLowerCase().indexOf(q) !== -1 ||
+               (a.patientId || '').toLowerCase().indexOf(q) !== -1 ||
+               (a.reasonForVisit || '').toLowerCase().indexOf(q) !== -1;
+      });
+    }
+
     filtered.sort(function(a, b) {
       var d = (a.appointmentDate || '').localeCompare(b.appointmentDate || '');
       if (d !== 0) return d;
@@ -195,8 +225,15 @@ document.addEventListener('DOMContentLoaded', function () {
       var gender = patient ? (patient.gender || '--') : '--';
       var timeDisplay = formatTime24to12(a.startTime);
       var dateDisplay = a.appointmentDate ? new Date(a.appointmentDate + 'T12:00:00').toLocaleDateString('en-US', { weekday:'short', day:'numeric', month:'short' }) : '--';
-      var statusClass = a.status === 'Booked' ? 'bg-booked' : a.status === 'Completed' ? 'bg-completed' : a.status === 'Cancelled' ? 'bg-cancelled' : a.status === 'NoShow' ? 'bg-cancelled' : 'bg-pending';
-      var statusLabel = a.status === 'NoShow' ? 'No-Show' : a.status;
+      var statusClass = a.status === 'Booked' ? 'bg-booked' : a.status === 'Completed' ? 'bg-completed' : a.status === 'Cancelled' ? 'bg-cancelled' : a.status === 'NoShow' ? 'bg-cancelled' : a.status === 'InProgress' ? 'bg-booked' : 'bg-pending';
+      var statusLabel = a.status === 'NoShow' ? 'No-Show' : a.status === 'InProgress' ? 'In Progress' : a.status;
+
+      var actionBtns = '<button class="action-btn action-view" data-appt-id="' + a.id + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>View</button>';
+
+      if (a.status === 'Booked' && a.appointmentDate === todayStr) {
+        actionBtns += '<button class="action-btn action-start" data-appt-id="' + a.id + '" style="background:#DCFCE7;color:#047857;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>Start</button>';
+      }
+
       rows += '<tr data-appt-id="' + a.id + '" class="appt-row-clickable">' +
         '<td>' + (start + i + 1) + '</td>' +
         '<td class="fw-medium" style="font-size:0.8rem;">' + dateDisplay + '</td>' +
@@ -204,9 +241,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '<td><div class="patient-details-col"><div class="avatar-circle" style="background:#DCFCE7;color:#166534;">' + initials + '</div><div><div class="fw-bold" style="color:var(--text-dark);font-size:0.85rem;">' + patientName + '</div><div class="text-muted" style="font-size:0.7rem;">' + pid + ' \u2022 ' + age + 'Y \u2022 ' + gender + '</div></div></div></td>' +
         '<td class="text-muted" style="font-size:0.8rem;">' + (a.reasonForVisit || '--') + '</td>' +
         '<td><span class="badge-status ' + statusClass + '">' + statusLabel + '</span></td>' +
-        '<td><div class="action-btn-group justify-content-center">' +
-          '<button class="action-btn action-view" data-appt-id="' + a.id + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>View</button>' +
-        '</div></td></tr>';
+        '<td><div class="action-btn-group justify-content-center">' + actionBtns + '</div></td></tr>';
     }
     tbody.innerHTML = rows;
 
@@ -465,11 +500,28 @@ document.addEventListener('DOMContentLoaded', function () {
   //  BIND ACTION BUTTONS (View + row click)
   // ══════════════════════════════════════════
 
+  function startConsultation(apptId) {
+    var a = getAppointmentById(apptId);
+    if (!a) return;
+    if (a.status !== 'Booked') { showToast('Only Booked appointments can be started', 'error'); return; }
+    if (a.appointmentDate !== todayStr) { showToast('Can only start today\'s appointments', 'error'); return; }
+    a.status = 'InProgress';
+    window.StorageDB.updateAppointment(a);
+    showToast((a.patientName || 'Patient') + ' — consultation started', 'success');
+    fullRefresh();
+  }
+
   function bindActionButtons() {
     document.querySelectorAll('.action-view').forEach(function(btn) {
       btn.addEventListener('click', function(e) {
         e.stopPropagation();
         openConsultWizard(this.dataset.apptId);
+      });
+    });
+    document.querySelectorAll('.action-start').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        startConsultation(this.dataset.apptId);
       });
     });
     document.querySelectorAll('.appt-row-clickable').forEach(function(tr) {
@@ -495,41 +547,26 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     statusMenu.querySelectorAll('.dropdown-item').forEach(function(item) {
       item.addEventListener('click', function() {
-        var val = this.dataset.value;
+        currentStatusFilter = this.dataset.value;
+        _apptPage = 1;
         statusFilter.querySelector('span').textContent = this.textContent;
         statusMenu.classList.remove('show');
-        filterByStatus(val);
+        renderAppointments();
       });
     });
     document.addEventListener('click', function() { statusMenu.classList.remove('show'); });
-  }
-
-  function filterByStatus(val) {
-    var tbody = document.querySelector('#appointmentsList .appts-table tbody');
-    if (!tbody) return;
-    tbody.querySelectorAll('tr').forEach(function(tr) {
-      if (tr.querySelector('td[colspan]')) return;
-      if (val === 'all') { tr.style.display = ''; return; }
-      var badge = tr.querySelector('.badge-status');
-      var match = badge && badge.textContent.trim().toLowerCase() === val;
-      tr.style.display = match ? '' : 'none';
-    });
   }
 
   // ══════════════════════════════════════════
   //  SEARCH
   // ══════════════════════════════════════════
 
-  var searchInput = document.querySelector('.filter-dropdown input');
+  var searchInput = document.querySelector('.filter-dropdown input[type="text"]');
   if (searchInput) {
     searchInput.addEventListener('input', function() {
-      var q = this.value.toLowerCase();
-      var trs = document.querySelectorAll('#appointmentsList .appts-table tbody tr');
-      trs.forEach(function(tr) {
-        if (tr.querySelector('td[colspan]')) return;
-        var name = tr.querySelector('.fw-bold');
-        tr.style.display = (name && name.textContent.toLowerCase().includes(q)) || !q ? '' : 'none';
-      });
+      currentSearchQuery = this.value.trim();
+      _apptPage = 1;
+      renderAppointments();
     });
   }
 
@@ -537,13 +574,23 @@ document.addEventListener('DOMContentLoaded', function () {
   //  DATE FILTER
   // ══════════════════════════════════════════
 
-  var dateFilter = document.getElementById('dateFilter');
-  if (dateFilter) {
-    var now = new Date();
-    var dateStr = now.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-    dateFilter.querySelector('span').textContent = dateStr;
-    dateFilter.addEventListener('click', function() {
-      openModal('calModal');
+  var dateFilterInput = document.getElementById('dateFilterInput');
+  var clearDateBtn = document.getElementById('clearDateFilter');
+  if (dateFilterInput) {
+    dateFilterInput.addEventListener('change', function() {
+      currentDateFilter = this.value || '';
+      _apptPage = 1;
+      if (clearDateBtn) clearDateBtn.style.display = currentDateFilter ? '' : 'none';
+      renderAppointments();
+    });
+  }
+  if (clearDateBtn) {
+    clearDateBtn.addEventListener('click', function() {
+      currentDateFilter = '';
+      if (dateFilterInput) dateFilterInput.value = '';
+      this.style.display = 'none';
+      _apptPage = 1;
+      renderAppointments();
     });
   }
 

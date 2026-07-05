@@ -224,8 +224,7 @@
               <span class="profile-name">Patient</span>
               <span class="profile-role">-</span>
             </div>
-            <script>(function(){var n=sessionStorage.patientName,i=sessionStorage.currentPatientId;if(n){var pn=document.querySelector('.profile-name');if(pn)pn.textContent=n;var pr=document.querySelector('.profile-role');if(pr)pr.textContent=i||'Patient';var ai=document.querySelector('.profile-avatar img');if(ai)ai.src='https://ui-avatars.com/api/?name='+encodeURIComponent(n)+'&background=047857&color=fff';}})();</script>
-            <div class="profile-avatar">SK</div>
+            <div class="profile-avatar">?</div>
           </a>
         </div>
       </header>
@@ -247,7 +246,7 @@
             <p class="text-muted mb-0" style="font-size: 0.9rem;">Your complete clinical history and records.</p>
           </div>
           <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary fw-semibold d-flex align-items-center gap-2" onclick="alert('Downloading Medical History...')" style="background: var(--bg-card);">
+            <button class="btn btn-outline-secondary fw-semibold d-flex align-items-center gap-2" id="downloadHistoryBtn">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download All
             </button>
           </div>
@@ -259,20 +258,20 @@
             <svg class="position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: #6B7280;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <input type="text" id="historySearchInput" class="form-control form-control-sm" style="padding-left: 36px; padding-top: 8px; padding-bottom: 8px; border-radius: 8px;" placeholder="Search diagnosis, doctor...">
           </div>
-          <select class="form-select form-select-sm" style="width: 150px; border-radius: 8px;">
-            <option selected>All Time</option>
-            <option>Last 6 Months</option>
-            <option>2025</option>
-            <option>2024</option>
+          <select class="form-select form-select-sm" id="historyTimeFilter" style="width: 150px; border-radius: 8px;">
+            <option value="all" selected>All Time</option>
+            <option value="6months">Last 6 Months</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
           </select>
-          <select class="form-select form-select-sm" style="width: 150px; border-radius: 8px;">
-            <option selected>All Departments</option>
-            <option>Cardiology</option>
-            <option>Orthopedics</option>
-            <option>Dermatology</option>
-            <option>General Medicine</option>
-            <option>Neurology</option>
-            <option>Pediatrics</option>
+          <select class="form-select form-select-sm" id="historyDeptFilter" style="width: 150px; border-radius: 8px;">
+            <option value="All Departments" selected>All Departments</option>
+            <option value="Cardiology">Cardiology</option>
+            <option value="Orthopedics">Orthopedics</option>
+            <option value="Dermatology">Dermatology</option>
+            <option value="General Medicine">General Medicine</option>
+            <option value="Neurology">Neurology</option>
+            <option value="Pediatrics">Pediatrics</option>
           </select>
         </div>
 
@@ -295,19 +294,23 @@
               <h6 class="fw-bold text-dark mb-3">Quick Summary</h6>
               <div class="mb-3 d-flex justify-content-between align-items-center">
                 <span class="text-muted" style="font-size: 0.85rem;">Blood Group</span>
-                <span class="fw-bold" style="color: #E11D48; background: #FFE4E6; padding: 2px 8px; border-radius: 4px;">O+</span>
+                <span class="fw-bold" id="summaryBloodGroup" style="color: #E11D48; background: #FFE4E6; padding: 2px 8px; border-radius: 4px;">-</span>
               </div>
               <div class="mb-3 d-flex justify-content-between align-items-center">
-                <span class="text-muted" style="font-size: 0.85rem;">Height</span>
-                <span class="fw-semibold text-dark">175 cm</span>
+                <span class="text-muted" style="font-size: 0.85rem;">Gender</span>
+                <span class="fw-semibold text-dark" id="summaryGender">-</span>
               </div>
               <div class="mb-3 d-flex justify-content-between align-items-center">
-                <span class="text-muted" style="font-size: 0.85rem;">Weight</span>
-                <span class="fw-semibold text-dark">76 kg</span>
+                <span class="text-muted" style="font-size: 0.85rem;">DOB</span>
+                <span class="fw-semibold text-dark" id="summaryDob">-</span>
+              </div>
+              <div class="mb-3 d-flex justify-content-between align-items-center">
+                <span class="text-muted" style="font-size: 0.85rem;">Patient ID</span>
+                <span class="fw-semibold text-dark" id="summaryPatientId">-</span>
               </div>
               <div class="d-flex justify-content-between align-items-center">
-                <span class="text-muted" style="font-size: 0.85rem;">BMI</span>
-                <span class="fw-semibold text-dark">24.8 (Normal)</span>
+                <span class="text-muted" style="font-size: 0.85rem;">Total Records</span>
+                <span class="fw-semibold text-dark" id="summaryRecordCount">0</span>
               </div>
             </div>
           </div>
@@ -322,125 +325,103 @@
     </main>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../shared/utils/storage.js"></script>
   <script src="../../shared/utils/patient-portal.js"></script>
   <script>
     (function () {
       var esc = window.StorageDB ? StorageDB.escapeHtml : function(s){return String(s||'').replace(/[&<>"']/g,function(m){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];});};
-      var historyData = [
-        {
-          title: 'Hypertension & Routine Checkup',
-          date: '10 May 2026',
-          doctor: 'Dr. Arvind Kumar (Cardiology)',
-          badge: 'Follow Up',
-          badgeStyle: 'background:#E0E7FF;color:#4338CA;',
-          notes: 'Patient reports mild headaches occasionally. Blood pressure is slightly elevated but manageable. Advised to continue current medication and reduce sodium intake. Scheduled ECG for next visit just as a precaution.',
-          vitals: [
-            { label: 'Blood Pressure', val: '135/85 mmHg' },
-            { label: 'Heart Rate', val: '78 bpm' },
-            { label: 'Weight', val: '76 kg' },
-            { label: 'Temperature', val: '98.4 \u00b0F' }
-          ],
-          showPrescription: true,
-          showDischarge: true
-        },
-        {
-          title: 'Viral Fever & Cough',
-          date: '15 Mar 2026',
-          doctor: 'Dr. Meena Iyer (General Medicine)',
-          badge: 'Outpatient',
-          badgeStyle: 'background:#F3F4F6;color:#4B5563;',
-          notes: 'Patient presented with high fever (102F), body ache, and dry cough for the past 3 days. Diagnosed with seasonal viral infection. Prescribed antipyretics and cough suppressants. Advised complete rest for 3 days and plenty of fluids.',
-          vitals: null,
-          showPrescription: true,
-          showDischarge: false
-        },
-        {
-          title: 'Initial Consultation',
-          date: '12 Dec 2025',
-          doctor: 'Dr. Arvind Kumar',
-          badge: '',
-          badgeStyle: '',
-          notes: 'First visit to establish baseline health. Discussed family history of heart disease.',
-          vitals: null,
-          showPrescription: false,
-          showDischarge: false
-        },
-        {
-          title: 'Annual Physical Exam',
-          date: '18 Sep 2025',
-          doctor: 'Dr. Meena Iyer (General Medicine)',
-          badge: 'Routine',
-          badgeStyle: 'background:#ECFDF5;color:#059669;',
-          notes: 'Annual checkup. All vitals normal. Recommended继续保持 healthy diet and exercise routine.',
-          vitals: [
-            { label: 'Blood Pressure', val: '118/76 mmHg' },
-            { label: 'Heart Rate', val: '72 bpm' },
-            { label: 'Weight', val: '74 kg' },
-            { label: 'Cholesterol', val: '185 mg/dL' }
-          ],
-          showPrescription: false,
-          showDischarge: false
-        },
-        {
-          title: 'Allergy Consultation',
-          date: '22 Jun 2025',
-          doctor: 'Dr. Priya Sharma (Dermatology)',
-          badge: 'Consultation',
-          badgeStyle: 'background:#FEF3C7;color:#D97706;',
-          notes: 'Patient reported seasonal allergies with skin irritation. Prescribed antihistamines and recommended allergy testing.',
-          vitals: null,
-          showPrescription: true,
-          showDischarge: false
-        },
-        {
-          title: 'Knee Pain Evaluation',
-          date: '05 Mar 2025',
-          doctor: 'Dr. Sridhar Rao (Orthopedics)',
-          badge: 'Follow Up',
-          badgeStyle: 'background:#E0E7FF;color:#4338CA;',
-          notes: 'Mild knee pain due to early arthritis. Recommended physiotherapy and glucosamine supplements. X-ray showed no major damage.',
-          vitals: null,
-          showPrescription: true,
-          showDischarge: true
-        }
-      ];
-
       var _historyPage = 1;
       var HISTORY_PER_PAGE = 3;
 
+      function getPatientId() {
+        return sessionStorage.getItem('currentPatientId') || '';
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return '--';
+        var d = new Date(dateStr + 'T12:00:00');
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+      }
+
       function formatVitals(vitals) {
-        if (!vitals) return '';
+        if (!vitals || !vitals.length) return '';
         var html = '<div class="row g-3 mb-4">';
         for (var i = 0; i < vitals.length; i++) {
-          html += '<div class="col-sm-3 col-6"><div class="vital-box"><div class="vital-label">' + vitals[i].label + '</div><div class="vital-val">' + vitals[i].val + '</div></div></div>';
+          html += '<div class="col-sm-3 col-6"><div class="vital-box"><div class="vital-label">' + esc(vitals[i].label) + '</div><div class="vital-val">' + esc(vitals[i].val) + '</div></div></div>';
         }
         html += '</div>';
         return html;
       }
 
-      function renderHistory(filter) {
+      function getBadgeStyle(badge) {
+        var styles = {
+          'Follow Up': 'background:#E0E7FF;color:#4338CA;',
+          'Outpatient': 'background:#F3F4F6;color:#4B5563;',
+          'Routine': 'background:#ECFDF5;color:#059669;',
+          'Consultation': 'background:#FEF3C7;color:#D97706;'
+        };
+        return styles[badge] || 'background:#F3F4F6;color:#4B5563;';
+      }
+
+      function updateSummary(pid) {
+        if (!window.StorageDB) return;
+        var patient = window.StorageDB.getPatientById(pid);
+        if (!patient) return;
+        var bloodEl = document.getElementById('summaryBloodGroup');
+        var genderEl = document.getElementById('summaryGender');
+        var dobEl = document.getElementById('summaryDob');
+        var pidEl = document.getElementById('summaryPatientId');
+        if (bloodEl) bloodEl.textContent = patient.bloodGroup || '-';
+        if (genderEl) genderEl.textContent = patient.gender || '-';
+        if (dobEl) {
+          var dob = patient.dateOfBirth || '';
+          if (dob) {
+            var d = new Date(dob + 'T12:00:00');
+            dobEl.textContent = d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+          } else { dobEl.textContent = '-'; }
+        }
+        if (pidEl) pidEl.textContent = patient.id || '-';
+      }
+
+      function renderHistory() {
         var container = document.getElementById('historyTimeline');
         var pageInfo = document.getElementById('historyPageInfo');
         var prevBtn = document.getElementById('historyPagePrev');
         var nextBtn = document.getElementById('historyPageNext');
-        if (!container) return;
+        if (!container || !window.StorageDB) return;
 
-        var filtered = [];
-        var q = (filter || '').toLowerCase().trim();
+        var pid = getPatientId();
+        updateSummary(pid);
+        var records = window.StorageDB.getMedicalRecords(pid);
+        var recordCountEl = document.getElementById('summaryRecordCount');
+        if (recordCountEl) recordCountEl.textContent = records.length;
+        var searchQ = (document.getElementById('historySearchInput').value || '').toLowerCase().trim();
+        var deptFilter = document.getElementById('historyDeptFilter') ? document.getElementById('historyDeptFilter').value : 'All Departments';
+        var timeFilter = document.getElementById('historyTimeFilter') ? document.getElementById('historyTimeFilter').value : 'all';
 
-        for (var i = 0; i < historyData.length; i++) {
-          var h = historyData[i];
-          if (q) {
-            var searchable = h.title + ' ' + h.doctor + ' ' + h.notes;
-            if (!searchable.toLowerCase().includes(q)) continue;
+        var filtered = records.filter(function(r) {
+          if (searchQ) {
+            var searchable = (r.title || '') + ' ' + (r.doctorName || '') + ' ' + (r.clinicalNotes || '') + ' ' + (r.diagnosis || '');
+            if (!searchable.toLowerCase().includes(searchQ)) return false;
           }
-          filtered.push(h);
-        }
+          if (deptFilter !== 'All Departments' && r.department !== deptFilter) return false;
+          if (timeFilter !== 'all' && r.date) {
+            var d = new Date(r.date + 'T00:00:00');
+            var now = new Date();
+            if (timeFilter === '6months') {
+              var sixMonthsAgo = new Date(now); sixMonthsAgo.setMonth(now.getMonth() - 6);
+              if (d < sixMonthsAgo) return false;
+            } else if (timeFilter === '2025' && d.getFullYear() !== 2025) return false;
+            else if (timeFilter === '2024' && d.getFullYear() !== 2024) return false;
+          }
+          return true;
+        });
 
         if (!filtered.length) {
           container.innerHTML = '<div class="py-5 text-center text-muted" style="font-size:0.95rem;">No medical history records found.</div>';
-          pageInfo.textContent = 'Showing 0-0 of 0 records';
-          prevBtn.disabled = true; nextBtn.disabled = true;
+          if (pageInfo) pageInfo.textContent = 'Showing 0-0 of 0 records';
+          if (prevBtn) { prevBtn.disabled = true; nextBtn.disabled = true; }
           return;
         }
 
@@ -452,33 +433,32 @@
 
         var html = '<div class="history-timeline">';
         for (var i = 0; i < page.length; i++) {
-          var h = page[i];
-          var isOlder = (_historyPage > 1 || i >= 2);
-          var cardOpacity = isOlder ? ' style="opacity:0.85;"' : '';
-          var dotStyle = isOlder ? ' style="border-color:#D1D5DB;background:#F9FAFB;"' : '';
-          var badgeHtml = h.badge ? '<div style="' + esc(h.badgeStyle) + 'padding:4px 10px;border-radius:4px;font-size:0.75rem;font-weight:600;">' + esc(h.badge) + '</div>' : '';
-          var buttonsHtml = '<div class="d-flex gap-3 pt-3 border-top">';
-          if (h.showPrescription) buttonsHtml += '<a href="../prescriptions/patient-prescriptions.html" class="btn btn-sm btn-outline-success fw-semibold d-flex align-items-center gap-2" style="border-color:var(--primary-brand);color:var(--primary-brand);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31"></path><path d="M14 9.3V1.99"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path><path d="M5.52 16h12.96"></path></svg> View Prescription</a>';
-          if (h.showDischarge) buttonsHtml += '<button class="btn btn-sm btn-outline-secondary fw-semibold d-flex align-items-center gap-2" onclick="alert(\'Viewing Discharge Summary\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> Discharge Summary</button>';
-          buttonsHtml += '</div>';
-          var vitalsHtml = formatVitals(h.vitals);
+          var r = page[i];
+          var badgeHtml = r.badge ? '<div style="' + getBadgeStyle(r.badge) + 'padding:4px 10px;border-radius:4px;font-size:0.75rem;font-weight:600;">' + esc(r.badge) + '</div>' : '';
+          var vitalsHtml = formatVitals(r.vitals);
+          var buttonsHtml = '<div class="d-flex gap-3 pt-3 border-top">' +
+            '<a href="../prescriptions/patient-prescriptions.html" class="btn btn-sm btn-outline-success fw-semibold d-flex align-items-center gap-2" style="border-color:var(--primary-brand);color:var(--primary-brand);">' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31"></path><path d="M14 9.3V1.99"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path><path d="M5.52 16h12.96"></path></svg> View Prescription</a>' +
+            '</div>';
 
           html += '<div class="history-item">' +
-            '<div class="history-dot"' + dotStyle + '></div>' +
-            '<div class="history-card"' + cardOpacity + '>' +
+            '<div class="history-dot"></div>' +
+            '<div class="history-card">' +
               '<div class="history-header">' +
                 '<div>' +
-                  '<h5 class="fw-bold mb-1" style="color:var(--dark-text);">' + esc(h.title) + '</h5>' +
+                  '<h5 class="fw-bold mb-1" style="color:var(--dark-text);">' + esc(r.title || 'Medical Visit') + '</h5>' +
                   '<div class="d-flex align-items-center gap-2" style="font-size:0.85rem;color:var(--muted-text);">' +
-                    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ' + esc(h.date) +
+                    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ' + esc(formatDate(r.date)) +
                     '<span style="color:#D1D5DB;">|</span>' +
-                    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> ' + esc(h.doctor) +
+                    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> ' + esc(r.doctorName || 'Doctor') +
+                    (r.department ? ' (' + esc(r.department) + ')' : '') +
                   '</div>' +
                 '</div>' +
                 badgeHtml +
               '</div>' +
               '<div class="history-body">' +
-                '<div class="mb-4"><h6 class="fw-bold mb-2" style="font-size:0.9rem;color:var(--dark-text);">Clinical Notes</h6><p class="text-muted mb-0" style="font-size:0.85rem;line-height:1.5;">' + esc(h.notes) + '</p></div>' +
+                (r.diagnosis ? '<div class="mb-3"><h6 class="fw-bold mb-1" style="font-size:0.9rem;color:var(--dark-text);">Diagnosis</h6><p class="text-muted mb-0" style="font-size:0.85rem;">' + esc(r.diagnosis) + '</p></div>' : '') +
+                (r.clinicalNotes ? '<div class="mb-4"><h6 class="fw-bold mb-2" style="font-size:0.9rem;color:var(--dark-text);">Clinical Notes</h6><p class="text-muted mb-0" style="font-size:0.85rem;line-height:1.5;">' + esc(r.clinicalNotes) + '</p></div>' : '') +
                 vitalsHtml +
                 buttonsHtml +
               '</div>' +
@@ -488,27 +468,69 @@
         html += '</div>';
         container.innerHTML = html;
 
-        pageInfo.textContent = 'Showing ' + (filtered.length ? start + 1 : 0) + '-' + end + ' of ' + filtered.length + ' records';
-        prevBtn.disabled = _historyPage <= 1;
-        nextBtn.disabled = end >= filtered.length;
+        if (pageInfo) pageInfo.textContent = 'Showing ' + (filtered.length ? start + 1 : 0) + '-' + end + ' of ' + filtered.length + ' records';
+        if (prevBtn) { prevBtn.disabled = _historyPage <= 1; nextBtn.disabled = end >= filtered.length; }
       }
 
       renderHistory();
 
       document.getElementById('historySearchInput').addEventListener('input', function () {
         _historyPage = 1;
-        renderHistory(this.value);
+        renderHistory();
       });
 
-      document.querySelectorAll('.form-select').forEach(function (sel) {
-        sel.addEventListener('change', function () {
+      var deptFilter = document.getElementById('historyDeptFilter');
+      if (deptFilter) {
+        deptFilter.addEventListener('change', function () {
           _historyPage = 1;
-          renderHistory(document.getElementById('historySearchInput').value);
+          renderHistory();
         });
-      });
+      }
+      var timeFilter = document.getElementById('historyTimeFilter');
+      if (timeFilter) {
+        timeFilter.addEventListener('change', function () {
+          _historyPage = 1;
+          renderHistory();
+        });
+      }
 
-      document.getElementById('historyPagePrev').addEventListener('click', function () { if (_historyPage > 1) { _historyPage--; renderHistory(document.getElementById('historySearchInput').value); } });
-      document.getElementById('historyPageNext').addEventListener('click', function () { _historyPage++; renderHistory(document.getElementById('historySearchInput').value); });
+      document.getElementById('historyPagePrev').addEventListener('click', function () { if (_historyPage > 1) { _historyPage--; renderHistory(); } });
+      document.getElementById('historyPageNext').addEventListener('click', function () { _historyPage++; renderHistory(); });
+
+      // Download handler
+      document.getElementById('downloadHistoryBtn').addEventListener('click', function() {
+        if (!window.StorageDB) return;
+        var pid = getPatientId();
+        var records = window.StorageDB.getMedicalRecords(pid);
+        var txt = 'CITYCARE HOSPITAL - MEDICAL HISTORY\n';
+        txt += 'Patient ID: ' + pid + '\n';
+        txt += 'Generated: ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + '\n';
+        txt += '========================================\n\n';
+        for (var di = 0; di < records.length; di++) {
+          var r = records[di];
+          txt += 'Record: ' + (r.id || '') + '\n';
+          txt += 'Date: ' + formatDate(r.date) + '\n';
+          txt += 'Department: ' + (r.department || '') + '\n';
+          txt += 'Doctor: ' + (r.doctorName || '') + '\n';
+          txt += 'Diagnosis: ' + (r.diagnosis || '') + '\n';
+          txt += 'Notes: ' + (r.notes || '-') + '\n';
+          if (r.vitals && r.vitals.length) {
+            txt += 'Vitals:\n';
+            for (var vi = 0; vi < r.vitals.length; vi++) {
+              txt += '  - ' + r.vitals[vi].label + ': ' + r.vitals[vi].val + '\n';
+            }
+          }
+          txt += '----------------------------------------\n\n';
+        }
+        var blob = new Blob([txt], {type: 'text/plain'});
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'MedicalHistory_' + pid + '.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+      });
     })();
   </script>
 </body>

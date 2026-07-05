@@ -200,10 +200,13 @@
               <span>All Appointments</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
-            <div class="filter-dropdown" id="dateFilter">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-              <span>Wed, 10 June 2026</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <div class="filter-dropdown" style="padding: 0 12px; gap: 8px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <input type="date" id="dateFilterInput" style="border: none; outline: none; background: transparent; font-size: 0.85rem; width: 110px; font-family: inherit; color: inherit;" />
+              <!-- clear filter button -->
+              <button id="clearDateFilter" style="background:none;border:none;padding:0;color:var(--muted-text);display:none;cursor:pointer;" title="Clear Date Filter">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
             </div>
             <div class="filter-dropdown" id="statusFilter">
               <span>All Status</span>
@@ -227,7 +230,10 @@
         <div class="dropdown-menu-custom" id="statusMenu">
           <div class="dropdown-item" data-value="all">All Status</div>
           <div class="dropdown-item" data-value="booked">Booked</div>
+          <div class="dropdown-item" data-value="inprogress">In Progress</div>
           <div class="dropdown-item" data-value="completed">Completed</div>
+          <div class="dropdown-item" data-value="cancelled">Cancelled</div>
+          <div class="dropdown-item" data-value="no-show">No-Show</div>
           <div class="dropdown-item" data-value="pending">Pending</div>
         </div>
 
@@ -636,4 +642,5 @@
   <script src="doctor-appointments.js"></script>
 </body>
 </html>
+
 

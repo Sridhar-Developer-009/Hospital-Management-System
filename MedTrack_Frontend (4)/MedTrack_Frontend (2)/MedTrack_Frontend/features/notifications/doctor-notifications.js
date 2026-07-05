@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var notifications = [];
   var currentFilter = 'all';
   var searchQuery = '';
+  var currentPage = 1;
+  var ITEMS_PER_PAGE = 10;
 
   function loadNotifications() {
     if (window.StorageDB) {
@@ -65,14 +67,21 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!filtered.length) {
       container.innerHTML = '';
       empty.style.display = 'block';
+      renderPagination(0);
       updateStats();
       return;
     }
     empty.style.display = 'none';
 
+    var totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+    if (currentPage > totalPages) currentPage = totalPages;
+    var start = (currentPage - 1) * ITEMS_PER_PAGE;
+    var end = Math.min(start + ITEMS_PER_PAGE, filtered.length);
+    var page = filtered.slice(start, end);
+
     var html = '';
-    for (var i = 0; i < filtered.length; i++) {
-      var n = filtered[i];
+    for (var i = 0; i < page.length; i++) {
+      var n = page[i];
       var cfg = iconConfigs[n.type] || iconConfigs.info;
       var unreadClass = n.read ? '' : ' unread';
       var timeAgo = getTimeAgo(n.createdAt);
@@ -99,7 +108,37 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
 
+    renderPagination(filtered.length);
     updateStats();
+  }
+
+  function renderPagination(totalItems) {
+    var existing = document.getElementById('notifPagination');
+    if (existing) existing.remove();
+
+    if (totalItems <= ITEMS_PER_PAGE) return;
+
+    var totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+    var start = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+    var end = Math.min(currentPage * ITEMS_PER_PAGE, totalItems);
+
+    var wrapper = document.createElement('div');
+    wrapper.id = 'notifPagination';
+    wrapper.className = 'p-3 border-top d-flex justify-content-between align-items-center';
+    wrapper.innerHTML =
+      '<span class="small text-muted">Showing ' + start + '-' + end + ' of ' + totalItems + '</span>' +
+      '<div class="btn-group">' +
+        '<button class="btn btn-sm btn-outline-secondary" id="notifPrev"' + (currentPage <= 1 ? ' disabled' : '') + '>Prev</button>' +
+        '<button class="btn btn-sm btn-outline-secondary" id="notifNext"' + (currentPage >= totalPages ? ' disabled' : '') + '>Next</button>' +
+      '</div>';
+
+    var listWrapper = document.querySelector('.notif-list-wrapper');
+    if (listWrapper) listWrapper.appendChild(wrapper);
+
+    var prevBtn = document.getElementById('notifPrev');
+    var nextBtn = document.getElementById('notifNext');
+    if (prevBtn) prevBtn.addEventListener('click', function () { if (currentPage > 1) { currentPage--; render(); } });
+    if (nextBtn) nextBtn.addEventListener('click', function () { if (currentPage < totalPages) { currentPage++; render(); } });
   }
 
   function getTimeAgo(isoString) {
@@ -165,6 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById('notifSearch').addEventListener('input', function () {
     searchQuery = this.value;
+    currentPage = 1;
     render();
   });
 
@@ -173,6 +213,7 @@ document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.notif-filter-btn').forEach(function (b) { b.classList.remove('active'); });
       this.classList.add('active');
       currentFilter = this.getAttribute('data-filter');
+      currentPage = 1;
       render();
     });
   });

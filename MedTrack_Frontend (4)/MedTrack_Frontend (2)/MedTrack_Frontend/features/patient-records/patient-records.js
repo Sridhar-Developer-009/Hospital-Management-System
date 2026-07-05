@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var initials = getInitials(p.name);
 
       tr.innerHTML =
-        '<td><div class="patient-cell"><div class="patient-avatar" style="background:' + avatarColor + ';">' + initials + '</div><div><div class="patient-name">' + p.name + '</div></div></div></td>' +
+        '<td><div class="patient-cell"><div class="patient-avatar" style="background:' + avatarColor + ';">' + initials + '</div><div class="patient-name">' + p.name + '</div></div></td>' +
         '<td><span class="patient-id">' + p.id + '</span></td>' +
         '<td>' + p.age + ' / ' + p.gender + '</td>' +
         '<td>' + p.phone + '</td>' +

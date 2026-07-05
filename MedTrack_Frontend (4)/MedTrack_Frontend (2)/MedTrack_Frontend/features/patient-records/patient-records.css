@@ -142,6 +142,7 @@
 .records-table .patient-name {
   font-weight: 600;
   color: var(--text-dark, #2D2A24);
+  align-self: center;
 }
 .records-table .patient-id {
   font-size: 0.75rem;

@@ -252,8 +252,7 @@
               <span class="profile-name">Patient</span>
               <span class="profile-role">-</span>
             </div>
-            <script>(function(){var n=sessionStorage.patientName,i=sessionStorage.currentPatientId;if(n){var pn=document.querySelector('.profile-name');if(pn)pn.textContent=n;var pr=document.querySelector('.profile-role');if(pr)pr.textContent=i||'Patient';var ai=document.querySelector('.profile-avatar img');if(ai)ai.src='https://ui-avatars.com/api/?name='+encodeURIComponent(n)+'&background=047857&color=fff';}})();</script>
-            <div class="profile-avatar">SK</div>
+            <div class="profile-avatar">?</div>
           </a>
         </div>
       </header>
@@ -282,7 +281,7 @@
         <!-- Tabs -->
         <ul class="nav nav-tabs mb-4" id="appointmentsTabs" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming" type="button" role="tab" aria-controls="upcoming" aria-selected="true">Upcoming (2)</button>
+            <button class="nav-link active" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming" type="button" role="tab" aria-controls="upcoming" aria-selected="true">Upcoming <span id="upcomingTabCount" class="small text-muted">(0)</span></button>
           </li>
           <li class="nav-item" role="presentation">
             <button class="nav-link" id="past-tab" data-bs-toggle="tab" data-bs-target="#past" type="button" role="tab" aria-controls="past" aria-selected="false">Past Appointments</button>
@@ -322,45 +321,21 @@
                   </div>
                 </div>
               </div>
+            </div>
           </div>
           
           <!-- PAST -->
           <div class="tab-pane fade" id="past" role="tabpanel" aria-labelledby="past-tab">
             <div class="row">
               <div class="col-lg-10 col-xl-8">
-                
-                <div class="appt-card">
-                  <div class="appt-header">
-                    <span class="status-badge status-past">Completed</span>
-                    <span style="font-size: 0.8rem; color: var(--muted-text); font-weight: 500;">Booking ID: #APT-28105</span>
-                  </div>
-                  <div class="appt-body" style="opacity: 0.8;">
-                    <div class="d-flex flex-column flex-md-row gap-4 align-items-md-center">
-                      <div class="date-box d-flex flex-column justify-content-center" style="background: #F3F4F6; border-color: #D1D5DB; color: #4B5563;">
-                        <div class="day">10</div>
-                        <div class="month">May</div>
-                      </div>
-                      <div class="d-flex gap-3 flex-grow-1 align-items-center border-md-end pe-md-4">
-                        <img src="https://ui-avatars.com/api/?name=Rohit+Sharma&background=7c3aed&color=fff&size=150" alt="Dr. Rohit" class="doctor-avatar">
-                        <div>
-                          <h5 class="fw-bold mb-1" style="color: var(--dark-text);">Dr. Rohit Sharma</h5>
-                          <div style="font-size: 0.85rem; color: var(--muted-text);">Orthopedics</div>
-                        </div>
-                      </div>
-                      <div class="ps-md-2" style="min-width: 200px;">
-                        <div class="mb-2 d-flex align-items-center gap-2">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                          <div style="font-size: 0.85rem; color: var(--dark-text); font-weight: 500;">02:00 PM</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="appt-footer">
-                    <a href="../medical-history/medical-history.html" class="btn btn-sm btn-outline-secondary fw-semibold px-3">View Medical Record</a>
-                    <button class="btn btn-sm btn-primary fw-semibold px-3 text-white" style="background: var(--primary-brand); border-color: var(--primary-brand);">Book Again</button>
+                <div id="past-appointments-container"></div>
+                <div class="d-flex justify-content-between align-items-center mt-3" id="pastPagination">
+                  <span class="small text-muted" id="pastPageInfo">Showing 0-0 of 0 appointments</span>
+                  <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-secondary" id="pastPagePrev">Prev</button>
+                    <button class="btn btn-sm btn-outline-secondary" id="pastPageNext">Next</button>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
@@ -369,35 +344,14 @@
           <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
             <div class="row">
               <div class="col-lg-10 col-xl-8">
-                
-                <div class="appt-card">
-                  <div class="appt-header">
-                    <span class="status-badge status-cancelled">Cancelled</span>
-                    <span style="font-size: 0.8rem; color: var(--muted-text); font-weight: 500;">Booking ID: #APT-27599</span>
-                  </div>
-                  <div class="appt-body" style="opacity: 0.7;">
-                    <div class="d-flex flex-column flex-md-row gap-4 align-items-md-center">
-                      <div class="date-box d-flex flex-column justify-content-center" style="background: #F3F4F6; border-color: #D1D5DB; color: #4B5563;">
-                        <div class="day">22</div>
-                        <div class="month">Apr</div>
-                      </div>
-                      <div class="d-flex gap-3 flex-grow-1 align-items-center border-md-end pe-md-4">
-                        <img src="https://ui-avatars.com/api/?name=Arvind+Kumar&background=047857&color=fff&size=150" alt="Dr. Arvind" class="doctor-avatar">
-                        <div>
-                          <h5 class="fw-bold mb-1" style="color: var(--dark-text);">Dr. Arvind Kumar</h5>
-                          <div style="font-size: 0.85rem; color: var(--muted-text);">Cardiology</div>
-                        </div>
-                      </div>
-                      <div class="ps-md-2" style="min-width: 200px;">
-                        <div class="mb-2 d-flex align-items-center gap-2">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                          <div style="font-size: 0.85rem; color: var(--dark-text); font-weight: 500;">10:00 AM</div>
-                        </div>
-                      </div>
-                    </div>
+                <div id="cancelled-appointments-container"></div>
+                <div class="d-flex justify-content-between align-items-center mt-3" id="cancelledPagination">
+                  <span class="small text-muted" id="cancelledPageInfo">Showing 0-0 of 0 appointments</span>
+                  <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-secondary" id="cancelledPagePrev">Prev</button>
+                    <button class="btn btn-sm btn-outline-secondary" id="cancelledPageNext">Next</button>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
@@ -530,8 +484,190 @@
     var _upcomingPage = 1;
     var UPCOMING_PER_PAGE = 5;
 
+    var _pastPage = 1;
+    var PAST_PER_PAGE = 5;
+    var _cancelledPage = 1;
+    var CANCELLED_PER_PAGE = 5;
+
+    function getPatientId() {
+      return sessionStorage.getItem('currentPatientId') || '';
+    }
+
+    function renderPastAppointments() {
+      var container = document.getElementById('past-appointments-container');
+      var pageInfo = document.getElementById('pastPageInfo');
+      var prevBtn = document.getElementById('pastPagePrev');
+      var nextBtn = document.getElementById('pastPageNext');
+      if (!container) return;
+
+      var pid = getPatientId();
+      var all = window.StorageDB ? window.StorageDB.getAppointments().filter(function(a) { return a.patientId === pid; }) : [];
+      var past = all.filter(function(a) {
+        if (a.status === 'Cancelled') return false;
+        if (a.status === 'Completed' || a.status === 'NoShow') return true;
+        var d = new Date(a.appointmentDate + 'T00:00:00');
+        var today = new Date(); today.setHours(0, 0, 0, 0);
+        return d < today;
+      });
+      past.sort(function(a, b) { return (b.appointmentDate || '').localeCompare(a.appointmentDate || ''); });
+
+      if (past.length === 0) {
+        container.innerHTML = '<div class="p-5 text-center" style="background: var(--bg-card); border-radius: 12px; border: 1px solid var(--light-border);">' +
+          '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5" class="mb-3"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>' +
+          '<h5 class="fw-bold text-dark">No Past Appointments</h5>' +
+          '<p class="text-muted">Your completed and past visits will appear here.</p></div>';
+        pageInfo.textContent = 'Showing 0-0 of 0 appointments';
+        prevBtn.disabled = true; nextBtn.disabled = true;
+        return;
+      }
+
+      var totalPages = Math.ceil(past.length / PAST_PER_PAGE);
+      if (_pastPage > totalPages) _pastPage = totalPages;
+      var start = (_pastPage - 1) * PAST_PER_PAGE;
+      var end = Math.min(start + PAST_PER_PAGE, past.length);
+      var page = past.slice(start, end);
+
+      var html = '';
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      page.forEach(function(appt) {
+        var d = new Date(appt.appointmentDate + 'T00:00:00');
+        var day = d.getDate();
+        var month = months[d.getMonth()];
+        var timeFormatted = formatTime12h(appt.startTime);
+        var img = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(appt.doctorName) + '&background=047857&color=fff&size=150';
+
+        html += '<div class="appt-card">' +
+          '<div class="appt-header">' +
+            '<span class="status-badge ' + (appt.status === 'Completed' ? 'status-past' : 'status-cancelled') + '">' + esc(appt.status) + '</span>' +
+            '<span style="font-size: 0.8rem; color: var(--muted-text); font-weight: 500;">Booking ID: #' + esc(appt.id) + '</span>' +
+          '</div>' +
+          '<div class="appt-body" style="opacity: 0.8;">' +
+            '<div class="d-flex flex-column flex-md-row gap-4 align-items-md-center">' +
+              '<div class="date-box d-flex flex-column justify-content-center" style="background: #F3F4F6; border-color: #D1D5DB; color: #4B5563;">' +
+                '<div class="day">' + day + '</div>' +
+                '<div class="month">' + month + '</div>' +
+              '</div>' +
+              '<div class="d-flex gap-3 flex-grow-1 align-items-center border-md-end pe-md-4">' +
+                '<img src="' + esc(img) + '" alt="' + esc(appt.doctorName) + '" class="doctor-avatar">' +
+                '<div>' +
+                  '<h5 class="fw-bold mb-1" style="color: var(--dark-text);">' + esc(appt.doctorName) + '</h5>' +
+                  '<div style="font-size: 0.85rem; color: var(--muted-text);">' + esc(appt.department || '') + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="ps-md-2" style="min-width: 200px;">' +
+                '<div class="mb-2 d-flex align-items-center gap-2">' +
+                  '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>' +
+                  '<div style="font-size: 0.85rem; color: var(--dark-text); font-weight: 500;">' + esc(timeFormatted) + '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="appt-footer">' +
+            '<a href="../medical-history/medical-history.html" class="btn btn-sm btn-outline-secondary fw-semibold px-3">View Medical Record</a>' +
+            '<a href="../appointments/book-appointment.html" class="btn btn-sm btn-primary fw-semibold px-3 text-white" style="background: var(--primary-brand); border-color: var(--primary-brand);">Book Again</a>' +
+          '</div>' +
+        '</div>';
+      });
+      container.innerHTML = html;
+      pageInfo.textContent = 'Showing ' + (past.length ? start + 1 : 0) + '-' + end + ' of ' + past.length + ' appointments';
+      prevBtn.disabled = _pastPage <= 1;
+      nextBtn.disabled = end >= past.length;
+    }
+
+    function renderCancelledAppointments() {
+      var container = document.getElementById('cancelled-appointments-container');
+      var pageInfo = document.getElementById('cancelledPageInfo');
+      var prevBtn = document.getElementById('cancelledPagePrev');
+      var nextBtn = document.getElementById('cancelledPageNext');
+      if (!container) return;
+
+      var pid = getPatientId();
+      var all = window.StorageDB ? window.StorageDB.getAppointments().filter(function(a) { return a.patientId === pid; }) : [];
+      var cancelled = all.filter(function(a) { return a.status === 'Cancelled'; });
+      cancelled.sort(function(a, b) { return (b.appointmentDate || '').localeCompare(a.appointmentDate || ''); });
+
+      if (cancelled.length === 0) {
+        container.innerHTML = '<div class="p-5 text-center" style="background: var(--bg-card); border-radius: 12px; border: 1px solid var(--light-border);">' +
+          '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5" class="mb-3"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>' +
+          '<h5 class="fw-bold text-dark">No Cancelled Appointments</h5>' +
+          '<p class="text-muted">Your cancelled appointments will appear here.</p></div>';
+        pageInfo.textContent = 'Showing 0-0 of 0 appointments';
+        prevBtn.disabled = true; nextBtn.disabled = true;
+        return;
+      }
+
+      var totalPages = Math.ceil(cancelled.length / CANCELLED_PER_PAGE);
+      if (_cancelledPage > totalPages) _cancelledPage = totalPages;
+      var start = (_cancelledPage - 1) * CANCELLED_PER_PAGE;
+      var end = Math.min(start + CANCELLED_PER_PAGE, cancelled.length);
+      var page = cancelled.slice(start, end);
+
+      var html = '';
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      page.forEach(function(appt) {
+        var d = new Date(appt.appointmentDate + 'T00:00:00');
+        var day = d.getDate();
+        var month = months[d.getMonth()];
+        var timeFormatted = formatTime12h(appt.startTime);
+        var img = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(appt.doctorName) + '&background=DC2626&color=fff&size=150';
+
+        html += '<div class="appt-card">' +
+          '<div class="appt-header">' +
+            '<span class="status-badge status-cancelled">Cancelled</span>' +
+            '<span style="font-size: 0.8rem; color: var(--muted-text); font-weight: 500;">Booking ID: #' + esc(appt.id) + '</span>' +
+          '</div>' +
+          '<div class="appt-body" style="opacity: 0.7;">' +
+            '<div class="d-flex flex-column flex-md-row gap-4 align-items-md-center">' +
+              '<div class="date-box d-flex flex-column justify-content-center" style="background: #F3F4F6; border-color: #D1D5DB; color: #4B5563;">' +
+                '<div class="day">' + day + '</div>' +
+                '<div class="month">' + month + '</div>' +
+              '</div>' +
+              '<div class="d-flex gap-3 flex-grow-1 align-items-center border-md-end pe-md-4">' +
+                '<img src="' + esc(img) + '" alt="' + esc(appt.doctorName) + '" class="doctor-avatar">' +
+                '<div>' +
+                  '<h5 class="fw-bold mb-1" style="color: var(--dark-text);">' + esc(appt.doctorName) + '</h5>' +
+                  '<div style="font-size: 0.85rem; color: var(--muted-text);">' + esc(appt.department || '') + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="ps-md-2" style="min-width: 200px;">' +
+                '<div class="mb-2 d-flex align-items-center gap-2">' +
+                  '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>' +
+                  '<div style="font-size: 0.85rem; color: var(--dark-text); font-weight: 500;">' + esc(timeFormatted) + '</div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+      container.innerHTML = html;
+      pageInfo.textContent = 'Showing ' + (cancelled.length ? start + 1 : 0) + '-' + end + ' of ' + cancelled.length + ' appointments';
+      prevBtn.disabled = _cancelledPage <= 1;
+      nextBtn.disabled = end >= cancelled.length;
+    }
+
+    function updateTabCounts() {
+      var pid = getPatientId();
+      var all = window.StorageDB ? window.StorageDB.getAppointments().filter(function(a) { return a.patientId === pid; }) : [];
+      var today = new Date(); today.setHours(0, 0, 0, 0);
+      var upcoming = all.filter(function(a) { return a.status === 'Booked' && new Date(a.appointmentDate + 'T00:00:00') >= today; }).length;
+      var past = all.filter(function(a) { return a.status === 'Completed' || a.status === 'NoShow' || (a.status !== 'Cancelled' && new Date(a.appointmentDate + 'T00:00:00') < today); }).length;
+      var cancelled = all.filter(function(a) { return a.status === 'Cancelled'; }).length;
+      var uc = document.getElementById('upcomingTabCount');
+      if (uc) uc.textContent = '(' + upcoming + ')';
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       renderUpcomingAppointments();
+      updateTabCounts();
+
+      var pastTab = document.getElementById('past-tab');
+      var cancelledTab = document.getElementById('cancelled-tab');
+      if (pastTab) {
+        pastTab.addEventListener('shown.bs.tab', function() { renderPastAppointments(); });
+      }
+      if (cancelledTab) {
+        cancelledTab.addEventListener('shown.bs.tab', function() { renderCancelledAppointments(); });
+      }
     });
 
     function formatTime12h(timeStr) {
@@ -1022,6 +1158,10 @@
 
     document.getElementById('upcomingPagePrev').addEventListener('click', function () { if (_upcomingPage > 1) { _upcomingPage--; renderUpcomingAppointments(); } });
     document.getElementById('upcomingPageNext').addEventListener('click', function () { _upcomingPage++; renderUpcomingAppointments(); });
+    document.getElementById('pastPagePrev').addEventListener('click', function () { if (_pastPage > 1) { _pastPage--; renderPastAppointments(); } });
+    document.getElementById('pastPageNext').addEventListener('click', function () { _pastPage++; renderPastAppointments(); });
+    document.getElementById('cancelledPagePrev').addEventListener('click', function () { if (_cancelledPage > 1) { _cancelledPage--; renderCancelledAppointments(); } });
+    document.getElementById('cancelledPageNext').addEventListener('click', function () { _cancelledPage++; renderCancelledAppointments(); });
 
     function filterAppointments() {
       var query = (document.getElementById('apptSearchInput').value || '').toLowerCase().trim();

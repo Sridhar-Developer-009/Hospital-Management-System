@@ -225,8 +225,7 @@
               <span class="profile-name">Patient</span>
               <span class="profile-role">-</span>
             </div>
-            <script>(function(){var n=sessionStorage.patientName,i=sessionStorage.currentPatientId;if(n){var pn=document.querySelector('.profile-name');if(pn)pn.textContent=n;var pr=document.querySelector('.profile-role');if(pr)pr.textContent=i||'Patient';var ai=document.querySelector('.profile-avatar img');if(ai)ai.src='https://ui-avatars.com/api/?name='+encodeURIComponent(n)+'&background=047857&color=fff';}})();</script>
-            <div class="profile-avatar">SK</div>
+            <div class="profile-avatar">?</div>
           </a>
         </div>
       </header>
@@ -255,11 +254,11 @@
             <svg class="position-absolute" style="left: 12px; top: 50%; transform: translateY(-50%); color: #6B7280;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <input type="text" id="rxSearchInput" class="form-control form-control-sm" style="padding-left: 36px; padding-top: 8px; padding-bottom: 8px; border-radius: 8px;" placeholder="Search doctor, medicine...">
           </div>
-          <select class="form-select form-select-sm" style="width: 150px; border-radius: 8px;">
-            <option selected>All Time</option>
-            <option>Last 6 Months</option>
-            <option>2025</option>
-            <option>2024</option>
+          <select class="form-select form-select-sm" id="rxDateFilter" style="width: 150px; border-radius: 8px;">
+            <option value="all" selected>All Time</option>
+            <option value="6months">Last 6 Months</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
           </select>
         </div>
 
@@ -301,18 +300,31 @@
         return day + ' ' + month + ' ' + d.getFullYear();
       }
 
-      function render(filter) {
+      function toISO(d) {
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      }
+
+      function render(searchQuery, dateFilterVal) {
         var container = document.getElementById('prescriptionsContainer');
         var pageInfo = document.getElementById('rxPatientPageInfo');
         var prevBtn = document.getElementById('rxPatientPagePrev');
         var nextBtn = document.getElementById('rxPatientPageNext');
         if (!container) return;
 
-        var filtered = [];
-        var q = (filter || '').toLowerCase().trim();
+        var q = (searchQuery || '').toLowerCase().trim();
+        var df = dateFilterVal || 'all';
+        var cutoff = new Date();
+        cutoff.setMonth(cutoff.getMonth() - 6);
 
+        var filtered = [];
         for (var i = 0; i < rxList.length; i++) {
           var rx = rxList[i];
+          var rxDate = new Date(rx.date + 'T12:00:00');
+
+          if (df === '6months' && rxDate < cutoff) continue;
+          if (df === '2025' && rxDate.getFullYear() !== 2025) continue;
+          if (df === '2024' && rxDate.getFullYear() !== 2024) continue;
+
           if (q) {
             var searchable = (rx.doctorName || '') + ' ' + (rx.id || '') + ' ' + (rx.diagnosis || '');
             for (var mi = 0; mi < rx.medicines.length; mi++) {
@@ -353,18 +365,21 @@
           var headerBg = (i % 2 === 0) ? 'var(--primary-brand)' : '#4B5563';
           var dateDisplay = formatDate(rx.date);
           var notesHtml = rx.notes ? '<div class="px-4 py-3 border-top" style="background:#FFFBEB;"><h6 class="fw-bold mb-1" style="font-size:0.85rem;color:#92400E;">Doctor\'s Advice</h6><p class="mb-0" style="font-size:0.85rem;color:#92400E;">' + rx.notes + '</p></div>' : '';
+          var rxId = rx.id || '';
+          var rxDoctorName = rx.doctorName || 'Doctor';
+          var rxDepartment = rx.department || 'General';
 
           html += '<div class="prescription-card">' +
             '<div class="rx-header" style="background:' + headerBg + ';">' +
               '<div>' +
                 '<h4 class="fw-bold mb-0" style="font-family:\'Outfit\',sans-serif;">RX</h4>' +
-                '<div style="font-size:0.8rem;opacity:0.9;">' + (rx.doctorName || 'Doctor') + ' &bull; ' + (rx.department || 'General') + '</div>' +
+                '<div style="font-size:0.8rem;opacity:0.9;">' + rxDoctorName + ' &bull; ' + rxDepartment + '</div>' +
               '</div>' +
               '<div class="text-end">' +
                 '<div class="rx-badge mb-1">' +
                   '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> ' + dateDisplay +
                 '</div>' +
-                '<div style="font-size:0.75rem;opacity:0.8;">Rx ID: ' + (rx.id || '') + '</div>' +
+                '<div style="font-size:0.75rem;opacity:0.8;">Rx ID: ' + rxId + '</div>' +
               '</div>' +
             '</div>' +
             '<div class="rx-body p-0">' +
@@ -377,35 +392,97 @@
               notesHtml +
             '</div>' +
             '<div class="rx-footer">' +
-              '<div style="font-size:0.8rem;color:var(--muted-text);">Prescription ID: #' + (rx.id || '') + '</div>' +
+              '<div style="font-size:0.8rem;color:var(--muted-text);">Prescription ID: #' + rxId + '</div>' +
               '<div class="d-flex gap-2">' +
-                '<button class="btn btn-sm btn-outline-secondary fw-semibold d-flex align-items-center gap-1" onclick="alert(\'Print feature coming soon\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> Print</button>' +
-                '<button class="btn btn-sm btn-primary fw-semibold d-flex align-items-center gap-1 text-white" onclick="alert(\'Download coming soon\')" style="background:var(--primary-brand);border-color:var(--primary-brand);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download</button>' +
+                '<button class="btn btn-sm btn-outline-secondary fw-semibold d-flex align-items-center gap-1 rx-print-btn" data-rx-id="' + rxId + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg> Print</button>' +
+                '<button class="btn btn-sm btn-primary fw-semibold d-flex align-items-center gap-1 text-white rx-download-btn" data-rx-id="' + rxId + '" style="background:var(--primary-brand);border-color:var(--primary-brand);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download</button>' +
               '</div>' +
             '</div>' +
           '</div>';
         }
 
         container.innerHTML = html;
+
+        // Wire print buttons
+        container.querySelectorAll('.rx-print-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var rid = this.getAttribute('data-rx-id');
+            for (var pi = 0; pi < rxList.length; pi++) {
+              if (rxList[pi].id === rid) {
+                var r = rxList[pi];
+                var txt = 'CITYCARE HOSPITAL\n';
+                txt += 'Prescription: ' + (r.id || '') + '\n';
+                txt += 'Doctor: ' + (r.doctorName || '') + '\n';
+                txt += 'Department: ' + (r.department || '') + '\n';
+                txt += 'Date: ' + formatDate(r.date) + '\n';
+                txt += 'Diagnosis: ' + (r.diagnosis || '') + '\n\n';
+                txt += 'Medicines:\n';
+                for (var pmi = 0; pmi < r.medicines.length; pmi++) {
+                  var pm = r.medicines[pmi];
+                  txt += '  - ' + (pm.name || '') + ': ' + (pm.dosage || '') + ', ' + (pm.frequency || '') + ', ' + (pm.duration || '') + '\n';
+                }
+                if (r.notes) txt += '\nDoctor\'s Advice: ' + r.notes + '\n';
+                var pw = window.open('', '_blank', 'width=700,height=500');
+                pw.document.write('<html><head><title>Print Prescription</title><style>body{font-family:sans-serif;padding:40px;white-space:pre-wrap;}</style></head><body>' + txt.replace(/\n/g, '<br>') + '<script>setTimeout(function(){window.print();window.close();},500);<' + '/script></body></html>');
+                pw.document.close();
+                break;
+              }
+            }
+          });
+        });
+
+        // Wire download buttons
+        container.querySelectorAll('.rx-download-btn').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            var rid = this.getAttribute('data-rx-id');
+            for (var di = 0; di < rxList.length; di++) {
+              if (rxList[di].id === rid) {
+                var r = rxList[di];
+                var txt = 'CITYCARE HOSPITAL\n';
+                txt += 'Prescription: ' + (r.id || '') + '\n';
+                txt += 'Doctor: ' + (r.doctorName || '') + '\n';
+                txt += 'Department: ' + (r.department || '') + '\n';
+                txt += 'Date: ' + formatDate(r.date) + '\n';
+                txt += 'Diagnosis: ' + (r.diagnosis || '') + '\n\n';
+                txt += 'Medicines:\n';
+                for (var dmi = 0; dmi < r.medicines.length; dmi++) {
+                  var dm = r.medicines[dmi];
+                  txt += '  - ' + (dm.name || '') + ': ' + (dm.dosage || '') + ', ' + (dm.frequency || '') + ', ' + (dm.duration || '') + '\n';
+                }
+                if (r.notes) txt += '\nDoctor\'s Advice: ' + r.notes + '\n';
+                var blob = new Blob([txt], {type: 'text/plain'});
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'Prescription_' + (r.id || 'rx') + '.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(a.href);
+                break;
+              }
+            }
+          });
+        });
+
         pageInfo.textContent = 'Showing ' + (filtered.length ? start + 1 : 0) + '-' + end + ' of ' + filtered.length + ' prescriptions';
         prevBtn.disabled = _rxPatPage <= 1;
         nextBtn.disabled = end >= filtered.length;
       }
 
-      render();
+      var searchInput = document.getElementById('rxSearchInput');
+      var dateFilter = document.getElementById('rxDateFilter');
 
-      document.getElementById('rxSearchInput').addEventListener('input', function () {
-        _rxPatPage = 1;
-        render(this.value);
-      });
+      function reload() {
+        render(searchInput ? searchInput.value : '', dateFilter ? dateFilter.value : 'all');
+      }
 
-      document.querySelector('.form-select').addEventListener('change', function () {
-        _rxPatPage = 1;
-        render(document.getElementById('rxSearchInput').value);
-      });
+      render('', 'all');
 
-      document.getElementById('rxPatientPagePrev').addEventListener('click', function () { if (_rxPatPage > 1) { _rxPatPage--; render(document.getElementById('rxSearchInput').value); } });
-      document.getElementById('rxPatientPageNext').addEventListener('click', function () { _rxPatPage++; render(document.getElementById('rxSearchInput').value); });
+      if (searchInput) searchInput.addEventListener('input', function () { _rxPatPage = 1; reload(); });
+      if (dateFilter) dateFilter.addEventListener('change', function () { _rxPatPage = 1; reload(); });
+
+      document.getElementById('rxPatientPagePrev').addEventListener('click', function () { if (_rxPatPage > 1) { _rxPatPage--; reload(); } });
+      document.getElementById('rxPatientPageNext').addEventListener('click', function () { _rxPatPage++; reload(); });
     })();
   </script>
 </body>

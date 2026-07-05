@@ -24,17 +24,11 @@ document.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeS(); });
   requestAnimationFrame(function() { if (sidebar) sidebar.classList.add('sidebar-animate'); });
 
-  // ── Search Logic (Debounced) ──
+  // ── Patient-Scoped Search ──
+  const esc = window.StorageDB ? StorageDB.escapeHtml : function(s){return String(s||'').replace(/[&<>"']/g,function(m){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];});};
   const searchInput = document.getElementById('patient-search-input');
   const searchDropdown = document.getElementById('search-results-dropdown');
   let searchTimeout = null;
-  const mockDatabase = [
-    { type: 'Doctor', name: 'Dr. Arvind Kumar', specialty: 'Cardiology' },
-    { type: 'Doctor', name: 'Dr. Meena Iyer', specialty: 'General Medicine' },
-    { type: 'Doctor', name: 'Dr. Rohit Sharma', specialty: 'Orthopedics' },
-    { type: 'Department', name: 'Cardiology', specialty: 'Heart Health' },
-    { type: 'Symptom', name: 'Chest Pain', specialty: 'Consult a Cardiologist' }
-  ];
   if (searchInput && searchDropdown) {
     searchInput.addEventListener('input', function (e) {
       const query = e.target.value.toLowerCase().trim();
@@ -43,31 +37,62 @@ document.addEventListener('DOMContentLoaded', function () {
       searchDropdown.style.display = 'block';
       searchDropdown.innerHTML = '<div class="p-3 text-center text-muted"><div class="spinner-border spinner-border-sm me-2" role="status"></div>Searching...</div>';
       searchTimeout = setTimeout(function () {
-        var results = mockDatabase.filter(function (item) {
-          return item.name.toLowerCase().includes(query) || item.specialty.toLowerCase().includes(query);
+        if (!window.StorageDB) { searchDropdown.innerHTML = '<div class="p-3 text-center text-muted">Search unavailable</div>'; return; }
+        var pid = sessionStorage.getItem('currentPatientId') || '';
+        var results = [];
+        // Search appointments
+        var appts = window.StorageDB.getAppointments().filter(function(a) { return a.patientId === pid; });
+        appts.forEach(function(a) {
+          var searchable = (a.doctorName || '') + ' ' + (a.department || '') + ' ' + (a.appointmentDate || '') + ' ' + (a.reasonForVisit || '');
+          if (searchable.toLowerCase().includes(query)) {
+            results.push({ type: 'Appointment', title: a.doctorName + ' (' + a.department + ')', subtitle: a.appointmentDate + ' - ' + a.status, link: '../appointments/patient-appointments.html', icon: 'calendar' });
+          }
+        });
+        // Search prescriptions
+        var rxs = window.StorageDB.getPrescriptionsForPatient(pid);
+        rxs.forEach(function(rx) {
+          var searchable = (rx.doctorName || '') + ' ' + (rx.id || '') + ' ' + (rx.diagnosis || '');
+          (rx.medicines || []).forEach(function(m) { searchable += ' ' + (m.name || ''); });
+          if (searchable.toLowerCase().includes(query)) {
+            results.push({ type: 'Prescription', title: 'Rx #' + rx.id + ' - ' + (rx.doctorName || ''), subtitle: (rx.diagnosis || 'Prescription'), link: '../prescriptions/patient-prescriptions.html', icon: 'prescription' });
+          }
+        });
+        // Search medical records
+        var records = window.StorageDB.getMedicalRecords(pid);
+        records.forEach(function(r) {
+          var searchable = (r.title || '') + ' ' + (r.doctorName || '') + ' ' + (r.diagnosis || '') + ' ' + (r.clinicalNotes || '');
+          if (searchable.toLowerCase().includes(query)) {
+            results.push({ type: 'Medical Record', title: r.title || 'Visit', subtitle: (r.doctorName || '') + ' - ' + (r.date || ''), link: '../medical-history/medical-history.html', icon: 'file' });
+          }
         });
         if (results.length === 0) {
-          searchDropdown.innerHTML = '<div class="p-3 text-center text-muted">No results found for "' + query + '"</div>';
+          searchDropdown.innerHTML = '<div class="p-3 text-center text-muted">No results found for "' + esc(query) + '"</div>';
         } else {
+          var icons = {
+            calendar: '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>',
+            prescription: '<path d="M10 2v7.31"></path><path d="M14 9.3V1.99"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path><path d="M5.52 16h12.96"></path>',
+            file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line>'
+          };
           var html = '<div class="list-group list-group-flush">';
-          results.forEach(function (res) {
-            var icon = '';
-            if (res.type === 'Doctor') icon = '<circle cx="12" cy="7" r="4"></circle><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>';
-            else if (res.type === 'Department') icon = '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>';
-            else icon = '<path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>';
-            html += '<a href="book-appointment.html" class="list-group-item list-group-item-action p-3 d-flex align-items-center gap-3">' +
+          results.slice(0, 8).forEach(function(res) {
+            var iconSvg = icons[res.icon] || icons.calendar;
+            html += '<a href="' + res.link + '" class="list-group-item list-group-item-action p-3 d-flex align-items-center gap-3">' +
               '<div class="rounded-circle d-flex align-items-center justify-content-center" style="width:32px;height:32px;background:var(--primary-light);color:var(--primary-brand);">' +
-              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + icon + '</svg></div>' +
-              '<div><div class="fw-bold text-dark" style="font-size:0.85rem;">' + res.name + '</div>' +
-              '<div class="text-muted" style="font-size:0.75rem;">' + res.type + ' &bull; ' + res.specialty + '</div></div></a>';
+              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' + iconSvg + '</svg></div>' +
+              '<div><div class="fw-bold text-dark" style="font-size:0.85rem;">' + esc(res.title) + '</div>' +
+              '<div class="text-muted" style="font-size:0.75rem;">' + res.type + ' &bull; ' + esc(res.subtitle) + '</div></div></a>';
           });
           html += '</div>';
+          if (results.length > 8) html += '<div class="p-2 text-center text-muted" style="font-size:0.75rem;">' + (results.length - 8) + ' more results. Refine your search.</div>';
           searchDropdown.innerHTML = html;
         }
       }, 300);
     });
     document.addEventListener('click', function (e) {
       if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) searchDropdown.style.display = 'none';
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && searchDropdown.style.display !== 'none') searchDropdown.style.display = 'none';
     });
   }
 
@@ -184,32 +209,30 @@ document.addEventListener('DOMContentLoaded', function () {
     container.innerHTML = html;
   }
 
-  // ── Notification Section Cards ──
-  function renderNotifSection() {
-    var container = document.getElementById('notifSectionCards');
-    if (!container || !window.StorageDB) return;
-    var notifs = window.StorageDB.getNotificationsForRecipient('patient', getPatientId()).slice(0, 3);
-    if (!notifs.length) {
-      container.innerHTML = '<div class="col-12 text-center text-muted py-3" style="font-size:0.85rem;">No notifications yet.</div>';
-      return;
-    }
-    var html = '';
-    var icons = {
-      appointment: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>',
-      warning: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>',
-      success: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
-    };
-    var e = window.StorageDB.escapeHtml;
-    for (var i = 0; i < notifs.length; i++) {
-      var n = notifs[i];
-      var svg = icons[n.type] || icons.appointment;
-      html += '<div class="col-md-4"><div class="d-flex gap-3 p-3 rounded-3 border h-100" style="background:var(--bg-neutral);border-color:var(--light-border);">' +
-        '<div class="flex-shrink-0 mt-1"><div class="rounded-circle d-flex align-items-center justify-content-center" style="width:32px;height:32px;background:var(--primary-light);color:var(--primary-brand);">' + svg + '</div></div>' +
-        '<div><div class="fw-bold text-dark" style="font-size:0.8rem;">' + e(n.title) + '</div>' +
-        '<div class="text-muted mt-1" style="font-size:0.75rem;line-height:1.3;">' + e((n.message || '').substring(0, 70)) + '</div>' +
-        '<div class="text-muted mt-2" style="font-size:0.7rem;">' + e(timeAgo(n.createdAt)) + '</div></div></div></div>';
-    }
-    container.innerHTML = html;
+  // ── Toast Notification ──
+  if (!document.getElementById('medtrack-toast-style')) {
+    var ts = document.createElement('style');
+    ts.id = 'medtrack-toast-style';
+    ts.textContent = '@keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}';
+    document.head.appendChild(ts);
+  }
+  function showToast(message, type) {
+    type = type || 'success';
+    var existing = document.querySelector('.medtrack-toast');
+    if (existing) existing.remove();
+    var toast = document.createElement('div');
+    toast.className = 'medtrack-toast';
+    toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;padding:16px 24px;border-radius:12px;font-size:0.9rem;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,0.15);max-width:400px;animation:slideUp 0.3s ease;color:#fff;';
+    if (type === 'success') toast.style.background = '#059669';
+    else if (type === 'error') toast.style.background = '#DC2626';
+    else toast.style.background = '#2563EB';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(function() {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s';
+      setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
+    }, 4000);
   }
 
   // ── Badge Sync ──
@@ -234,6 +257,21 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // ── Profile Avatar Sync ──
+  function syncProfileAvatar() {
+    var name = sessionStorage.getItem('patientName');
+    var id = sessionStorage.getItem('currentPatientId');
+    var nameEl = document.querySelector('.profile-name');
+    var roleEl = document.querySelector('.profile-role');
+    var avatarEl = document.querySelector('.profile-avatar');
+    if (nameEl) nameEl.textContent = name || 'Patient';
+    if (roleEl) roleEl.textContent = id || '-';
+    if (avatarEl && name) {
+      var initials = name.split(' ').map(function(s) { return s[0]; }).filter(function(s) { return s; }).join('').substring(0, 2).toUpperCase();
+      avatarEl.textContent = initials || '?';
+    }
+  }
+
   // ── Logout handler ──
   document.querySelectorAll('a[href*="index.html"]').forEach(function(link) {
     if (link.textContent.trim().indexOf('Logout') !== -1 || link.classList.contains('logout-link')) {
@@ -249,10 +287,10 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // ── Init ──
+  syncProfileAvatar();
   updateGreeting();
   renderKPIs();
   renderRecentAppts();
   renderNotifDropdown();
-  renderNotifSection();
   syncBadges();
 });

@@ -199,14 +199,16 @@
 .slot-available .slot-sub { color: #166534; opacity: 0.8; }
 .slot-blocked .slot-sub { color: #B91C1C; opacity: 0.8; }
 .slot-booked .slot-sub { color: #B45309; opacity: 0.8; }
-.slot-completed .slot-sub { color: #1D4ED8; opacity: 0.8; }
+.slot-completed .slot-sub { color: #047857; opacity: 0.8; }
+.slot-noshow .slot-sub { color: #9A3412; opacity: 0.8; }
 .slot-empty .slot-sub { color: #7A7268; opacity: 0.5; }
 
-/* Slot States - Console color scheme */
+/* Slot States */
 .slot-available { background: #DCFCE7; color: #166534; }
 .slot-blocked { background: #FEE2E2; color: #B91C1C; }
 .slot-booked { background: #FEF3C7; color: #B45309; }
-.slot-completed { background: #DBEAFE; color: #1D4ED8; }
+.slot-completed { background: #DCFCE7; color: #047857; }
+.slot-noshow { background: #FFF7ED; color: #9A3412; }
 .slot-empty { background: var(--bg-card, #F6F0E4); color: var(--text-muted, #7A7268); }
 
 /* Legend */
@@ -241,7 +243,8 @@
 .swatch-available { background: #DCFCE7; border: 1px solid #166534; }
 .swatch-blocked { background: #FEE2E2; border: 1px solid #B91C1C; }
 .swatch-booked { background: #FEF3C7; border: 1px solid #B45309; }
-.swatch-completed { background: #DBEAFE; border: 1px solid #1D4ED8; }
+.swatch-completed { background: #DCFCE7; border: 1px solid #047857; }
+.swatch-noshow { background: #FFF7ED; border: 1px solid #9A3412; }
 .swatch-empty { background: var(--bg-card); border: 1px solid var(--border-color); }
 
 /* Footer */

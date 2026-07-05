@@ -454,7 +454,8 @@
     'InProgress': ['Completed', 'NoShow'],
     'Completed':  [],
     'Cancelled':  [],
-    'NoShow':     ['Scheduled']
+    'NoShow':     ['Scheduled'],
+    'Booked':     ['Cancelled']
   };
 
   StorageDB.setApptStatusAndSlot = function(apptId, newStatus, slotMarker) {
@@ -621,7 +622,9 @@
       const startTime = slotTimes[slotIdx];
       const startH = parseInt(startTime.split(':')[0], 10);
       const endTime = `${String(startH + 1).padStart(2, '0')}:00`;
-      const status = statuses[i % statuses.length];
+      let status = statuses[i % statuses.length];
+      // Ensure PAT-1001 has at least one cancelled appointment (index 24 → change from Completed to Cancelled)
+      if (i === 24 && pat.id === 'PAT-1001') status = 'Cancelled';
       appts.push({
         id: `APT-${1024 + i}`,
         patientId: pat.id,
@@ -634,7 +637,7 @@
         endTime: endTime,
         status: status,
         reasonForVisit: reasons[i % reasons.length],
-        notes: status === 'Completed' ? 'Patient responded well to treatment.' : '',
+        notes: status === 'Completed' ? 'Patient responded well to treatment.' : (status === 'Cancelled' ? 'Cancelled by patient - scheduling conflict' : ''),
         createdAt: new Date(today.getTime() - (25 - i) * 3600000).toISOString()
       });
     }
@@ -777,18 +780,22 @@
     return this.getNotificationsForRecipient(recipientType, recipientId).filter(function(n) { return !n.read; }).length;
   };
 
-  // On init, also seed patients and appointments if not present
+  // On init, also seed patients, appointments, and medical records if not present
   const origInit = StorageDB.init;
   StorageDB.init = function() {
     origInit.call(this);
     this.seedPatientData();
     this.seedAppointmentData();
+    this.seedMedicalRecordData();
     // One-time clear of all hardcoded notification data
     if (!localStorage.getItem('medtrack_notifications_cleared')) {
       localStorage.removeItem(this.NOTIF_KEY);
       localStorage.removeItem('medtrack_notifications_data');
       localStorage.setItem('medtrack_notifications_cleared', '1');
     }
+    this.seedNotificationData();
+    this.seedPrescriptionData();
+    this.seedAuditLogData();
   };
 
   // Migrate old doctor notification data into the central store on first load
@@ -1042,10 +1049,230 @@
   StorageDB.saveSettings = function(settings) {
     localStorage.setItem(this.SETTINGS_KEY, JSON.stringify(settings));
   };
+  // ── Medical Records ──────────────────────────────────────────────────
+  StorageDB.MEDICAL_RECORDS_KEY = 'medtrack_medical_records';
+
+  StorageDB.getMedicalRecords = function(patientId) {
+    var data = localStorage.getItem(this.MEDICAL_RECORDS_KEY);
+    var all = data ? JSON.parse(data) : [];
+    if (patientId) return all.filter(function(r) { return r.patientId === patientId; }).sort(function(a, b) { return (b.date || '').localeCompare(a.date || ''); });
+    return all;
+  };
+
+  StorageDB.getMedicalRecordById = function(id) {
+    return this.getMedicalRecords().find(function(r) { return r.id === id; }) || null;
+  };
+
+  StorageDB.generateMedicalRecordCode = function() {
+    var records = this.getMedicalRecords();
+    var max = 0;
+    records.forEach(function(r) {
+      var num = parseInt(r.id.replace('MR-', ''), 10);
+      if (!isNaN(num) && num > max) max = num;
+    });
+    return 'MR-' + (max + 1);
+  };
+
+  StorageDB.addMedicalRecord = function(record) {
+    var records = this.getMedicalRecords();
+    if (!record.id) record.id = this.generateMedicalRecordCode();
+    if (!record.createdAt) record.createdAt = new Date().toISOString();
+    records.push(record);
+    localStorage.setItem(this.MEDICAL_RECORDS_KEY, JSON.stringify(records));
+    return record.id;
+  };
+
+  StorageDB.updateMedicalRecord = function(updated) {
+    var records = this.getMedicalRecords();
+    var idx = records.findIndex(function(r) { return r.id === updated.id; });
+    if (idx === -1) return false;
+    updated.updatedAt = new Date().toISOString();
+    records[idx] = updated;
+    localStorage.setItem(this.MEDICAL_RECORDS_KEY, JSON.stringify(records));
+    return true;
+  };
+
+  StorageDB.seedMedicalRecordData = function() {
+    if (localStorage.getItem(this.MEDICAL_RECORDS_KEY)) return;
+    var appointments = this.getAppointments();
+    var completed = appointments.filter(function(a) { return a.status === 'Completed' || a.status === 'NoShow'; });
+    if (!completed.length) return;
+    var records = [];
+    var diagnoses = ['Hypertension Monitoring', 'Viral Fever', 'Annual Checkup', 'Allergy Consultation', 'Knee Pain Evaluation', 'Routine Follow-up'];
+    var notes = [
+      'Patient responded well to treatment. Blood pressure stabilized. Continue current medication with regular monitoring.',
+      'Symptoms resolved with prescribed medication. Patient advised to maintain hydration and rest.',
+      'All vitals within normal range. No significant findings. Recommended to maintain a healthy diet and regular exercise.',
+      'Seasonal allergies managed with antihistamines. Patient advised to avoid known triggers.',
+      'Mild osteoarthritis detected in right knee. Physiotherapy recommended. Prescribed NSAIDs for pain management.',
+      'Follow-up showed improvement. No changes to medication plan. Next visit in 3 months.'
+    ];
+    for (var i = 0; i < completed.length; i++) {
+      var a = completed[i];
+      records.push({
+        id: 'MR-' + (1001 + i),
+        patientId: a.patientId,
+        patientName: a.patientName,
+        doctorId: a.doctorId,
+        doctorName: a.doctorName,
+        department: a.department,
+        appointmentId: a.id,
+        title: diagnoses[i % diagnoses.length],
+        date: a.appointmentDate,
+        badge: i % 3 === 0 ? 'Follow Up' : (i % 3 === 1 ? 'Outpatient' : 'Routine'),
+        clinicalNotes: notes[i % notes.length],
+        vitals: [
+          { label: 'Blood Pressure', val: (120 + i * 2) + '/' + (80 + i) + ' mmHg' },
+          { label: 'Heart Rate', val: (70 + i) + ' bpm' },
+          { label: 'Temperature', val: '98.6 °F' }
+        ],
+        diagnosis: diagnoses[i % diagnoses.length],
+        createdBy: a.doctorId,
+        createdAt: new Date(a.appointmentDate + 'T10:00:00').toISOString()
+      });
+    }
+    localStorage.setItem(this.MEDICAL_RECORDS_KEY, JSON.stringify(records));
+  };
+
+  StorageDB.seedPrescriptionData = function() {
+    if (localStorage.getItem('medtrack_prescriptions')) return;
+    var appts = this.getAppointments();
+    var completed = appts.filter(function(a) { return a.status === 'Completed' || a.status === 'NoShow'; });
+    if (!completed.length) return;
+    var prescriptions = [];
+    var medicinesPool = [
+      [{ name:'Amlodipine 5mg', dosage:'1 tablet', frequency:'Once daily', duration:'30 days' }, { name:'Metoprolol 25mg', dosage:'1 tablet', frequency:'Twice daily', duration:'30 days' }],
+      [{ name:'Paracetamol 650mg', dosage:'1 tablet', frequency:'Three times daily', duration:'5 days' }, { name:'Azithromycin 500mg', dosage:'1 tablet', frequency:'Once daily', duration:'3 days' }],
+      [{ name:'Atorvastatin 10mg', dosage:'1 tablet', frequency:'Once daily at night', duration:'90 days' }, { name:'Ecosprin 75mg', dosage:'1 tablet', frequency:'Once daily', duration:'90 days' }],
+      [{ name:'Metformin 500mg', dosage:'1 tablet', frequency:'Twice daily after meals', duration:'60 days' }, { name:'Glimipril 2mg', dosage:'1 tablet', frequency:'Once daily', duration:'60 days' }],
+      [{ name:'Telmisartan 40mg', dosage:'1 tablet', frequency:'Once daily', duration:'30 days' }, { name:'Hydrochlorothiazide 12.5mg', dosage:'1 tablet', frequency:'Once daily', duration:'30 days' }],
+      [{ name:'Cetirizine 10mg', dosage:'1 tablet', frequency:'Once daily at night', duration:'14 days' }, { name:'Montelukast 10mg', dosage:'1 tablet', frequency:'Once daily at night', duration:'14 days' }],
+      [{ name:'Diclofenac 50mg', dosage:'1 tablet', frequency:'Twice daily after meals', duration:'7 days' }, { name:'Pantoprazole 40mg', dosage:'1 capsule', frequency:'Once daily before breakfast', duration:'14 days' }],
+      [{ name:'Thyroxine 50mcg', dosage:'1 tablet', frequency:'Once daily on empty stomach', duration:'90 days' }, { name:'Calcium 500mg', dosage:'1 tablet', frequency:'Twice daily', duration:'90 days' }],
+      [{ name:'Amoxicillin 500mg', dosage:'1 capsule', frequency:'Three times daily', duration:'7 days' }, { name:'Omeprazole 20mg', dosage:'1 capsule', frequency:'Once daily before breakfast', duration:'14 days' }],
+      [{ name:'Levothyroxine 100mcg', dosage:'1 tablet', frequency:'Once daily on empty stomach', duration:'90 days' }, { name:'Vitamin D3 60K IU', dosage:'1 capsule', frequency:'Once weekly', duration:'8 weeks' }]
+    ];
+    var diagnoses = ['Hypertension', 'Viral Fever', 'Hyperlipidemia', 'Type 2 Diabetes', 'Hypertension', 'Seasonal Allergies', 'Arthritis', 'Hypothyroidism', 'Respiratory Infection', 'Vitamin D Deficiency'];
+    var doctorNotes = [
+      'Monitor BP daily. Follow up in 2 weeks. Low salt diet recommended.',
+      'Complete the full course. Stay hydrated. Follow up if symptoms persist.',
+      'Continue medication. Lipid profile check in 3 months. Exercise regularly.',
+      'Monitor fasting blood sugar weekly. Diet control essential. Follow up in 1 month.',
+      'Monitor BP at home. Reduce stress. Follow up in 2 weeks.',
+      'Avoid known allergens. Use air purifier at home. Follow up PRN.',
+      'Apply ice pack for swelling. Avoid strenuous activity. Physiotherapy recommended.',
+      'TSH level check after 6 weeks. Take medication consistently before breakfast.',
+      'Complete full course. Return if fever persists beyond 48 hours.',
+      'Sunlight exposure 15 min daily. Calcium-rich diet. Repeat vitamin panel in 3 months.'
+    ];
+    // Ensure PAT-1001 gets enough prescriptions: include Booked appts too
+    var prescribableAppts = appts.filter(function(a) { return a.status === 'Completed' || a.status === 'NoShow' || (a.patientId === 'PAT-1001' && a.status === 'Booked'); });
+    for (var i = 0; i < prescribableAppts.length && i < 12; i++) {
+      var a = prescribableAppts[i];
+      var medIdx = i % medicinesPool.length;
+      prescriptions.push({
+        id: 'PRX-' + (1001 + i),
+        patientId: a.patientId,
+        patientName: a.patientName,
+        patientInfo: '',
+        doctorId: a.doctorId,
+        doctorName: a.doctorName,
+        department: a.department,
+        date: a.appointmentDate,
+        diagnosis: diagnoses[medIdx],
+        medicines: medicinesPool[medIdx],
+        notes: doctorNotes[medIdx],
+        createdBy: a.doctorId,
+        createdAt: new Date(a.appointmentDate + 'T' + (a.startTime || '10:00') + ':00').toISOString()
+      });
+    }
+    localStorage.setItem('medtrack_prescriptions', JSON.stringify(prescriptions));
+  };
+
+  StorageDB.seedNotificationData = function() {
+    if (localStorage.getItem('medtrack_notifications')) return;
+    var notifs = [];
+    function add(title, message, type, recipientType, recipientId, read, hoursAgo) {
+      var d = new Date(Date.now() - hoursAgo * 3600000);
+      notifs.push({
+        type: type,
+        title: title,
+        message: message,
+        recipientType: recipientType,
+        recipientId: recipientId,
+        read: read,
+        senderId: 'system',
+        createdAt: d.toISOString()
+      });
+    }
+    // Patient notifications
+    add('Appointment Confirmed', 'Your appointment with Dr. Arvind Kumar on 05 Jul 2026 at 10:00 AM has been confirmed.', 'appointment', 'patient', 'PAT-1001', false, 2);
+    add('Lab Report Available', 'Your blood test results are ready. View them in your Medical History.', 'lab', 'patient', 'PAT-1001', false, 24);
+    add('Prescription Refill Reminder', 'Your prescription for Amlodipine 5mg is due for refill in 5 days.', 'success', 'patient', 'PAT-1001', true, 72);
+    add('Appointment Reminder', 'Reminder: You have an appointment with Dr. Suresh Patel tomorrow at 11:00 AM.', 'warning', 'patient', 'PAT-1003', false, 6);
+    add('Health Tip', 'Stay hydrated this summer. Aim for 8-10 glasses of water daily.', 'info', 'patient', 'PAT-1005', true, 120);
+    // Admin notifications (12+ so pagination has multiple pages with PAGE_SIZE=10)
+    add('New Patient Registered', 'Patient Divya Nair (PAT-1006) has been registered successfully.', 'success', 'admin', null, false, 48);
+    add('Appointment Cancellation', 'Appointment APT-1038 with Dr. Ravi Deshmukh was cancelled by patient.', 'warning', 'admin', null, false, 12);
+    add('System Backup Completed', 'Daily backup completed successfully. Database size: 2.4 MB.', 'info', 'admin', null, true, 8);
+    add('Doctor Availability Updated', 'Dr. Kavita Singh has updated her weekly availability schedule.', 'info', 'admin', null, false, 4);
+    add('Pending Approvals', '2 new doctor onboarding requests require your review.', 'warning', 'admin', null, false, 1);
+    add('Monthly Compliance Report', 'July compliance report generated. 98.7% on-time documentation rate.', 'info', 'admin', null, true, 72);
+    add('Staff Leave Approved', 'Dr. Manoj Tiwari (Orthopaedics) approved for annual leave 12-18 Aug.', 'info', 'admin', null, false, 16);
+    add('Equipment Maintenance Alert', 'MRI machine scheduled for preventive maintenance on 08 Jul 2026.', 'warning', 'admin', null, false, 10);
+    add('EMR Audit Complete', 'Electronic Medical Records audit completed. 0 critical findings.', 'success', 'admin', null, true, 36);
+    add('Server Upgrade Notice', 'Hospital management server will undergo upgrade on 10 Jul 2026 02:00-04:00 AM.', 'warning', 'admin', null, false, 6);
+    add('New Department Added', 'Department of Nephrology has been added to CityCare services.', 'success', 'admin', null, false, 120);
+    add('Insurance Policy Update', 'Updated TPA policies for cashless treatment now available in patient portal.', 'info', 'admin', null, true, 48);
+    // Doctor notifications
+    add('New Appointment Booking', 'Patient Arun Sharma booked an appointment with you on 05 Jul 2026 at 10:00 AM.', 'appointment', 'doctor', 'DOC-1001', false, 2);
+    add('Lab Report Reviewed', 'Lab results for patient Rajan Menon (PAT-1005) are ready for review.', 'lab', 'doctor', 'DOC-1001', false, 18);
+    add('Appointment Rescheduled', 'Patient Ganesh Iyer rescheduled their appointment from 04 Jul to 06 Jul 2026.', 'warning', 'doctor', 'DOC-1007', true, 30);
+    add('Patient Follow-up Due', 'Patient Lakshmi Narayanan (PAT-1002) is due for a follow-up visit.', 'success', 'doctor', 'DOC-1003', false, 72);
+    add('Prescription Update', 'Prescription PRX-1001 for patient Arun Sharma has been refilled by the pharmacy.', 'info', 'doctor', 'DOC-1001', true, 6);
+    add('New Referral Received', 'Patient Venkatesh Rao (PAT-1003) referred to Orthopaedics by Dr. Suresh Patel.', 'appointment', 'doctor', 'DOC-1007', false, 28);
+    // Broadcast (visible to all roles)
+    add('Hospital Holiday Notice', 'The hospital will remain closed on 15 Aug 2026 on account of Independence Day.', 'system', 'all', null, false, 96);
+    add('Emergency Drill Scheduled', 'Mandatory emergency response drill on 12 Jul 2026 at 10:00 AM. All staff must attend.', 'warning', 'all', null, false, 20);
+    notifs.forEach(function(n) { if (!n.id) n.id = 'NOTIF-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6); });
+    localStorage.setItem(this.NOTIF_KEY, JSON.stringify(notifs));
+  };
+
+  StorageDB.seedAuditLogData = function() {
+    if (localStorage.getItem(this.AUDIT_KEY)) return;
+    var logs = [];
+    function add(user, action, resource, details, hoursAgo) {
+      var d = new Date(Date.now() - hoursAgo * 3600000);
+      var pad = function(n) { return String(n).padStart(2, '0'); };
+      var ts = d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+      logs.push({
+        id: 'AUDIT-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+        ts: ts,
+        user: user,
+        action: action,
+        resource: resource,
+        details: details,
+        severity: 'Info'
+      });
+    }
+    add('Arun Sharma', 'Login', 'Session', 'Patient logged in successfully', 72);
+    add('Admin', 'Login', 'Session', 'Admin logged in successfully', 48);
+    add('Arun Sharma', 'Book', 'Appointment', 'Booked appointment APT-1036 with Dr. Arvind Kumar', 48);
+    add('Dr. Arvind Kumar', 'Login', 'Session', 'Doctor logged in successfully', 24);
+    add('Admin', 'Create', 'Patient', 'Registered new patient PAT-1006 Divya Nair', 48);
+    add('Arun Sharma', 'Cancel', 'Appointment', 'Cancelled appointment APT-1048 with Dr. Arvind Kumar', 12);
+    add('Dr. Priya Sharma', 'Update', 'Availability', 'Updated weekly schedule for Department of Dermatology', 6);
+    add('Arun Sharma', 'View', 'Medical Records', 'Accessed medical history records', 4);
+    add('Admin', 'Export', 'Reports', 'Exported appointment summary report', 2);
+    add('Dr. Arvind Kumar', 'Update', 'Prescription', 'Prescribed PRX-1001 for patient Arun Sharma', 1);
+    localStorage.setItem(this.AUDIT_KEY, JSON.stringify(logs));
+  };
+
   StorageDB.BACKUP_KEYS = [
     'medtrack_departments','medtrack_doctors','medtrack_patients','medtrack_appointments',
     'medtrack_shifts','medtrack_slots','medtrack_notifications','medtrack_landing_content',
-    'medtrack_landing_status','medtrack_holidays','medtrack_version',
+    'medtrack_landing_status','medtrack_holidays','medtrack_version','medtrack_prescriptions',
+    'medtrack_medical_records',
     'citycare_audit_logs','citycare_admin_creds','citycare_settings','citycare_theme'
   ];
 

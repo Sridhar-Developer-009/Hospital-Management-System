@@ -214,24 +214,30 @@
           </div>
         </div>
 
-        <!-- Compact Stats Row (3 real-data metrics) -->
+        <!-- Compact Stats Row (4 real-data metrics) -->
         <div class="row g-3 mb-4">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="card border-0 shadow-sm rounded-4 p-3 text-center h-100">
               <div class="text-muted fw-medium mb-1" style="font-size: 0.75rem;">TODAY'S APPOINTMENTS</div>
               <div class="fw-bold" style="font-size: 1.6rem; color: var(--primary-green, #047857);" id="statAppts">0</div>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="card border-0 shadow-sm rounded-4 p-3 text-center h-100">
               <div class="text-muted fw-medium mb-1" style="font-size: 0.75rem;">AVAILABLE SLOTS</div>
               <div class="fw-bold" style="font-size: 1.6rem; color: var(--primary-green, #047857);" id="statSlots">0 / 0</div>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="card border-0 shadow-sm rounded-4 p-3 text-center h-100">
               <div class="text-muted fw-medium mb-1" style="font-size: 0.75rem;">COMPLETED TODAY</div>
               <div class="fw-bold" style="font-size: 1.6rem; color: var(--primary-green, #047857);" id="statCompleted">0</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 text-center h-100">
+              <div class="text-muted fw-medium mb-1" style="font-size: 0.75rem;">NO-SHOWS TODAY</div>
+              <div class="fw-bold" style="font-size: 1.6rem; color: #B45309;" id="statNoShow">0</div>
             </div>
           </div>
         </div>
@@ -240,7 +246,6 @@
         <div class="card border-0 shadow-sm rounded-4 p-3">
           <div class="d-flex justify-content-between align-items-center mb-3 px-2">
             <h6 class="fw-bold text-dark mb-0">Today's Schedule</h6>
-            <a href="../appointments/doctor-appointments.html" class="text-decoration-none text-success" style="font-size: 0.8rem; font-weight: 600;">View All</a>
           </div>
           <div class="table-responsive">
             <table class="table table-borderless align-middle mb-0" style="font-size: 0.8rem;">
@@ -267,7 +272,7 @@
       </div>
 
       <!-- Footer -->
-      <footer class="dashboard-footer">
+      <footer class="dashboard-footer d-flex justify-content-center align-items-center gap-3 w-100 mt-4 text-muted" style="font-size: 0.85rem; padding-bottom: 20px;">
         <span>&copy; 2026 CityCare. All rights reserved.</span>
         <span>Version 2.4.0</span>
       </footer>

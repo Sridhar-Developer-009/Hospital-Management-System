@@ -24,11 +24,11 @@ document.addEventListener('DOMContentLoaded', function () {
   var currentDoctorId = sessionStorage.getItem('currentDoctorId') || 'DOC-1001';
 
   // ── State Model (matches console A/R/K/C/- markers) ──
-  var MARKER_TO_STATE = { 'A': 'available', 'R': 'blocked', 'K': 'booked', 'C': 'completed', '-': 'empty' };
-  var STATE_TO_MARKER = { available: 'A', blocked: 'R', booked: 'K', completed: 'C', empty: '-' };
-  var STATE_LABEL = { available: 'Available', blocked: 'Blocked', empty: 'No Slot', booked: 'Booked', completed: 'Completed' };
-  var STATE_COLOR = { available: '#166534', blocked: '#B91C1C', empty: '#7A7268', booked: '#B45309', completed: '#1D4ED8' };
-  var STATE_BG = { available: '#DCFCE7', blocked: '#FEE2E2', empty: '#F0E8DA', booked: '#FEF3C7', completed: '#E0F2FE' };
+  var MARKER_TO_STATE = { 'A': 'available', 'R': 'blocked', 'K': 'booked', 'C': 'completed', 'N': 'noshow', '-': 'empty' };
+  var STATE_TO_MARKER = { available: 'A', blocked: 'R', booked: 'K', completed: 'C', noshow: 'N', empty: '-' };
+  var STATE_LABEL = { available: 'Available', blocked: 'Blocked', empty: 'No Slot', booked: 'Booked', completed: 'Completed', noshow: 'No-Show' };
+  var STATE_COLOR = { available: '#166534', blocked: '#B91C1C', empty: '#7A7268', booked: '#B45309', completed: '#047857', noshow: '#9A3412' };
+  var STATE_BG = { available: '#DCFCE7', blocked: '#FEE2E2', empty: '#F0E8DA', booked: '#FEF3C7', completed: '#DCFCE7', noshow: '#FFF7ED' };
   var CYCLE_STATES = ['available', 'blocked', 'empty'];
   var DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -106,20 +106,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function syncBookedAppointmentsToGrid() {
     var appts = window.StorageDB.getAppointments() || [];
-    var booked = appts.filter(function(a) { return a.doctorId === currentDoctorId && a.status === 'Booked'; });
-    if (!booked.length) return;
+    var relevant = appts.filter(function(a) { return a.doctorId === currentDoctorId && (a.status === 'Booked' || a.status === 'NoShow' || a.status === 'Completed'); });
+    if (!relevant.length) return;
     var today = new Date();
     var startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     var changed = false;
-    booked.forEach(function(appt) {
+    var statusToState = { 'Booked': 'booked', 'NoShow': 'noshow', 'Completed': 'completed' };
+    relevant.forEach(function(appt) {
       var d = new Date(appt.appointmentDate + 'T00:00:00');
-      if (d < startOfToday) return; // Past appointments don't need grid markers
+      if (d < startOfToday) return;
       var dayName = getDayNameFromDate(d);
       var slotIdx = findSlotIndexForAppointment(appt);
       if (slotIdx < 0 || slotIdx > 4) return;
       if (!gridData[dayName]) gridData[dayName] = ['empty','empty','empty','empty','empty'];
-      if (gridData[dayName][slotIdx] !== 'booked') {
-        gridData[dayName][slotIdx] = 'booked';
+      var expectedState = statusToState[appt.status];
+      if (gridData[dayName][slotIdx] !== expectedState) {
+        gridData[dayName][slotIdx] = expectedState;
         changed = true;
       }
     });
@@ -184,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
     if (!match) return;
-    var slotMarker = newStatus === 'Completed' ? 'C' : newStatus === 'NoShow' ? 'R' : newStatus === 'Cancelled' ? 'A' : null;
+    var slotMarker = newStatus === 'Completed' ? 'C' : newStatus === 'NoShow' ? 'N' : newStatus === 'Cancelled' ? 'A' : null;
     window.StorageDB.setApptStatusAndSlot(match.id, newStatus, slotMarker);
     // Dispatch notifications for status changes from availability grid
     if (newStatus === 'Completed') {
@@ -345,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function () {
       DAY_NAMES.forEach(function(day) {
         var existing = gridData[day] || [];
         gridData[day] = existing.map(function(s) {
-          return (s === 'booked' || s === 'completed') ? s : 'available';
+          return (s === 'booked' || s === 'completed' || s === 'noshow') ? s : 'available';
         });
       });
       saveGrid();
@@ -379,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var tbody = document.getElementById('gridBody');
     tbody.innerHTML = '';
 
-    var totals = { available: 0, blocked: 0, empty: 0, booked: 0, completed: 0 };
+    var totals = { available: 0, blocked: 0, empty: 0, booked: 0, completed: 0, noshow: 0 };
 
     var weekDates = [];
     var today = new Date();
@@ -472,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function () {
     cell.querySelector('.slot-sub').textContent = STATE_LABEL[newState] || 'Empty';
 
     // Recalc totals
-    var totals = { available: 0, blocked: 0, empty: 0, booked: 0, completed: 0 };
+    var totals = { available: 0, blocked: 0, empty: 0, booked: 0, completed: 0, noshow: 0 };
     DAY_NAMES.forEach(function(d) {
       (gridData[d] || []).forEach(function(s) { totals[s] = (totals[s] || 0) + 1; });
     });
@@ -518,17 +520,30 @@ document.addEventListener('DOMContentLoaded', function () {
     var now = new Date();
     var canComplete = st.start <= now;
     var canPreManage = st.start > new Date(now.getTime() + 2 * 3600000);
+    var isPast = st.end < now;
 
     var dayOverride = getDaySlotTimes(day);
     var times = dayOverride ? dayOverride.slotTimes : config.slotTimes;
     title.textContent = day + ' \u2014 ' + timeLabel(times[slot]);
 
+    // Past non-booked slots are read-only
+    if (isPast && curState !== 'booked') {
+      var curColor2 = STATE_COLOR[curState] || '#7A7268';
+      var curLabel2 = STATE_LABEL[curState] || 'Empty';
+      info.innerHTML = '<div style="font-size:0.9rem;color:var(--text-muted);">Status: <strong style="color:' + curColor2 + ';">' + curLabel2 + '</strong></div><div style="font-size:0.8rem;color:var(--muted-text);margin-top:6px;">This slot has passed and cannot be modified.</div>';
+      options.innerHTML = '';
+      overlay.style.display = 'flex';
+      overlay.classList.add('open');
+      return;
+    }
+
     var curLabel = STATE_LABEL[curState] || 'Empty';
     var curColor = STATE_COLOR[curState] || '#7A7268';
 
-    // ── Completed: read-only ──
-    if (curState === 'completed') {
-      info.innerHTML = '<div style="font-size:0.9rem;color:var(--text-muted);">Status: <strong style="color:' + curColor + ';">' + curLabel + '</strong></div><div style="font-size:0.8rem;color:var(--muted-text);margin-top:6px;">Completed appointments are read-only.</div>';
+    // ── Completed / No-Show: read-only ──
+    if (curState === 'completed' || curState === 'noshow') {
+      var readonlyMsg = curState === 'completed' ? 'Completed appointments are read-only.' : 'No-show slots are read-only.';
+      info.innerHTML = '<div style="font-size:0.9rem;color:var(--text-muted);">Status: <strong style="color:' + curColor + ';">' + curLabel + '</strong></div><div style="font-size:0.8rem;color:var(--muted-text);margin-top:6px;">' + readonlyMsg + '</div>';
       options.innerHTML = '';
       overlay.style.display = 'flex';
       overlay.classList.add('open');
@@ -547,11 +562,11 @@ document.addEventListener('DOMContentLoaded', function () {
           closeSlotAction();
           showToast('Slot marked as Completed', 'success');
         });
-        slotActionAddBtn(options, 'Mark No-Show', '#B91C1C', '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>', function() {
-          updateCell(cell, day, slot, 'blocked');
+        slotActionAddBtn(options, 'Mark No-Show', '#9A3412', '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>', function() {
+          updateCell(cell, day, slot, 'noshow');
           syncSlotAppointment(day, slot, 'NoShow');
           closeSlotAction();
-          showToast('Marked as No-Show — slot blocked', 'info');
+          showToast('Marked as No-Show', 'info');
         });
       } else if (canPreManage) {
         // More than 2 hours away → can cancel
@@ -609,8 +624,8 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.legend-item').forEach(function(item) {
     item.addEventListener('click', function() {
       var st = this.dataset.state;
-      if (st === 'booked' || st === 'completed') {
-        showToast('Booked/Completed are set automatically from appointments', 'info');
+      if (st === 'booked' || st === 'completed' || st === 'noshow') {
+        showToast('Booked/Completed/No-Show are set automatically from appointments', 'info');
         return;
       }
       if (paintState === st) {
@@ -632,8 +647,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var day = cell.dataset.day;
     var slot = parseInt(cell.dataset.slot);
     var cur = gridData[day][slot];
-    if (cur === 'booked' || cur === 'completed') {
-      showToast('Cannot paint over booked/completed slots', 'info');
+    if (cur === 'booked' || cur === 'completed' || cur === 'noshow') {
+      showToast('Cannot paint over booked/completed/no-show slots', 'info');
       return;
     }
     updateCell(cell, day, slot, paintState);
@@ -708,6 +723,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('statBlocked').textContent = totals.blocked || 0;
     document.getElementById('statBooked').textContent = totals.booked || 0;
     document.getElementById('statCompleted').textContent = totals.completed || 0;
+    document.getElementById('statNoShow').textContent = totals.noshow || 0;
     document.getElementById('statEmpty').textContent = totals.empty || 0;
   }
 
@@ -724,7 +740,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var hasBookedOrCompleted = false;
     DAY_NAMES.forEach(function(day) {
       (gridData[day] || []).forEach(function(s) {
-        if (s === 'booked' || s === 'completed') hasBookedOrCompleted = true;
+        if (s === 'booked' || s === 'completed' || s === 'noshow') hasBookedOrCompleted = true;
       });
     });
     if (hasBookedOrCompleted) {
