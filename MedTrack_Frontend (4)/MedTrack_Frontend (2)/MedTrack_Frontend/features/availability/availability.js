@@ -108,13 +108,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var appts = window.StorageDB.getAppointments() || [];
     var relevant = appts.filter(function(a) { return a.doctorId === currentDoctorId && (a.status === 'Booked' || a.status === 'NoShow' || a.status === 'Completed'); });
     if (!relevant.length) return;
-    var today = new Date();
-    var startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     var changed = false;
     var statusToState = { 'Booked': 'booked', 'NoShow': 'noshow', 'Completed': 'completed' };
     relevant.forEach(function(appt) {
       var d = new Date(appt.appointmentDate + 'T00:00:00');
-      if (d < startOfToday) return;
       var dayName = getDayNameFromDate(d);
       var slotIdx = findSlotIndexForAppointment(appt);
       if (slotIdx < 0 || slotIdx > 4) return;
@@ -172,10 +169,17 @@ document.addEventListener('DOMContentLoaded', function () {
     window.StorageDB.saveDoctorSlots(currentDoctorId, output);
   }
 
-  function syncSlotAppointment(dayName, slotIdx, newStatus) {
-    var st = getSlotDateTime(dayName, slotIdx);
-    var dateStr = st.start.getFullYear() + '-' + String(st.start.getMonth() + 1).padStart(2, '0') + '-' + String(st.start.getDate()).padStart(2, '0');
-    var timeStr = String(st.start.getHours()).padStart(2, '0') + ':' + String(st.start.getMinutes()).padStart(2, '0');
+  function syncSlotAppointment(dayName, slotIdx, newStatus, dateStr) {
+    var timeStr;
+    if (!dateStr) {
+      var st = getSlotDateTime(dayName, slotIdx);
+      dateStr = st.start.getFullYear() + '-' + String(st.start.getMonth() + 1).padStart(2, '0') + '-' + String(st.start.getDate()).padStart(2, '0');
+      timeStr = String(st.start.getHours()).padStart(2, '0') + ':' + String(st.start.getMinutes()).padStart(2, '0');
+    } else {
+      var dayOverride = getDaySlotTimes(dayName);
+      var times = dayOverride ? dayOverride.slotTimes : config.slotTimes;
+      timeStr = times[slotIdx];
+    }
     var allAppts = window.StorageDB.getAppointments();
     var match = null;
     for (var i = 0; i < allAppts.length; i++) {
@@ -246,44 +250,58 @@ document.addEventListener('DOMContentLoaded', function () {
     return parseInt(p[0]) * 60 + parseInt(p[1]);
   }
 
+  function clearGlows() {
+    document.querySelectorAll('.slot-glow').forEach(function(el) { el.classList.remove('slot-glow'); });
+  }
+
+  function glowField(id) {
+    var el = document.getElementById(id);
+    if (el) { el.classList.add('slot-glow'); }
+  }
+
   function validateSetup() {
     var err = document.getElementById('setupError');
     err.textContent = '';
+    clearGlows();
 
     // Check breaks and lunch don't overlap
     var b1s = toMins(document.getElementById('setupB1S').value);
     var b1e = toMins(document.getElementById('setupB1E').value);
-    if (b1e <= b1s) { err.textContent = 'Break 1 end must be after start.'; return false; }
+    if (b1e <= b1s) { glowField('setupB1E'); err.textContent = 'Break 1 end must be after start.'; return false; }
 
     var ls = toMins(document.getElementById('setupLunchS').value);
     var le = toMins(document.getElementById('setupLunchE').value);
-    if (le <= ls) { err.textContent = 'Lunch end must be after start.'; return false; }
-    if (ls < b1e && le > b1s) { err.textContent = 'Lunch overlaps with Break 1.'; return false; }
+    if (le <= ls) { glowField('setupLunchE'); err.textContent = 'Lunch end must be after start.'; return false; }
+    if (ls < b1e && le > b1s) { glowField('setupLunchS'); glowField('setupB1E'); err.textContent = 'Lunch overlaps with Break 1.'; return false; }
 
     var b2s = toMins(document.getElementById('setupB2S').value);
     var b2e = toMins(document.getElementById('setupB2E').value);
-    if (b2e <= b2s) { err.textContent = 'Break 2 end must be after start.'; return false; }
-    if ((b2s < le && b2e > ls) || (b2s < b1e && b2e > b1s)) { err.textContent = 'Break 2 overlaps with another break or lunch.'; return false; }
+    if (b2e <= b2s) { glowField('setupB2E'); err.textContent = 'Break 2 end must be after start.'; return false; }
+    if (b2s < le && b2e > ls) { glowField('setupB2S'); glowField('setupLunchE'); err.textContent = 'Break 2 overlaps with Lunch.'; return false; }
+    if (b2s < b1e && b2e > b1s) { glowField('setupB2S'); glowField('setupB1E'); err.textContent = 'Break 2 overlaps with Break 1.'; return false; }
 
     // Check slots don't overlap with breaks or each other
     var dur = parseInt(document.getElementById('setupDuration').value, 10) || 30;
-    var breakRanges = [[b1s, b1e], [ls, le], [b2s, b2e]];
+    var breakRanges = [[b1s, b1e, 'Break 1'], [ls, le, 'Lunch'], [b2s, b2e, 'Break 2']];
     var slotValues = [];
     for (var i = 0; i < 5; i++) {
       var sv = document.getElementById('setupSlot' + (i + 1)).value;
-      if (!sv) { err.textContent = 'Slot ' + (i + 1) + ' time is required.'; return false; }
+      if (!sv) { glowField('setupSlot' + (i + 1)); err.textContent = 'Slot ' + (i + 1) + ' time is required.'; return false; }
       var ss = toMins(sv);
       var se = ss + dur;
       for (var b = 0; b < breakRanges.length; b++) {
         if (ss < breakRanges[b][1] && se > breakRanges[b][0]) {
-          err.textContent = 'Slot ' + (i + 1) + ' overlaps with a break/lunch.'; return false;
+          glowField('setupSlot' + (i + 1));
+          err.textContent = 'Slot ' + (i + 1) + ' (' + sv + ') overlaps with ' + breakRanges[b][2] + '.'; return false;
         }
       }
       for (var p = 0; p < slotValues.length; p++) {
         var ps = toMins(slotValues[p]);
         var pe = ps + dur;
         if (ss < pe && se > ps) {
-          err.textContent = 'Slot ' + (i + 1) + ' overlaps with Slot ' + (p + 1) + '.'; return false;
+          glowField('setupSlot' + (i + 1));
+          glowField('setupSlot' + (p + 1));
+          err.textContent = 'Slot ' + (i + 1) + ' (' + sv + ') overlaps with Slot ' + (p + 1) + ' (' + slotValues[p] + '). Ensure at least ' + dur + ' min gap between slots.'; return false;
         }
       }
       slotValues.push(sv);
@@ -313,13 +331,47 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (_editingDay) {
       var editedDay = _editingDay;
+      var daySlots = gridData[editedDay] || [];
+
+      var currentDayTimes = getDaySlotTimes(editedDay);
+      var origTimes = currentDayTimes ? currentDayTimes.slotTimes : config.slotTimes;
+      var origDur = currentDayTimes ? currentDayTimes.slotDuration : config.slotDuration;
+      var hadBookingPreserved = false;
+
+      // ── Determine past slots (using original times) ──
+      var now = new Date();
+      var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      var dayDate = new Date(todayStart);
+      var dayOffset = DAY_NAMES.indexOf(editedDay) - todayStart.getDay();
+      dayDate.setDate(todayStart.getDate() + dayOffset);
+      var isPastSlot = [];
+      for (var si = 0; si < 5; si++) {
+        isPastSlot[si] = false;
+        if (origTimes && origTimes[si]) {
+          var p = origTimes[si].split(':');
+          var ss = new Date(dayDate);
+          ss.setHours(parseInt(p[0], 10), parseInt(p[1], 10), 0, 0);
+          if (new Date(ss.getTime() + origDur * 60000) < now) {
+            isPastSlot[si] = true;
+          }
+        }
+      }
+
+      // ── Preserve times: past slots + booked/completed/noshow ──
+      for (var si = 0; si < 5; si++) {
+        var preserve = isPastSlot[si] || daySlots[si] === 'booked' || daySlots[si] === 'completed' || daySlots[si] === 'noshow';
+        if (preserve && origTimes && origTimes[si] && origTimes[si] !== slotVals[si]) {
+          slotVals[si] = origTimes[si];
+          document.getElementById('setupSlot' + (si + 1)).value = origTimes[si];
+          hadBookingPreserved = true;
+        }
+      }
+
       dayTimes[editedDay] = { slotTimes: slotVals, slotDuration: dur };
       saveDayTimes();
-      // Reset markers for this day: booked/completed stay, rest become available
-      // (Matches C# SetDayCustomSlotsAsync: unbooked slots replaced, booked preserved)
-      var daySlots = gridData[editedDay] || [];
+      // Reset: past + booked/completed/noshow stay, rest become available
       for (var si = 0; si < 5; si++) {
-        if (daySlots[si] !== 'booked' && daySlots[si] !== 'completed') {
+        if (!isPastSlot[si] && daySlots[si] !== 'booked' && daySlots[si] !== 'completed' && daySlots[si] !== 'noshow') {
           daySlots[si] = 'available';
         }
       }
@@ -329,8 +381,37 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('dayOverrideBanner').style.display = 'none';
       updateGenerateBtnLabel();
       switchTab('grid');
-      showToast(editedDay + ' configured with new times and available slots', 'success');
+      var msg = editedDay + ' configured with new times';
+      if (hadBookingPreserved) msg += ' (past/booked/completed/noshow slots preserved)';
+      showToast(msg, hadBookingPreserved ? 'info' : 'success');
     } else {
+      // ── Preserve original times for booked/completed/noshow slots ──
+      // Before overwriting config, create day overrides for any day that
+      // has a booked/completed/noshow slot at an index whose time changed.
+      var hadBookingPreserved = false;
+      var oldConfigTimes = config.slotTimes.slice();
+      DAY_NAMES.forEach(function(day) {
+        var existing = gridData[day] || [];
+        var dayOverride = getDaySlotTimes(day);
+        var origTimes = dayOverride ? dayOverride.slotTimes : oldConfigTimes;
+        var newSlotTimes = slotVals.slice();
+        var changed = false;
+        for (var si = 0; si < 5; si++) {
+          if (existing[si] === 'booked' || existing[si] === 'completed' || existing[si] === 'noshow') {
+            if (origTimes && origTimes[si] && origTimes[si] !== slotVals[si]) {
+              newSlotTimes[si] = origTimes[si];
+              changed = true;
+            }
+          }
+        }
+        if (changed) {
+          var dur = dayOverride ? dayOverride.slotDuration : config.slotDuration;
+          dayTimes[day] = { slotTimes: newSlotTimes, slotDuration: dur };
+          hadBookingPreserved = true;
+        }
+      });
+      if (hadBookingPreserved) saveDayTimes();
+
       config.slotDuration = dur;
       config.break1Start = document.getElementById('setupB1S').value;
       config.break1End = document.getElementById('setupB1E').value;
@@ -352,7 +433,9 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       saveGrid();
       switchTab('grid');
-      showToast('Grid generated from setup (booked/completed preserved)', 'success');
+      var msg = 'Grid generated from setup (booked/completed preserved)';
+      if (hadBookingPreserved) msg += '; booked slot times preserved via day override';
+      showToast(msg, hadBookingPreserved ? 'info' : 'success');
     }
   });
 
@@ -428,12 +511,23 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       tr.appendChild(tdDay);
 
+      var now = new Date();
       for (var si2 = 0; si2 < 5; si2++) {
         var state = slots[si2] || 'empty';
         var cell = document.createElement('td');
-        cell.className = 'avail-cell slot-' + state + (isWeekend ? ' weekend' : '');
+    var slotTimeStr = daySlotTimes[si2];
+    var isPastSlot = false;
+    if (slotTimeStr) {
+      var sp = slotTimeStr.split(':');
+      var slotDate = new Date(dateObj);
+      slotDate.setHours(parseInt(sp[0], 10), parseInt(sp[1], 10), 0, 0);
+      var slotEnd = new Date(slotDate.getTime() + dayDuration * 60000);
+      isPastSlot = slotEnd < now;
+    }
+        cell.className = 'avail-cell slot-' + state + (isWeekend ? ' weekend' : '') + (isPastSlot ? ' slot-past' : '');
         cell.dataset.day = dayName;
         cell.dataset.slot = si2;
+        cell.dataset.date = dateObj.toISOString().split('T')[0];
 
         var timeHtml = document.createElement('span');
         timeHtml.className = 'slot-time';
@@ -454,8 +548,9 @@ document.addEventListener('DOMContentLoaded', function () {
           if (paintState) return;
           var day = this.dataset.day;
           var slot = parseInt(this.dataset.slot);
+          var dateStr = this.dataset.date;
           var cur = gridData[day][slot];
-          openSlotAction(this, day, slot, cur);
+          openSlotAction(this, day, slot, cur, dateStr);
         });
 
         tr.appendChild(cell);
@@ -467,9 +562,25 @@ document.addEventListener('DOMContentLoaded', function () {
     updateStats(totals);
   }
 
+  function isSlotPast(dayName, slotIdx, dateStr) {
+    if (!dateStr) return true;
+    var dayOverride = getDaySlotTimes(dayName);
+    var times = dayOverride ? dayOverride.slotTimes : config.slotTimes;
+    var dur = dayOverride ? dayOverride.slotDuration : config.slotDuration;
+    var timeStr = times[slotIdx];
+    if (!timeStr) return true;
+    var p = timeStr.split(':');
+    var slotDate = new Date(dateStr + 'T00:00:00');
+    slotDate.setHours(parseInt(p[0], 10), parseInt(p[1], 10), 0, 0);
+    var slotEnd = new Date(slotDate.getTime() + dur * 60000);
+    return slotEnd < new Date();
+  }
+
   function updateCell(cell, day, slot, newState) {
     gridData[day][slot] = newState;
-    cell.className = 'avail-cell slot-' + newState + (cell.classList.contains('weekend') ? ' weekend' : '');
+    var dateStr = cell.dataset.date;
+    var isPastSlot = isSlotPast(day, slot, dateStr);
+    cell.className = 'avail-cell slot-' + newState + (cell.classList.contains('weekend') ? ' weekend' : '') + (isPastSlot ? ' slot-past' : '');
     cell.querySelector('.slot-label').textContent = STATE_TO_MARKER[newState] || '-';
     cell.querySelector('.slot-sub').textContent = STATE_LABEL[newState] || 'Empty';
 
@@ -483,12 +594,14 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ── Time helpers ──
-  function getSlotDateTime(dayName, slotIdx) {
+  function getSlotDateTime(dayName, slotIdx, dateObj) {
     var now = new Date();
-    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    var dayIndex = DAY_NAMES.indexOf(dayName);
-    var dateObj = new Date(today);
-    dateObj.setDate(today.getDate() + dayIndex);
+    if (!dateObj) {
+      var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      var dayIndex = DAY_NAMES.indexOf(dayName);
+      dateObj = new Date(today);
+      dateObj.setDate(today.getDate() + dayIndex);
+    }
     var dayOverride = getDaySlotTimes(dayName);
     var times = dayOverride ? dayOverride.slotTimes : config.slotTimes;
     var dur = dayOverride ? dayOverride.slotDuration : config.slotDuration;
@@ -510,21 +623,29 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ── Slot Action Card ──
-  function openSlotAction(cell, day, slot, curState) {
+  function openSlotAction(cell, day, slot, curState, dateStr) {
     var overlay = document.getElementById('slotOverlay');
     var title = document.getElementById('slotCardTitle');
     var info = document.getElementById('slotCardInfo');
     var options = document.getElementById('slotCardOptions');
 
-    var st = getSlotDateTime(day, slot);
-    var now = new Date();
-    var canComplete = st.start <= now;
-    var canPreManage = st.start > new Date(now.getTime() + 2 * 3600000);
-    var isPast = st.end < now;
-
     var dayOverride = getDaySlotTimes(day);
     var times = dayOverride ? dayOverride.slotTimes : config.slotTimes;
+    var dur = dayOverride ? dayOverride.slotDuration : config.slotDuration;
     title.textContent = day + ' \u2014 ' + timeLabel(times[slot]);
+
+    var now = new Date();
+    var slotStart = new Date();
+    var slotEnd = new Date();
+    if (dateStr && times[slot]) {
+      var sp = times[slot].split(':');
+      slotStart = new Date(dateStr + 'T00:00:00');
+      slotStart.setHours(parseInt(sp[0], 10), parseInt(sp[1], 10), 0, 0);
+      slotEnd = new Date(slotStart.getTime() + dur * 60000);
+    }
+    var canComplete = slotStart <= now;
+    var canPreManage = slotStart > new Date(now.getTime() + 2 * 3600000);
+    var isPast = slotEnd < now;
 
     // Past non-booked slots are read-only
     if (isPast && curState !== 'booked') {
@@ -558,13 +679,13 @@ document.addEventListener('DOMContentLoaded', function () {
         info.innerHTML = '<div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:8px;">Status: <strong style="color:#B45309;">Booked (K)</strong></div><div style="font-size:0.8rem;color:var(--muted-text);">This slot has started. Mark as completed or no-show.</div>';
         slotActionAddBtn(options, 'Mark Completed', '#1D4ED8', '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>', function() {
           updateCell(cell, day, slot, 'completed');
-          syncSlotAppointment(day, slot, 'Completed');
+          syncSlotAppointment(day, slot, 'Completed', dateStr);
           closeSlotAction();
           showToast('Slot marked as Completed', 'success');
         });
         slotActionAddBtn(options, 'Mark No-Show', '#9A3412', '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>', function() {
           updateCell(cell, day, slot, 'noshow');
-          syncSlotAppointment(day, slot, 'NoShow');
+          syncSlotAppointment(day, slot, 'NoShow', dateStr);
           closeSlotAction();
           showToast('Marked as No-Show', 'info');
         });
@@ -574,7 +695,7 @@ document.addEventListener('DOMContentLoaded', function () {
         slotActionAddBtn(options, 'Cancel Appointment', '#B91C1C', '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>', function() {
           if (confirm('Cancel this appointment and release the slot?')) {
             updateCell(cell, day, slot, 'available');
-            syncSlotAppointment(day, slot, 'Cancelled');
+            syncSlotAppointment(day, slot, 'Cancelled', dateStr);
             closeSlotAction();
             showToast('Appointment cancelled, slot released', 'info');
           }
@@ -751,7 +872,7 @@ document.addEventListener('DOMContentLoaded', function () {
     DAY_NAMES.forEach(function(day) {
       var slots = gridData[day] || [];
       for (var i = 0; i < 5; i++) {
-        if (slots[i] !== 'booked' && slots[i] !== 'completed') {
+        if (slots[i] !== 'booked' && slots[i] !== 'completed' && slots[i] !== 'noshow') {
           slots[i] = 'empty';
         }
       }
@@ -765,7 +886,7 @@ document.addEventListener('DOMContentLoaded', function () {
     DAY_NAMES.forEach(function(day) {
       var slots = gridData[day] || [];
       for (var i = 0; i < 5; i++) {
-        if (slots[i] !== 'booked' && slots[i] !== 'completed') {
+        if (slots[i] !== 'booked' && slots[i] !== 'completed' && slots[i] !== 'noshow') {
           slots[i] = 'available';
         }
       }
@@ -794,13 +915,17 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(function() { t.classList.remove('show'); setTimeout(function() { t.remove(); }, 300); }, 2800);
   }
 
-  // ── Cross-tab sync ──
+  // ── Cross-tab & same-tab sync ──
+  function reloadGridData() {
+    loadGrid();
+    if (document.getElementById('panelGrid').style.display !== 'none') renderGrid();
+  }
   window.addEventListener('storage', function(e) {
     if (e.key === 'medtrack_slots' || e.key === 'medtrack_appointments' || (e.key && e.key.indexOf('medtrack_config_') === 0)) {
-      loadGrid();
-      if (document.getElementById('panelGrid').style.display !== 'none') renderGrid();
+      reloadGridData();
     }
   });
+  document.addEventListener('medtrack:dataChanged', reloadGridData);
 
   // ── Init ──
   loadGrid();

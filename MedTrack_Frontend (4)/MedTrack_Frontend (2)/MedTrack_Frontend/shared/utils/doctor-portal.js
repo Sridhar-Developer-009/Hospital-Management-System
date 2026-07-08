@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // ── Date Helpers ──
   var today = new Date();
-  var todayStr = today.toISOString().split('T')[0];
+  var todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
   var todayDayName = today.toLocaleDateString('en-US', { weekday: 'long' });
   var timeStr = today.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
@@ -227,6 +227,34 @@ document.addEventListener('DOMContentLoaded', function () {
         sessionStorage.clear();
         window.location.href = link.getAttribute('href');
       });
+    }
+  });
+
+  // ── Quick Actions Toggle ──
+  var qaFab = document.getElementById('qaFab');
+  var qaPanel = document.getElementById('qaPanel');
+  var qaPanelClose = document.getElementById('qaPanelClose');
+
+  function closeQA() {
+    qaFab.classList.remove('open');
+    qaPanel.classList.remove('open');
+  }
+
+  if (qaFab) {
+    qaFab.addEventListener('click', function(e) {
+      e.stopPropagation();
+      qaFab.classList.toggle('open');
+      qaPanel.classList.toggle('open');
+    });
+  }
+
+  if (qaPanelClose) {
+    qaPanelClose.addEventListener('click', closeQA);
+  }
+
+  document.addEventListener('click', function(e) {
+    if (qaPanel && qaFab && !qaFab.contains(e.target) && !qaPanel.contains(e.target)) {
+      closeQA();
     }
   });
 

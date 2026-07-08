@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help Center - CityCare</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../shared/components/layout.css">
+  <style>
+    .help-layout .sidebar { width: 270px; }
+    .help-card { border-radius: 12px; border: 1px solid var(--light-border, #E5DDD5); background: var(--bg-card, #FFF); padding: 24px; }
+    .help-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .faq-accordion .accordion-item { border: 1px solid var(--light-border, #E5DDD5); border-radius: 10px !important; margin-bottom: 8px; overflow: hidden; }
+    .faq-accordion .accordion-button { font-weight: 600; font-size: 0.9rem; color: var(--dark-text, #2D2A24); background: var(--bg-card, #FFF); box-shadow: none; }
+    .faq-accordion .accordion-button:not(.collapsed) { background: var(--primary-light, #D1FAE5); color: var(--primary-brand, #047857); }
+    .faq-accordion .accordion-body { font-size: 0.85rem; color: var(--muted-text, #6B7280); line-height: 1.6; }
+    .help-search-box { max-width: 600px; }
+    .help-search-box input { border-radius: 12px; padding: 12px 18px; font-size: 0.95rem; border: 2px solid var(--light-border, #E5DDD5); background: var(--bg-card, #FFF); }
+    .help-search-box input:focus { border-color: var(--primary-brand, #047857); box-shadow: 0 0 0 3px rgba(4,120,87,0.12); }
+    .help-category-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .getting-started-card { border-radius: 12px; border: 1px solid var(--light-border, #E5DDD5); padding: 20px; text-align: center; transition: all 0.2s; cursor: pointer; }
+    .getting-started-card:hover { border-color: var(--primary-brand, #047857); background: var(--primary-light, #D1FAE5); transform: translateY(-2px); }
+    [data-theme="dark"] .help-card { background: var(--bg-card, #1F2937); }
+    [data-theme="dark"] .faq-accordion .accordion-button { background: var(--bg-card, #1F2937); color: var(--dark-text, #F3F4F6); }
+    [data-theme="dark"] .faq-accordion .accordion-button:not(.collapsed) { background: rgba(4,120,87,0.2); color: #10B981; }
+    [data-theme="dark"] .faq-accordion .accordion-body { color: #D1D5DB; }
+    [data-theme="dark"] .getting-started-card:hover { background: rgba(4,120,87,0.15); }
+    .help-chatbot-notice { border-radius: 12px; background: var(--primary-light, #D1FAE5); border: 1px solid var(--primary-brand, #047857); padding: 16px 20px; display: flex; align-items: center; gap: 12px; }
+    .help-chatbot-notice svg { flex-shrink: 0; }
+  </style>
+  <script>
+    (function() {
+      function updateIcon(isDark) {
+        var icon = document.getElementById('darkModeIcon');
+        if(icon) {
+          icon.innerHTML = isDark
+            ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'
+            : '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+        }
+      }
+      function applyTheme() {
+        var stored = localStorage.getItem('citycare_theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var isDark = stored === 'dark' || (!stored && prefersDark);
+        if (isDark) { document.documentElement.setAttribute('data-theme', 'dark'); } else { document.documentElement.removeAttribute('data-theme'); }
+        updateIcon(isDark);
+      }
+      applyTheme();
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+        if (!localStorage.getItem('citycare_theme')) applyTheme();
+      });
+      document.addEventListener('DOMContentLoaded', function() {
+        var toggle = document.getElementById('darkModeToggle');
+        if(toggle) {
+          toggle.addEventListener('click', function() {
+            var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('citycare_theme', 'light'); updateIcon(false); }
+            else { document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('citycare_theme', 'dark'); updateIcon(true); }
+          });
+        }
+        applyTheme();
+      });
+    })();
+  </script>
+</head>
+<body>
+  <div class="admin-layout help-layout">
+    <aside class="sidebar" id="sidebar">
+      <script>(function(){var s=localStorage.getItem('medtrackSidebarState');if(window.innerWidth>1280&&s!=='closed')document.getElementById('sidebar').classList.add('open');else if(window.innerWidth<=1280&&s==='open')document.getElementById('sidebar').classList.add('open');})();</script>
+      <div class="sidebar-header">
+        <button class="sidebar-close-btn" id="sidebar-close" aria-label="Close sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="sidebar-brand-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <div class="sidebar-brand-text">CityCare</div>
+      </div>
+      <nav class="sidebar-nav" id="helpSidebarNav">
+      </nav>
+      <div class="sidebar-footer">
+        <a href="#" class="sidebar-link active" id="helpSidebarHelpLink">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          Help
+        </a>
+        <a href="../../index.html" class="sidebar-link logout-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Logout
+        </a>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <main class="main-content">
+      <header class="top-header">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle sidebar">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="header-search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="helpSearchInput" class="form-control border-0 shadow-none bg-transparent" placeholder="Search help topics..." style="font-size:0.85rem;">
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="d-flex align-items-center gap-2">
+            <a href="javascript:void(0)" id="helpDashboardLink" class="btn btn-sm fw-semibold" style="background:var(--primary-brand);color:#fff;border-radius:8px;padding:6px 16px;font-size:0.8rem;text-decoration:none;">Back to Dashboard</a>
+          </div>
+          <button class="icon-btn" id="darkModeToggle" aria-label="Toggle dark mode">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path id="darkModeIcon" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="dashboard-body container-fluid p-4">
+        <nav class="breadcrumb-bar mb-3" aria-label="Breadcrumb">
+          <a href="../../index.html" class="breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Home
+          </a>
+          <svg class="breadcrumb-sep" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <span class="breadcrumb-current">Help Center</span>
+        </nav>
+
+        <div class="mb-4">
+          <h2 class="fw-bold mb-1" style="font-family: 'Outfit', sans-serif; color: var(--dark-text);" id="helpGreeting">Help Center</h2>
+          <p class="text-muted mb-0" style="font-size: 0.9rem;">Find answers, get guidance, and learn how to make the most of CityCare.</p>
+        </div>
+
+        <div class="help-search-box mb-4 mx-auto">
+          <input type="text" id="helpTopicSearch" class="form-control" placeholder="Search for help topics, e.g. book appointment, change password...">
+          <div id="helpSearchResults" class="mt-2" style="display:none;"></div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-12">
+            <div class="help-chatbot-notice">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-brand, #047857)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              <div class="flex-grow-1">
+                <strong style="color:var(--primary-brand, #047857);">Need immediate help?</strong>
+                <span class="text-muted" style="font-size:0.85rem;"> Click the chat button at the bottom right to ask the CityCare virtual assistant.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4 mb-4" id="gettingStartedRow">
+          <div class="col-12"><h5 class="fw-bold" style="color:var(--dark-text);">Getting Started</h5></div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <div class="col-12">
+            <h5 class="fw-bold mb-3" style="color:var(--dark-text);">Frequently Asked Questions</h5>
+            <div class="faq-accordion accordion" id="faqAccordion">
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="help-card h-100">
+              <h6 class="fw-bold mb-2" style="color:var(--dark-text);">Contact Support</h6>
+              <p class="text-muted" style="font-size:0.85rem;">Can't find what you're looking for? Our support team is here to help.</p>
+              <button class="btn fw-semibold" style="background:var(--primary-brand);color:#fff;border-radius:8px;" id="contactSupportBtn">Submit a Request</button>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="help-card h-100">
+              <h6 class="fw-bold mb-2" style="color:var(--dark-text);">System Status</h6>
+              <p class="text-muted" style="font-size:0.85rem;">All systems are operational. Check here for any scheduled maintenance or outages.</p>
+              <div class="d-flex align-items-center gap-2">
+                <span style="width:10px;height:10px;border-radius:50%;background:#059669;display:inline-block;"></span>
+                <span class="fw-semibold" style="font-size:0.85rem;color:#059669;">All Systems Online</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="dashboard-footer text-muted" style="font-size: 0.85rem;">
+        <span>&copy; 2026 CityCare. All rights reserved.</span>
+        <span>Version 2.4.0</span>
+      </footer>
+    </main>
+  </div>
+
+  <script src="../../shared/utils/storage.js"></script>
+  <script src="../../assets/js/mockData.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../shared/components/help-widget.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var role = 'guest';
+      var userName = 'User';
+      var dashboardLink = '';
+      var sidebarLinks = [];
+
+      if (sessionStorage.getItem('currentAdminId')) {
+        role = 'admin';
+        userName = sessionStorage.getItem('adminName') || 'Admin';
+        dashboardLink = '../dashboard/admin-dashboard.html';
+        sidebarLinks = [
+          { href: '../dashboard/admin-dashboard.html', label: 'Dashboard', icon: 'rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7' },
+          { label: 'MANAGEMENT', divider: true },
+          { href: '../doctors/admin-doctors.html', label: 'Doctor Management', icon: 'path d="M22 12h-4l-3 9L9 3l-3 9H2"' },
+          { href: '../patients/admin-patients.html', label: 'Patient Management', icon: 'path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"' },
+          { href: '../appointments/admin-appointments.html', label: 'Appointment Management', icon: 'rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"' },
+          { label: 'COMMUNICATION', divider: true },
+          { href: '../notifications/admin-notifications.html', label: 'Notifications', icon: 'path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"' },
+          { label: 'ANALYTICS', divider: true },
+          { href: '../reports/reports.html', label: 'Reports & Analytics', icon: 'line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"' },
+          { label: 'ADMINISTRATION', divider: true },
+          { href: '../content/content.html', label: 'Content Management', icon: 'path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"' },
+          { href: '../backup/backup.html', label: 'Backup & Restore', icon: 'path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"' },
+          { href: '../settings/settings.html', label: 'System Settings', icon: 'circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"' },
+          { href: '../audit-logs/audit-logs.html', label: 'Audit Logs', icon: 'path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"' },
+        ];
+      } else if (sessionStorage.getItem('currentDoctorId')) {
+        role = 'doctor';
+        userName = sessionStorage.getItem('doctorName') || 'Doctor';
+        dashboardLink = '../dashboard/doctor-dashboard.html';
+        sidebarLinks = [
+          { href: '../dashboard/doctor-dashboard.html', label: 'Dashboard', icon: 'path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"' },
+          { label: 'SCHEDULE', divider: true },
+          { href: '../appointments/doctor-appointments.html', label: 'My Appointments', icon: 'rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"' },
+          { href: '../availability/availability.html', label: 'Availability', icon: 'circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"' },
+          { label: 'PATIENT CARE', divider: true },
+          { href: '../patient-records/patient-records.html', label: 'Patient Records', icon: 'path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"' },
+          { label: 'COMMUNICATION', divider: true },
+          { href: '../notifications/doctor-notifications.html', label: 'Notifications', icon: 'path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"' },
+          { label: 'ACCOUNT', divider: true },
+          { href: '../profile/doctor-profile.html', label: 'My Profile', icon: 'path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"' },
+        ];
+      } else if (sessionStorage.getItem('currentPatientId')) {
+        role = 'patient';
+        userName = sessionStorage.getItem('patientName') || 'Patient';
+        dashboardLink = '../dashboard/patient-dashboard.html';
+        sidebarLinks = [
+          { href: '../dashboard/patient-dashboard.html', label: 'Dashboard', icon: 'path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"' },
+          { label: 'APPOINTMENTS', divider: true },
+          { href: '../appointments/book-appointment.html', label: 'Book Appointment', icon: 'rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="12" y1="14" x2="12" y2="18"></line><line x1="9" y1="16" x2="15" y2="16"' },
+          { href: '../appointments/patient-appointments.html', label: 'My Appointments', icon: 'rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"' },
+          { label: 'HEALTH RECORDS', divider: true },
+          { href: '../medical-history/medical-history.html', label: 'Medical History', icon: 'path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"' },
+          { href: '../prescriptions/patient-prescriptions.html', label: 'Prescriptions', icon: 'path d="M10 2v7.31"></path><path d="M14 9.3V1.99"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path><path d="M5.52 16h12.96"' },
+          { label: 'COMMUNICATION', divider: true },
+          { href: '../notifications/patient-notifications.html', label: 'Notifications', icon: 'path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"' },
+          { label: 'ACCOUNT', divider: true },
+          { href: '../profile/patient-profile.html', label: 'My Profile', icon: 'path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"' },
+        ];
+      } else {
+        dashboardLink = '../../index.html';
+      }
+
+      var esc = window.StorageDB ? StorageDB.escapeHtml : function(s) { return s || ''; };
+
+      var nav = document.getElementById('helpSidebarNav');
+      if (nav && sidebarLinks.length) {
+        var html = '';
+        for (var i = 0; i < sidebarLinks.length; i++) {
+          var link = sidebarLinks[i];
+          if (link.divider) {
+            html += '<div class="sidebar-section-label">' + esc(link.label) + '</div>';
+          } else {
+            html += '<a href="' + esc(link.href) + '" class="sidebar-link">' +
+              '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><' + link.icon + '></svg> ' +
+              esc(link.label) + '</a>';
+          }
+        }
+        nav.innerHTML = html;
+      }
+
+      var dl = document.getElementById('helpDashboardLink');
+      if (dl && dashboardLink) dl.href = dashboardLink;
+
+      var greeting = document.getElementById('helpGreeting');
+      if (greeting) {
+        var hour = new Date().getHours();
+        var g = 'Good Morning';
+        if (hour >= 12 && hour < 17) g = 'Good Afternoon';
+        else if (hour >= 17) g = 'Good Evening';
+        greeting.textContent = g + ', ' + userName + '! Welcome to the Help Center.';
+      }
+
+      var esc2 = window.StorageDB ? StorageDB.escapeHtml : function(s) { return s || ''; };
+
+      var roleFaqs = {
+        admin: {
+          'Appointment Management': [
+            { q: 'How do I view all appointments?', a: 'Go to Appointment Management in the sidebar. You can view, filter, and manage all appointments across the hospital.' },
+            { q: 'How do I cancel an appointment?', a: 'Find the appointment in the list and click the Cancel button. You can add a cancellation reason.' },
+          ],
+          'Doctor Management': [
+            { q: 'How do I add a new doctor?', a: 'Go to Doctor Management and click "Add Doctor". Fill in their details, qualifications, and department.' },
+            { q: 'How do I deactivate a doctor?', a: 'Find the doctor in the list and toggle their status to Inactive. They will no longer appear for bookings.' },
+          ],
+          'Patient Management': [
+            { q: 'How do I find a patient?', a: 'Use the search bar at the top or go to Patient Management. You can search by name, ID, or contact.' },
+            { q: 'How do I update patient details?', a: 'Click on a patient record and edit their information directly.' },
+          ],
+          'Reports & Analytics': [
+            { q: 'What reports are available?', a: 'You can access appointment summaries, no-show reports, and department utilization reports from the Reports page.' },
+            { q: 'How do I export data?', a: 'On the Reports page, choose your report type and click Export. Data is downloaded as a CSV file.' },
+          ],
+          'System & Settings': [
+            { q: 'How do I backup the system?', a: 'Go to Backup & Restore in the Administration section. You can export all data as a JSON file.' },
+            { q: 'How do I restore from backup?', a: 'Go to Backup & Restore and use the Import function to upload a previously exported JSON file.' },
+            { q: 'How do I send a notification?', a: 'Click the "Send Notification" quick action on the dashboard. Select recipients, subject, and message.' },
+          ],
+        },
+        doctor: {
+          'Appointments & Schedule': [
+            { q: 'How do I view my daily schedule?', a: 'Your daily schedule appears on the dashboard. For full details, go to My Appointments.' },
+            { q: 'How do I update my availability?', a: 'Go to Availability & Slots. Set which days and time slots you are available for patient bookings.' },
+            { q: 'How do I mark an appointment completed?', a: 'Open the appointment and click "Mark Completed" after you finish the consultation.' },
+          ],
+          'Patient Care': [
+            { q: 'How do I access patient records?', a: 'Go to Patient Records and search by patient name or ID to view their full history.' },
+            { q: 'How do I add clinical notes?', a: 'From a patient record, click "Add Note" and enter your observations, diagnosis, and treatment plan.' },
+          ],
+          'Account & Profile': [
+            { q: 'How do I update my profile?', a: 'Go to My Profile to update your contact details, qualifications, and other information.' },
+            { q: 'How do I change my password?', a: 'From My Profile, click Change Password and follow the prompts.' },
+          ],
+        },
+        patient: {
+          'Appointments': [
+            { q: 'How do I book an appointment?', a: 'Click "Book Appointment" in the sidebar. Select a department, doctor, pick a date/time, and confirm.' },
+            { q: 'How do I cancel or reschedule?', a: 'Go to My Appointments, find your appointment, and use the Cancel or Reschedule buttons.' },
+            { q: 'What should I bring to my appointment?', a: 'Please bring a valid ID, your insurance card, and any relevant medical records or reports.' },
+          ],
+          'Medical Records': [
+            { q: 'How do I view my medical history?', a: 'Go to Medical History in the sidebar to see all your past visits, diagnoses, and notes.' },
+            { q: 'How do I access my prescriptions?', a: 'Go to Prescriptions to view current and past prescriptions, including dosage instructions.' },
+          ],
+          'Account': [
+            { q: 'How do I update my profile?', a: 'Go to My Profile to update your name, contact, address, and other personal details.' },
+            { q: 'How do I change my password?', a: 'From My Profile, click Change Password and enter your current and new password.' },
+          ],
+        },
+        guest: {
+          'Getting Started': [
+            { q: 'How do I register?', a: 'Go to the login page and click "Register". Choose Patient or Doctor, fill in your details, and create an account.' },
+            { q: 'How do I log in?', a: 'Go to the login page, enter your username and password, and select your role.' },
+          ],
+        }
+      };
+
+      var faqs = roleFaqs[role] || roleFaqs.guest;
+      var accordion = document.getElementById('faqAccordion');
+      if (accordion) {
+        var html2 = '';
+        var catIdx = 0;
+        for (var cat in faqs) {
+          if (faqs.hasOwnProperty(cat)) {
+            var items = faqs[cat];
+            items.forEach(function (item, idx) {
+              var collapseId = 'faq-collapse-' + catIdx + '-' + idx;
+              html2 += '<div class="accordion-item">' +
+                '<h2 class="accordion-header">' +
+                  '<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#' + collapseId + '">' +
+                    esc2(item.q) +
+                  '</button>' +
+                '</h2>' +
+                '<div id="' + collapseId + '" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">' +
+                  '<div class="accordion-body">' + esc2(item.a) + '</div>' +
+                '</div>' +
+              '</div>';
+            });
+            catIdx++;
+          }
+        }
+        accordion.innerHTML = html2;
+      }
+
+      var gettingStartedRow = document.getElementById('gettingStartedRow');
+      if (gettingStartedRow) {
+        var gsCards = {
+          admin: [
+            { title: 'Manage Doctors', desc: 'Add, edit, or deactivate doctor profiles.', icon: 'path d="M22 12h-4l-3 9L9 3l-3 9H2"' },
+            { title: 'View Reports', desc: 'Access analytics, export data, track performance.', icon: 'line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"' },
+            { title: 'System Settings', desc: 'Configure theme, language, and preferences.', icon: 'circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"' },
+          ],
+          doctor: [
+            { title: 'View Schedule', desc: 'Check today\'s appointments and manage your day.', icon: 'rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"' },
+            { title: 'Patient Records', desc: 'Access patient history, add clinical notes.', icon: 'path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"' },
+            { title: 'Set Availability', desc: 'Update your available slots for patient bookings.', icon: 'circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"' },
+          ],
+          patient: [
+            { title: 'Book Appointment', desc: 'Schedule a visit with a doctor of your choice.', icon: 'rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="12" y1="14" x2="12" y2="18"></line><line x1="9" y1="16" x2="15" y2="16"' },
+            { title: 'View Medical History', desc: 'Access your past visits, diagnoses, and records.', icon: 'path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"' },
+            { title: 'My Prescriptions', desc: 'Check current prescriptions and medication details.', icon: 'path d="M10 2v7.31"></path><path d="M14 9.3V1.99"></path><path d="M8.5 2h7"></path><path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path><path d="M5.52 16h12.96"' },
+          ],
+          guest: [
+            { title: 'Register', desc: 'Create a new patient or doctor account.', icon: 'path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line>' },
+            { title: 'Log In', desc: 'Sign in with your existing credentials.', icon: 'path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line>' },
+          ],
+        };
+
+        var cards = gsCards[role] || gsCards.guest;
+        var cardsHtml = '';
+        cards.forEach(function (card) {
+          cardsHtml += '<div class="col-md-4"><div class="getting-started-card h-100">' +
+            '<div class="help-category-icon mx-auto mb-3" style="background:var(--primary-light, #D1FAE5);color:var(--primary-brand, #047857);">' +
+              '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><' + card.icon + '></svg>' +
+            '</div>' +
+            '<h6 class="fw-bold mb-1" style="color:var(--dark-text);font-size:0.9rem;">' + esc2(card.title) + '</h6>' +
+            '<p class="text-muted mb-0" style="font-size:0.8rem;">' + esc2(card.desc) + '</p>' +
+          '</div></div>';
+        });
+        gettingStartedRow.innerHTML += '<div class="row g-3">' + cardsHtml + '</div>';
+      }
+
+      var helpSearch = document.getElementById('helpTopicSearch');
+      var helpSearchResults = document.getElementById('helpSearchResults');
+      if (helpSearch) {
+        helpSearch.addEventListener('input', function () {
+          var query = this.value.toLowerCase().trim();
+          if (query.length < 2) {
+            helpSearchResults.style.display = 'none';
+            return;
+          }
+          var allFaqs = [];
+          for (var c in faqs) {
+            if (faqs.hasOwnProperty(c)) {
+              faqs[c].forEach(function (f) { allFaqs.push(f); });
+            }
+          }
+          var matches = allFaqs.filter(function (f) {
+            return f.q.toLowerCase().includes(query) || f.a.toLowerCase().includes(query);
+          }).slice(0, 5);
+          if (matches.length === 0) {
+            helpSearchResults.style.display = 'block';
+            helpSearchResults.innerHTML = '<div class="text-muted p-2" style="font-size:0.85rem;">No results found for "' + esc2(query) + '". Try the chatbot below.</div>';
+          } else {
+            helpSearchResults.style.display = 'block';
+            var h = '';
+            matches.forEach(function (m) {
+              h += '<div class="p-2 border-bottom" style="font-size:0.85rem;cursor:pointer;" onclick="scrollToFAQ(\'' + esc2(m.q.replace(/'/g, "\\'")) + '\')">' +
+                '<div class="fw-semibold" style="color:var(--dark-text);">' + esc2(m.q) + '</div>' +
+                '<div class="text-muted" style="font-size:0.8rem;">' + esc2(m.a.substring(0, 100)) + '...</div>' +
+              '</div>';
+            });
+            helpSearchResults.innerHTML = h;
+          }
+        });
+      }
+
+      var supportBtn = document.getElementById('contactSupportBtn');
+      if (supportBtn) {
+        supportBtn.addEventListener('click', function () {
+          if (window.StorageDB) {
+            var name = userName || 'User';
+            StorageDB.addAuditLog(name, 'Support Request', 'Help', 'User submitted a support request from Help Center');
+          }
+          if (window.showToast) {
+            window.showToast('Support request submitted. A representative will contact you shortly.', 'success');
+          } else {
+            alert('Support request submitted. A representative will contact you shortly.');
+          }
+        });
+      }
+    });
+
+    function scrollToFAQ(query) {
+      var buttons = document.querySelectorAll('.accordion-button');
+      for (var i = 0; i < buttons.length; i++) {
+        if (buttons[i].textContent.trim().toLowerCase().includes(query.toLowerCase())) {
+          buttons[i].click();
+          buttons[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
+          break;
+        }
+      }
+      document.getElementById('helpSearchResults').style.display = 'none';
+      document.getElementById('helpTopicSearch').value = '';
+    }
+  </script>
+</body>
+</html>

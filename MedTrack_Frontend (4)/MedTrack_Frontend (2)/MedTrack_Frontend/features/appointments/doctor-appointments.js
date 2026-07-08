@@ -50,7 +50,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var TOTAL_SLOTS = SLOT_TIMES.length;
 
   // ── Data State ──
-  var todayStr = new Date().toISOString().split('T')[0];
+  var d = new Date();
+  var todayStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   var allAppointments = [];
   var allPatients = [];
   var currentFilter = 'all';
@@ -94,7 +95,8 @@ document.addEventListener('DOMContentLoaded', function () {
       return (a.startTime || '').localeCompare(b.startTime || '');
     });
     allPatients = window.StorageDB.getPatients();
-    todayStr = new Date().toISOString().split('T')[0];
+    var d2 = new Date();
+    todayStr = d2.getFullYear() + '-' + String(d2.getMonth() + 1).padStart(2, '0') + '-' + String(d2.getDate()).padStart(2, '0');
   }
 
   function getTodaysAppts() {
@@ -161,8 +163,8 @@ document.addEventListener('DOMContentLoaded', function () {
       startOfWeek.setDate(now.getDate() - now.getDay() + 1);
       var endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 6);
-      var s = startOfWeek.toISOString().split('T')[0];
-      var e = endOfWeek.toISOString().split('T')[0];
+      var s = startOfWeek.getFullYear() + '-' + String(startOfWeek.getMonth() + 1).padStart(2, '0') + '-' + String(startOfWeek.getDate()).padStart(2, '0');
+      var e = endOfWeek.getFullYear() + '-' + String(endOfWeek.getMonth() + 1).padStart(2, '0') + '-' + String(endOfWeek.getDate()).padStart(2, '0');
       filtered = filtered.filter(function(a) { return a.appointmentDate >= s && a.appointmentDate <= e; });
     }
 
@@ -230,8 +232,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
       var actionBtns = '<button class="action-btn action-view" data-appt-id="' + a.id + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>View</button>';
 
+      // Time-based action rules matching C# DoctorDashboard.cs:243-250
       if (a.status === 'Booked' && a.appointmentDate === todayStr) {
-        actionBtns += '<button class="action-btn action-start" data-appt-id="' + a.id + '" style="background:#DCFCE7;color:#047857;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>Start</button>';
+        var apptStartParts = a.startTime ? a.startTime.split(':') : [];
+        if (apptStartParts.length === 2) {
+          var nowDt = new Date();
+          var nowMin = nowDt.getHours() * 60 + nowDt.getMinutes();
+          var startMin = parseInt(apptStartParts[0], 10) * 60 + parseInt(apptStartParts[1], 10);
+          // C# canComplete: slot.StartTime <= now (start time has arrived)
+          if (startMin <= nowMin) {
+            // Start consultation
+            actionBtns += '<button class="action-btn action-start" data-appt-id="' + a.id + '" style="background:#DCFCE7;color:#047857;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>Start</button>';
+            // Mark No-Show (C#: both Complete and No-Show options shown when canComplete)
+            actionBtns += '<button class="action-btn action-noshow" data-appt-id="' + a.id + '" style="background:#FEF2F2;color:#DC2626;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>No-Show</button>';
+          } else {
+            // C# canPreManage: StartTime > now+2h → far enough to manage ahead
+            var twoHoursLater = new Date(nowDt);
+            twoHoursLater.setMinutes(nowDt.getMinutes() + 120);
+            var twoHoursLaterMin = twoHoursLater.getHours() * 60 + twoHoursLater.getMinutes();
+            if (startMin > twoHoursLaterMin) {
+              actionBtns += '<button class="action-btn action-cancel-bydoc" data-appt-id="' + a.id + '" style="background:#FEF2F2;color:#DC2626;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>Cancel</button>';
+            } else {
+              // Within 2h window but hasn't started yet — only View
+              actionBtns += '<button class="action-btn action-soon" data-appt-id="' + a.id + '" style="background:#FEF3C7;color:#B45309;cursor:not-allowed;opacity:0.7;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>Soon</button>';
+            }
+          }
+        }
       }
 
       rows += '<tr data-appt-id="' + a.id + '" class="appt-row-clickable">' +
@@ -262,9 +288,6 @@ document.addEventListener('DOMContentLoaded', function () {
   if (apptFilter && apptFilterMenu) {
     apptFilter.addEventListener('click', function(e) {
       e.stopPropagation();
-      var rect = apptFilter.getBoundingClientRect();
-      apptFilterMenu.style.top = (rect.bottom + 4) + 'px';
-      apptFilterMenu.style.left = rect.left + 'px';
       apptFilterMenu.classList.toggle('show');
     });
     apptFilterMenu.querySelectorAll('.dropdown-item').forEach(function(item) {
@@ -420,19 +443,41 @@ document.addEventListener('DOMContentLoaded', function () {
     var consultNotes = document.getElementById('wiz-consult-notes').value.trim();
 
     var rxRows = document.querySelectorAll('#wiz-rx-table tbody tr');
+    var rxErrors = [];
     var prescriptions = [];
     rxRows.forEach(function(row) {
       var inputs = row.querySelectorAll('input');
-      if (inputs[0] && inputs[0].value.trim()) {
-        prescriptions.push({
-          medicine: inputs[0].value.trim(),
-          dosage: inputs[1] ? inputs[1].value.trim() : '',
-          frequency: inputs[2] ? inputs[2].value.trim() : '',
-          duration: inputs[3] ? inputs[3].value.trim() : '',
-          instructions: inputs[4] ? inputs[4].value.trim() : ''
-        });
-      }
+      var med = inputs[0] ? inputs[0].value.trim() : '';
+      if (!med) return;
+      var dosage = inputs[1] ? inputs[1].value.trim() : '';
+      var frequency = inputs[2] ? inputs[2].value.trim() : '';
+      var duration = inputs[3] ? inputs[3].value.trim() : '';
+      var instructions = inputs[4] ? inputs[4].value.trim() : '';
+      var errs = [];
+      if (!dosage) errs.push('dosage');
+      if (!frequency) errs.push('frequency');
+      if (!duration) errs.push('days');
+      if (duration && (!/^\d+$/.test(duration) || parseInt(duration, 10) < 1)) errs.push('days (must be a positive number)');
+      if (errs.length) rxErrors.push({ medicine: med, fields: errs });
+      prescriptions.push({ medicine: med, dosage: dosage, frequency: frequency, duration: duration, instructions: instructions });
     });
+    if (rxErrors.length) {
+      rxRows.forEach(function(row) {
+        row.querySelectorAll('input').forEach(function(i) { i.classList.remove('rx-input-error'); });
+      });
+      rxErrors.forEach(function(e) {
+        var inputs = Array.from(rxRows).filter(function(r) { return r.querySelector('input') && r.querySelector('input').value.trim() === e.medicine; });
+        if (inputs[0]) {
+          var all = inputs[0].querySelectorAll('input');
+          if (e.fields.some(function(f) { return f === 'dosage'; })) all[1].classList.add('rx-input-error');
+          if (e.fields.some(function(f) { return f === 'frequency'; })) all[2].classList.add('rx-input-error');
+          if (e.fields.some(function(f) { return f.indexOf('days') === 0; })) all[3].classList.add('rx-input-error');
+        }
+      });
+      var msg = rxErrors.map(function(e) { return e.medicine + ': ' + e.fields.join(', '); }).join('\n');
+      showToast('Fix prescription rows:\n' + msg, 'error');
+      return;
+    }
 
     a.status = 'Completed';
     a.diagnosis = diagnosis;
@@ -473,6 +518,32 @@ document.addEventListener('DOMContentLoaded', function () {
     closeModal('consultWizard');
   };
 
+  // ── No-Show Confirm Handler (C# DoctorDashboard: mark as No-Show) ──
+  document.getElementById('confirm-noshow-btn').addEventListener('click', function() {
+    var apptId = this.getAttribute('data-appt-id');
+    if (!apptId || !window.StorageDB) return;
+    var a = getAppointmentById(apptId);
+    if (!a) { showToast('Appointment not found', 'error'); return; }
+    window.StorageDB.noShowAppointment(apptId);
+    window.StorageDB.dispatchNotification('Patient marked No-Show', a.patientName + ' did not arrive for appointment ' + a.id + ' with ' + (a.doctorName || 'Doctor') + ' on ' + a.appointmentDate + ' at ' + a.startTime, 'admin', null, 'warning');
+    showToast((a.patientName || 'Patient') + ' marked No-Show', 'warning');
+    closeModal('noshowModal');
+    fullRefresh();
+  });
+
+  // ── Doctor Cancel Confirm Handler (C# DoctorDashboard: cancel when canPreManage) ──
+  document.getElementById('confirm-doccancel-btn').addEventListener('click', function() {
+    var apptId = this.getAttribute('data-appt-id');
+    if (!apptId || !window.StorageDB) return;
+    var a = getAppointmentById(apptId);
+    if (!a) { showToast('Appointment not found', 'error'); return; }
+    window.StorageDB.cancelAppointment(apptId);
+    window.StorageDB.dispatchNotification('Appointment cancelled by doctor', a.patientName + '\'s appointment ' + a.id + ' was cancelled by the doctor', 'admin', null, 'warning');
+    showToast((a.patientName || 'Patient') + '\'s appointment cancelled', 'success');
+    closeModal('docCancelModal');
+    fullRefresh();
+  });
+
   // ── Wizard inline handlers (set once) ──
   document.getElementById('wiz-medical-history-btn').addEventListener('click', function() {
     var pid = this.getAttribute('data-patient-id');
@@ -494,6 +565,15 @@ document.addEventListener('DOMContentLoaded', function () {
       '<td><button class="rx-remove-btn">&times;</button></td>';
     tb.appendChild(tr);
     tr.querySelector('.rx-remove-btn').addEventListener('click', function() { tr.remove(); });
+    tr.querySelectorAll('input').forEach(function(inp) {
+      inp.addEventListener('input', function() { this.classList.remove('rx-input-error'); });
+    });
+    var daysInput = tr.querySelectorAll('input')[3];
+    if (daysInput) {
+      daysInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+      });
+    }
   });
 
   // ══════════════════════════════════════════
@@ -524,11 +604,47 @@ document.addEventListener('DOMContentLoaded', function () {
         startConsultation(this.dataset.apptId);
       });
     });
+    document.querySelectorAll('.action-noshow').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        openNoShowModal(this.dataset.apptId);
+      });
+    });
+    document.querySelectorAll('.action-cancel-bydoc').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        openDocCancelModal(this.dataset.apptId);
+      });
+    });
     document.querySelectorAll('.appt-row-clickable').forEach(function(tr) {
       tr.addEventListener('click', function() {
         openConsultWizard(this.dataset.apptId);
       });
     });
+  }
+
+  // ── No-Show Modal (C# DoctorDashboard: Mark as No-Show when canComplete) ──
+  function openNoShowModal(apptId) {
+    var a = getAppointmentById(apptId);
+    if (!a) return;
+    document.getElementById('noshow-patient-name').textContent = a.patientName || 'Patient';
+    document.getElementById('noshow-appt-info').innerHTML =
+      'Appointment <strong>#' + a.id + '</strong> on ' + (a.appointmentDate || '--') +
+      ' at ' + formatTime24to12(a.startTime);
+    document.getElementById('confirm-noshow-btn').setAttribute('data-appt-id', apptId);
+    openModal('noshowModal');
+  }
+
+  // ── Doctor Cancel Modal (C# canPreManage: slot > 2h away) ──
+  function openDocCancelModal(apptId) {
+    var a = getAppointmentById(apptId);
+    if (!a) return;
+    document.getElementById('doccancel-patient-name').textContent = a.patientName || 'Patient';
+    document.getElementById('doccancel-appt-info').innerHTML =
+      'Appointment <strong>#' + a.id + '</strong> with ' + (a.doctorName || 'Doctor') +
+      ' on ' + (a.appointmentDate || '--') + ' at ' + formatTime24to12(a.startTime);
+    document.getElementById('confirm-doccancel-btn').setAttribute('data-appt-id', apptId);
+    openModal('docCancelModal');
   }
 
   // ══════════════════════════════════════════
@@ -540,9 +656,6 @@ document.addEventListener('DOMContentLoaded', function () {
   if (statusFilter && statusMenu) {
     statusFilter.addEventListener('click', function(e) {
       e.stopPropagation();
-      var rect = statusFilter.getBoundingClientRect();
-      statusMenu.style.top = (rect.bottom + 4) + 'px';
-      statusMenu.style.left = rect.left + 'px';
       statusMenu.classList.toggle('show');
     });
     statusMenu.querySelectorAll('.dropdown-item').forEach(function(item) {
