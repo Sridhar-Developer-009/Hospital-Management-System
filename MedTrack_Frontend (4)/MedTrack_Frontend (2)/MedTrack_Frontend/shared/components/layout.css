@@ -634,6 +634,57 @@ body {
 .kpi-trend.up   { color: #059669; }
 .kpi-trend.down { color: #DC2626; }
 
+/* ── Charts Section ────────────────────────── */
+.charts-section {
+  margin-bottom: 28px;
+}
+.charts-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.charts-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark-text, #2D2A24);
+}
+.charts-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--light-border, #E5DDD5);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted-text, #7A7268);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+}
+.charts-toggle-btn:hover {
+  border-color: var(--primary-brand, #0D6E6E);
+  color: var(--primary-brand, #0D6E6E);
+  background: var(--primary-light, #E6F7F6);
+}
+.charts-toggle-btn .charts-eye-icon {
+  transition: transform 0.3s ease;
+}
+.charts-content {
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+  max-height: 400px;
+  opacity: 1;
+}
+.charts-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+}
+
 /* ── Charts Row ───────────────────────────── */
 .charts-row {
   display: grid;
@@ -1046,11 +1097,12 @@ body {
 
 /* ── Dashboard Footer ─────────────────────── */
 .dashboard-footer {
-  margin-top: auto;
   padding: 16px 0 4px;
   border-top: 1px solid var(--light-border, #E5DDD5);
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 .footer-text {
   font-size: 0.75rem;

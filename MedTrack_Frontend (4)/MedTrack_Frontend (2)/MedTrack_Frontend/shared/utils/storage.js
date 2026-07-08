@@ -312,6 +312,11 @@
         const slots = JSON.parse(localStorage.getItem('medtrack_slots') || '{}');
         slots[doctorId] = slotData;
         localStorage.setItem('medtrack_slots', JSON.stringify(slots));
+        StorageDB._notifyDataChange();
+    },
+
+    _notifyDataChange: function() {
+      try { document.dispatchEvent(new CustomEvent('medtrack:dataChanged', { bubbles: true })); } catch(e) {}
     },
 
     generateDoctorCode: function() {
@@ -407,7 +412,20 @@
 
   StorageDB.DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
-  StorageDB.getSlotTimes = function(doctorId) {
+  StorageDB.getSlotTimes = function(doctorId, appointmentDate) {
+    // Check per-day overrides if date is provided
+    if (appointmentDate) {
+      var dayTimesKey = 'medtrack_day_times_' + doctorId;
+      try {
+        var dtSaved = localStorage.getItem(dayTimesKey);
+        if (dtSaved) {
+          var dt = JSON.parse(dtSaved);
+          var dayName = this.DAY_NAMES[new Date(appointmentDate + 'T00:00:00').getDay()];
+          if (dt[dayName] && dt[dayName].slotTimes && dt[dayName].slotTimes.length === 5)
+            return dt[dayName].slotTimes;
+        }
+      } catch (e) {}
+    }
     var key = 'medtrack_config_' + doctorId;
     try {
       var saved = localStorage.getItem(key);
@@ -420,7 +438,7 @@
   };
 
   StorageDB.getSlotIndex = function(doctorId, appointmentDate, startTime) {
-    var slotTimes = this.getSlotTimes(doctorId);
+    var slotTimes = this.getSlotTimes(doctorId, appointmentDate);
     var m = startTime.match(/(\d+):(\d+)\s*(AM|PM)/i);
     if (!m) {
       m = startTime.match(/(\d+):(\d+)/);
@@ -470,6 +488,7 @@
     if (slotMarker) {
       this.setSlotMarker(appts[idx].doctorId, appts[idx].appointmentDate, appts[idx].startTime, slotMarker);
     }
+    this._notifyDataChange();
     return true;
   };
 
@@ -560,7 +579,7 @@
   };
 
   StorageDB.noShowAppointment = function(apptId) {
-    this.setApptStatusAndSlot(apptId, 'NoShow', 'R');
+    this.setApptStatusAndSlot(apptId, 'NoShow', 'N');
   };
 
   StorageDB.getAppointments = function() {
@@ -576,6 +595,7 @@
     const appts = this.getAppointments();
     appts.push(appt);
     localStorage.setItem('medtrack_appointments', JSON.stringify(appts));
+    this._notifyDataChange();
   };
 
   StorageDB.updateAppointment = function(updated) {
@@ -584,6 +604,7 @@
     if (idx === -1) return;
     appts[idx] = updated;
     localStorage.setItem('medtrack_appointments', JSON.stringify(appts));
+    this._notifyDataChange();
   };
 
   StorageDB.generateAppointmentCode = function() {
@@ -632,7 +653,7 @@
         doctorId: doc.id,
         doctorName: doc.name,
         department: doc.department,
-        appointmentDate: d.toISOString().split('T')[0],
+        appointmentDate: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'),
         startTime: startTime,
         endTime: endTime,
         status: status,

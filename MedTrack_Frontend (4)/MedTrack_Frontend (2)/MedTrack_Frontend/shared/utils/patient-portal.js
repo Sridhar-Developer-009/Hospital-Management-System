@@ -286,6 +286,34 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // ── Quick Actions Toggle ──
+  var qaFab = document.getElementById('qaFab');
+  var qaPanel = document.getElementById('qaPanel');
+  var qaPanelClose = document.getElementById('qaPanelClose');
+
+  function closeQA() {
+    qaFab.classList.remove('open');
+    qaPanel.classList.remove('open');
+  }
+
+  if (qaFab) {
+    qaFab.addEventListener('click', function(e) {
+      e.stopPropagation();
+      qaFab.classList.toggle('open');
+      qaPanel.classList.toggle('open');
+    });
+  }
+
+  if (qaPanelClose) {
+    qaPanelClose.addEventListener('click', closeQA);
+  }
+
+  document.addEventListener('click', function(e) {
+    if (qaPanel && qaFab && !qaFab.contains(e.target) && !qaPanel.contains(e.target)) {
+      closeQA();
+    }
+  });
+
   // ── Init ──
   syncProfileAvatar();
   updateGreeting();

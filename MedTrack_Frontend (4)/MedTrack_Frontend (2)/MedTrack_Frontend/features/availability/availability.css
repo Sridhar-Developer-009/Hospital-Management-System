@@ -203,6 +203,17 @@
 .slot-noshow .slot-sub { color: #9A3412; opacity: 0.8; }
 .slot-empty .slot-sub { color: #7A7268; opacity: 0.5; }
 
+/* Past slots - non-editable */
+.avail-grid td.avail-cell.slot-past,
+.avail-grid td.slot-past {
+  cursor: not-allowed !important;
+  opacity: 0.55;
+}
+.avail-grid td.avail-cell.slot-past:hover,
+.avail-grid td.slot-past:hover {
+  box-shadow: none !important;
+}
+
 /* Slot States */
 .slot-available { background: #DCFCE7; color: #166534; }
 .slot-blocked { background: #FEE2E2; color: #B91C1C; }
@@ -465,6 +476,13 @@
 }
 
 /* Legend hint */
+.avail-grid-hint {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted, #7A7268);
+  padding: 6px 0 2px;
+  font-style: italic;
+}
 .avail-legend-hint {
   text-align: center;
   font-size: 0.72rem;
@@ -504,6 +522,16 @@
 .toast-notification.success { background: #047857; }
 .toast-notification.info { background: #0369A1; }
 .toast-notification.error { background: #DC2626; }
+
+@keyframes slot-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.5); border-color: #DC2626; }
+  50% { box-shadow: 0 0 0 4px rgba(220,38,38,0.3); border-color: #DC2626; }
+}
+input.slot-glow, select.slot-glow {
+  animation: slot-glow 0.8s ease-in-out 3;
+  border-color: #DC2626 !important;
+  background-color: #FEF2F2 !important;
+}
 
 @media (max-width: 768px) {
   .avail-stats { gap: 10px; }

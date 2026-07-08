@@ -99,10 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Attach reveal classes to key sections
   const revealTargets = [
     // [selector, direction, delay-class]
-    ['.hero-tag-badge',       '',           ''],
-    ['.hero-actions-row',     '',           'delay-1'],
-    ['.hero-compliance-row',  '',           'delay-2'],
-
     ['.gateway-selection-panel .section-title', '', ''],
     ['.gateway-selection-panel .section-subtitle', '', 'delay-1'],
     ['.gateway-card',         '',           ''],      // staggered below
@@ -227,14 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
    statNumbers.forEach(el => statsObserver.observe(el));
 
 
-  /* ─── 7. Hero entrance (immediate) ──────────────────────────── */
-  setTimeout(() => {
-    document.querySelectorAll('.hero-tag-badge, .hero-slider-dots, .hero-actions-row, .hero-compliance-row').forEach(el => {
-      el.classList.add('visible');
-    });
-  }, 80);
-
-  /* ─── 8. Smooth parallax engine (rAF-throttled) ────────────── */
+  /* ─── 7. Smooth parallax engine (rAF-throttled) ────────────── */
   let parallaxTicking = false;
   window.addEventListener('scroll', () => {
     if (!parallaxTicking) {
@@ -261,5 +250,18 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }, { passive: true });
+
+
+  /* ─── 8. Scroll-to-Top Button ───────────────────────────────── */
+  const scrollBtn = document.getElementById('scrollTopBtn');
+  if (scrollBtn) {
+    window.addEventListener('scroll', () => {
+      scrollBtn.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+
+    scrollBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 
 });

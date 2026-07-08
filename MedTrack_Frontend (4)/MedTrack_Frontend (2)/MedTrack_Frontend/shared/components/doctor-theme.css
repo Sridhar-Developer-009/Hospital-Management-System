@@ -324,6 +324,131 @@
 .row.g-3.mb-4 > .col:nth-child(4) .kpi-card { animation-delay: 0.20s; }
 .row.g-3.mb-4 > .col:nth-child(5) .kpi-card { animation-delay: 0.25s; }
 
+/* ── Floating Quick Actions ──────────────────────────────────────────── */
+.qa-fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 1050;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: #047857;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(4, 120, 87, 0.35);
+  transition: all 0.3s ease;
+}
+.qa-fab:hover {
+  background: #065F46;
+  transform: scale(1.08);
+  box-shadow: 0 6px 28px rgba(4, 120, 87, 0.45);
+}
+.qa-fab .qa-fab-close { display: none; }
+.qa-fab.open .qa-fab-icon { display: none; }
+.qa-fab.open .qa-fab-close { display: block; }
+.qa-fab.open {
+  background: #DC2626;
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.35);
+}
+.qa-fab.open:hover {
+  background: #B91C1C;
+  box-shadow: 0 6px 28px rgba(220, 38, 38, 0.45);
+}
+
+/* ── Quick Actions Panel ─────────────────────────────────────────────── */
+.qa-panel {
+  position: fixed;
+  bottom: 96px;
+  right: 28px;
+  z-index: 1049;
+  width: 320px;
+  background: var(--bg-card, #F6F0E4);
+  border: 1px solid var(--light-border, #E5DDD5);
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+  transform: translateY(20px) scale(0.95);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  overflow: hidden;
+}
+.qa-panel.open {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.qa-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--light-border, #E5DDD5);
+}
+.qa-panel-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--dark-text, #2D2A24);
+  margin: 0;
+}
+.qa-panel-close {
+  background: none;
+  border: none;
+  color: var(--muted-text, #7A7268);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  transition: all 0.2s ease;
+}
+.qa-panel-close:hover {
+  background: var(--bg-neutral, #F0E8DA);
+  color: var(--dark-text, #2D2A24);
+}
+.qa-panel-body {
+  padding: 8px 6px 12px;
+  max-height: 380px;
+  overflow-y: auto;
+}
+.qa-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--dark-text, #2D2A24);
+  transition: background 0.2s ease;
+}
+.qa-item:hover {
+  background: var(--bg-neutral, #F0E8DA);
+}
+.qa-item-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.qa-item-title {
+  font-size: 0.83rem;
+  font-weight: 700;
+}
+.qa-item-desc {
+  font-size: 0.72rem;
+  color: var(--muted-text, #7A7268);
+  margin-top: 1px;
+}
+
 /* Stagger schedule cards */
 .row.g-3.mb-4 .col-lg-4:nth-child(1) .card { animation-delay: 0.15s; }
 .row.g-3.mb-4 .col-lg-4:nth-child(2) .card { animation-delay: 0.25s; }

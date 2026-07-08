@@ -967,4 +967,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // ── Charts Toggle ──
+  window.toggleCharts = function() {
+    var content = document.getElementById('chartsContent');
+    var btn = document.getElementById('chartsToggleBtn');
+    if (!content || !btn) return;
+    var hidden = content.classList.toggle('collapsed');
+    btn.querySelector('span').textContent = hidden ? 'Show' : 'Hide';
+    localStorage.setItem('citycare_charts_hidden', hidden ? '1' : '');
+  };
+
+  // Restore charts toggle state on load
+  (function() {
+    var content = document.getElementById('chartsContent');
+    var btn = document.getElementById('chartsToggleBtn');
+    if (!content || !btn) return;
+    if (localStorage.getItem('citycare_charts_hidden') === '1') {
+      content.classList.add('collapsed');
+      btn.querySelector('span').textContent = 'Show';
+    }
+  })();
+
 });
